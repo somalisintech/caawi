@@ -4,9 +4,9 @@ import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 import AuthProvider from '@/app/context/AuthProvider';
 import dynamic from 'next/dynamic';
-import Header from '@/components/Header';
+import { Toaster } from '@/components/ui/toaster';
 
-const ThemeProvider = dynamic(() => import('@/components/theme-provider'), { ssr: false });
+const ThemeProvider = dynamic(() => import('@/components/ThemeProvider'), { ssr: false });
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -20,14 +20,12 @@ interface Props {
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html className="h-full" lang="en">
+      <body className={`h-full ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>
-            <Header />
-            {children}
-          </AuthProvider>
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

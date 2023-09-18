@@ -17,7 +17,7 @@ import Link from 'next/link';
 export default function Login() {
   const { status } = useSession();
   const formValidationSchema = z.object({
-    email: z.string().email(),
+    email: z.string().min(1, { message: 'Email is required' }).email(),
     password: z.string().min(1, { message: 'Password is required' })
   });
 

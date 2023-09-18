@@ -13,6 +13,7 @@ import { toast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Register() {
   const { status } = useSession();
@@ -166,8 +167,7 @@ export default function Register() {
                 <span className="bg-white px-2 text-gray-500">Or continue with</span>
               </div>
             </div>
-            <p className="my-2 text-sm font-medium text-gray-700">Register with</p>
-            <div className="mt-3 grid grid-cols-3 gap-3">
+            <div className="mt-6 grid grid-cols-3 gap-3">
               <Button
                 className="text-gray-500 hover:text-gray-500"
                 variant="outline"
@@ -211,17 +211,22 @@ export default function Register() {
               </Button>
             </div>
           </div>
+          <p className="mt-6 text-center text-sm leading-6 text-gray-500">
+            Already have an account?{' '}
+            <Link href="/login" className="font-semibold text-gray-600 hover:text-gray-500">
+              Sign in here.
+            </Link>
+          </p>
         </div>
       </div>
       <div className="relative hidden w-0 flex-1 lg:block">
         <Image
           className="absolute inset-0 h-full w-full object-cover"
           src="https://images.unsplash.com/photo-1556711905-b3f402e1ff80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2970&q=80"
-          alt="sign in"
+          alt="image which reads YOU GOT THIS"
           fill={true}
           priority
         />
-        <div className="bg-yellow-400/20"></div>
       </div>
     </div>
   );

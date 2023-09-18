@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FaGithub, FaGoogle, FaSpinner, FaTwitter } from 'react-icons/fa6';
+import { FaGithub, FaGoogle, FaLinkedin, FaSpinner, FaTwitter } from 'react-icons/fa6';
 import { toast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
@@ -108,7 +108,7 @@ export default function Login() {
                 <span className="bg-white px-2 text-gray-500">Or continue with</span>
               </div>
             </div>
-            <div className="mt-6 grid grid-cols-3 gap-3">
+            <div className="mt-6 grid grid-cols-4 gap-3">
               <Button
                 className="text-gray-500 hover:text-gray-500"
                 variant="outline"
@@ -121,7 +121,6 @@ export default function Login() {
               >
                 <FaGoogle size={'1.5em'} />
               </Button>
-
               <Button
                 className="text-gray-500 hover:text-gray-500"
                 variant="outline"
@@ -134,7 +133,6 @@ export default function Login() {
               >
                 <FaTwitter size={'1.5em'} />
               </Button>
-
               <Button
                 className="text-gray-500 hover:text-gray-500"
                 variant="outline"
@@ -146,6 +144,18 @@ export default function Login() {
                 }
               >
                 <FaGithub size={'1.5em'} />
+              </Button>
+              <Button
+                className="text-gray-500 hover:text-gray-500"
+                variant="outline"
+                title="Sign in with LinkedIn"
+                onClick={() =>
+                  signIn('linkedin', {
+                    redirect: false
+                  })
+                }
+              >
+                <FaLinkedin size={'1.5em'} />
               </Button>
             </div>
             <p className="mt-6 text-center text-sm leading-6 text-gray-500">

@@ -3,7 +3,6 @@
 import { signOut, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { toast } from '@/components/ui/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function TopNav() {
@@ -22,7 +21,13 @@ export default function TopNav() {
             <AvatarImage src={session?.user?.image!} alt={session?.user?.name!} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <Button onClick={() => signOut({ redirect: false }).then(() => toast({ title: 'Goodbye 👋🏾' }))}>
+          <Button
+            onClick={() =>
+              signOut({
+                callbackUrl: '/'
+              })
+            }
+          >
             Sign out
           </Button>
         </div>

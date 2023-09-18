@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 import AuthProvider from '@/app/context/AuthProvider';
 import dynamic from 'next/dynamic';
 import { Toaster } from '@/components/ui/toaster';
+import { Analytics } from '@vercel/analytics/react';
 
 const ThemeProvider = dynamic(() => import('@/components/ThemeProvider'), { ssr: false });
 const inter = Inter({ subsets: ['latin'] });
@@ -23,7 +24,10 @@ export default function RootLayout({ children }: Props) {
     <html className="h-full" lang="en">
       <body className={`h-full ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <Analytics />
+          </AuthProvider>
         </ThemeProvider>
         <Toaster />
       </body>

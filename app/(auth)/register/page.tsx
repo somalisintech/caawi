@@ -11,7 +11,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FaGithub, FaGoogle, FaSpinner, FaTwitter } from 'react-icons/fa6';
 import { toast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
-import { CaawiLogo } from '@/components/CaawiLogo';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 
@@ -79,7 +78,6 @@ export default function Register() {
 
   return (
     <div className="flex min-h-full">
-      <CaawiLogo />
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Register for an account</h2>

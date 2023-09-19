@@ -10,18 +10,16 @@ export default async function Header() {
 
   return (
     <header className="flex items-center justify-between p-4">
-      <Link href="/">
-        <Button>Caawi</Button>
-      </Link>
+      <Button asChild>
+        <Link href="/">Caawi</Link>
+      </Button>
       <nav>
         <ul className="flex justify-evenly">
           {session && (
             <li>
-              <Link href="/profile">
-                <Button variant="ghost" size="lg">
-                  Profile
-                </Button>
-              </Link>
+              <Button variant="ghost" size="lg" asChild>
+                <Link href="/profile">Profile</Link>
+              </Button>
             </li>
           )}
           <li>

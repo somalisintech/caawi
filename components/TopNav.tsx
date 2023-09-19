@@ -27,12 +27,12 @@ export default async function TopNav() {
 
   return (
     <div className="ml-auto mr-5 mt-5 flex space-x-2">
-      <Link href={'/login'}>
-        <Button variant="outline">Sign in</Button>
-      </Link>
-      <Link href={'/register'}>
-        <Button>Sign up</Button>
-      </Link>
+      <Button variant="outline" asChild>
+        <Link href={'/login'}>Sign in</Link>
+      </Button>
+      <Button asChild>
+        <Link href={'/register'}>Sign up</Link>
+      </Button>
     </div>
   );
 }

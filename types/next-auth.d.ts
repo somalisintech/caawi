@@ -6,10 +6,6 @@ declare module 'next-auth' {
     lastName: string | null;
   }
   interface Session {
-    user: {
-      id: string;
-      firstName: string | null;
-      lastName: string | null;
-    };
+    user: User;
   }
 }

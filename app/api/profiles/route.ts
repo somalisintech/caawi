@@ -12,85 +12,31 @@ export async function GET() {
   }
 
   const profiles = await prisma.profile.findMany({
+    where: {
+      userType: 'MENTOR'
+    },
     select: {
-      location: true,
       user: {
         select: {
           name: true,
-          firstName: true,
-          lastName: true,
-          image: true,
-          email: false,
-          hashedPassword: false
+          image: true
+        }
+      },
+      bio: true,
+      location: {
+        select: {
+          city: true,
+          country: true
+        }
+      },
+      profession: {
+        select: {
+          role: true,
+          company: true
         }
       }
     }
   });
 
   return NextResponse.json(profiles);
-}
-
-// create
-export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return NextResponse.json(null, { status: 403 });
-  }
-
-  const body = await request.json();
-  const profile = await prisma.profile.create({
-    data: {
-      userId: session.user.id,
-      ...body
-    },
-    select: {
-      location: true,
-      user: {
-        select: {
-          name: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          image: true,
-          hashedPassword: false
-        }
-      }
-    }
-  });
-
-  return NextResponse.json(profile);
-}
-
-// update
-export async function PATCH(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return NextResponse.json(null, { status: 403 });
-  }
-
-  const body = await request.json();
-  const profile = await prisma.profile.update({
-    where: { userId: session.user.id },
-    data: {
-      userId: session.user.id,
-      ...body
-    },
-    select: {
-      location: true,
-      user: {
-        select: {
-          name: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          image: true,
-          hashedPassword: false
-        }
-      }
-    }
-  });
-
-  return NextResponse.json(profile);
 }

@@ -10,20 +10,12 @@ export async function GET() {
     return NextResponse.json(null, { status: 403 });
   }
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.user.id },
-    select: {
-      location: true,
-      user: {
-        select: {
-          name: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          image: true,
-          hashedPassword: false
-        }
-      }
+  const profile = await prisma.user.findUnique({
+    where: {
+      id: session.user.id
+    },
+    include: {
+      profile: true
     }
   });
 

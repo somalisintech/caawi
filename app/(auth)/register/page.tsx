@@ -11,7 +11,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FaGithub, FaGoogle, FaLinkedin, FaSpinner, FaTwitter } from 'react-icons/fa6';
 import { toast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
-import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,10 +45,18 @@ export default function Register() {
   });
 
   const onSubmit: SubmitHandler<FormValidation> = async (fields) =>
-    axios
-      .post('/api/auth/register', fields)
-      .then(({ data }) => {
-        toast({ title: `🎉 Thanks for registering ${data.firstName}!` });
+    fetch('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(fields)
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error registering');
+        }
+        return response.json();
+      })
+      .then(({ firstName }) => {
+        toast({ title: `🎉 Thanks for registering ${firstName}!` });
         signIn('credentials', {
           email: fields.email,
           password: fields.password,

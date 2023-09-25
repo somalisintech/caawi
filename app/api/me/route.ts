@@ -12,9 +12,16 @@ export async function GET() {
 
   const profile = await prisma.user.findUnique({
     where: {
-      id: session.user.id
+      id: session?.user.id
     },
-    include: {
+    select: {
+      name: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
       profile: true
     }
   });

@@ -11,7 +11,7 @@ export default async function Profile() {
     redirect('/login');
   }
 
-  const profile = await getProfile();
+  const profile = await getProfile(session);
 
   return (
     <main>

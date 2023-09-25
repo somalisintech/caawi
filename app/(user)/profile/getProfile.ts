@@ -1,13 +1,20 @@
-import { headers } from 'next/headers';
+import prisma from '@/lib/db';
+import { Session } from 'next-auth';
 
-const url = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${process.env.NEXTAUTH_URL}`;
-
-export async function getProfile() {
-  const response = await fetch(url + '/api/me', {
-    headers: headers()
+export async function getProfile(session: Session) {
+  return prisma.user.findUnique({
+    where: {
+      id: session?.user.id
+    },
+    select: {
+      name: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+      profile: true
+    }
   });
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-  return await response.json();
 }

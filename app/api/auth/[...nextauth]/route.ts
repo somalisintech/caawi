@@ -8,20 +8,8 @@ import LinkedInProvider from 'next-auth/providers/linkedin';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 
-const adapter = PrismaAdapter(prisma);
-
-adapter.createUser = async (data) =>
-  prisma.user.create({
-    data: {
-      ...data,
-      profile: {
-        create: {}
-      }
-    }
-  }) as any;
-
 export const authOptions = {
-  adapter,
+  adapter: PrismaAdapter(prisma),
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,

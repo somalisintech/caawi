@@ -20,6 +20,9 @@ export default async function TopNav() {
           <AvatarImage src={session?.user?.image!} alt={session?.user?.name!} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
+        <Button variant="outline" asChild>
+          <Link href={'/profile'}>Profile</Link>
+        </Button>
         <SignOutButton />
       </div>
     );

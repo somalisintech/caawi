@@ -61,8 +61,7 @@ CREATE TABLE "Profile" (
     "userType" "UserType" NOT NULL DEFAULT 'MENTEE',
     "bio" TEXT,
     "locationId" INTEGER,
-    "professionId" INTEGER,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "occupationId" INTEGER,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
@@ -71,20 +70,20 @@ CREATE TABLE "Profile" (
 -- CreateTable
 CREATE TABLE "Location" (
     "id" SERIAL NOT NULL,
-    "city" TEXT,
-    "country" TEXT,
+    "city" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
 
     CONSTRAINT "Location_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Profession" (
+CREATE TABLE "Occupation" (
     "id" SERIAL NOT NULL,
     "role" TEXT NOT NULL,
-    "yearsOfExperience" INTEGER NOT NULL,
-    "companyId" INTEGER NOT NULL,
+    "yearsOfExperience" INTEGER,
+    "companyId" INTEGER,
 
-    CONSTRAINT "Profession_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Occupation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -113,9 +112,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_profileId_key" ON "User"("profileId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Location_city_key" ON "Location"("city");
-
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -129,7 +125,7 @@ ALTER TABLE "User" ADD CONSTRAINT "User_profileId_fkey" FOREIGN KEY ("profileId"
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Profile" ADD CONSTRAINT "Profile_professionId_fkey" FOREIGN KEY ("professionId") REFERENCES "Profession"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_occupationId_fkey" FOREIGN KEY ("occupationId") REFERENCES "Occupation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Profession" ADD CONSTRAINT "Profession_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Occupation" ADD CONSTRAINT "Occupation_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;

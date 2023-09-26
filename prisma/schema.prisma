@@ -68,35 +68,34 @@ model Profile {
   userType     UserType    @default(MENTEE)
   bio          String?
   location     Location?   @relation(fields: [locationId], references: [id])
-  profession   Profession? @relation(fields: [professionId], references: [id])
+  occupation   Occupation? @relation(fields: [occupationId], references: [id])
   user         User?
   locationId   Int?
-  professionId Int?
+  occupationId Int?
 
-  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Location {
   id      Int       @id @default(autoincrement())
-  city    String?   @unique
-  country String?
+  city    String
+  country String
   profile Profile[]
 }
 
-model Profession {
+model Occupation {
   id                Int       @id @default(autoincrement())
   role              String
-  yearsOfExperience Int
-  profile           Profile[]
+  yearsOfExperience Int?
   company           Company?  @relation(fields: [companyId], references: [id])
-  companyId         Int
+  companyId         Int?
+  profile           Profile[]
 }
 
 model Company {
   id         Int          @id @default(autoincrement())
   name       String
-  Profession Profession[]
+  occupation Occupation[]
 }
 
 enum UserType {

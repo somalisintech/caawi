@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaGithub, FaGoogle, FaLinkedin, FaSpinner, FaTwitter } from 'react-icons/fa6';
 import { toast } from '@/components/ui/use-toast';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,7 +19,12 @@ import UserType = $Enums.UserType;
 
 export default function Register() {
   const { status } = useSession();
-  const userType = useRef<UserType>(UserType.MENTEE);
+  const [userType, setUserType] = useState<UserType>(UserType.MENTEE);
+
+  const imageUrl =
+    userType === UserType.MENTEE
+      ? 'https://images.unsplash.com/photo-1497493292307-31c376b6e479?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3871&q=80'
+      : 'https://images.unsplash.com/photo-1513477967668-2aaf11838bd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3774&q=80';
 
   const formValidationSchema = z
     .object({
@@ -52,7 +57,7 @@ export default function Register() {
       method: 'POST',
       body: JSON.stringify({
         ...fields,
-        userType: userType.current
+        userType
       })
     })
       .then((response) => {
@@ -74,7 +79,7 @@ export default function Register() {
   useEffect(() => {
     const url = new URL(window.location.href);
     if (url.hash === '#mentor-registration-form') {
-      userType.current = UserType.MENTOR;
+      setUserType(UserType.MENTOR);
     }
 
     if (form.formState.isSubmitSuccessful) {
@@ -103,10 +108,10 @@ export default function Register() {
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Register for an account</h2>
           <div className="mt-8">
             <Tabs
-              defaultValue={userType.current}
+              defaultValue={userType}
               className="w-full"
               onValueChange={(value) => {
-                userType.current = value as UserType;
+                setUserType(value as UserType);
               }}
             >
               <TabsList className="grid w-full grid-cols-2">
@@ -360,13 +365,7 @@ export default function Register() {
         </div>
       </div>
       <div className="relative hidden w-0 flex-1 lg:block">
-        <Image
-          className="absolute inset-0 h-full w-full object-cover"
-          src="https://images.unsplash.com/photo-1556711905-b3f402e1ff80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2970&q=80"
-          alt=""
-          fill={true}
-          priority
-        />
+        <Image className="absolute inset-0 h-full w-full object-cover" src={imageUrl} alt="" fill={true} priority />
       </div>
     </div>
   );

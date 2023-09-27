@@ -10,13 +10,16 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaGithub, FaGoogle, FaLinkedin, FaSpinner, FaTwitter } from 'react-icons/fa6';
 import { toast } from '@/components/ui/use-toast';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { $Enums } from '.prisma/client';
+import UserType = $Enums.UserType;
 
 export default function Register() {
   const { status } = useSession();
+  const userType = useRef<UserType>(UserType.MENTEE);
 
   const formValidationSchema = z
     .object({
@@ -47,7 +50,10 @@ export default function Register() {
   const onSubmit: SubmitHandler<FormValidation> = async (fields) =>
     fetch('/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify(fields)
+      body: JSON.stringify({
+        ...fields,
+        userType: userType.current
+      })
     })
       .then((response) => {
         if (!response.ok) {
@@ -91,12 +97,18 @@ export default function Register() {
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Register for an account</h2>
           <div className="mt-8">
-            <Tabs defaultValue="mentee" className="w-full">
+            <Tabs
+              defaultValue={userType.current}
+              className="w-full"
+              onValueChange={(value) => {
+                userType.current = value as UserType;
+              }}
+            >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="mentee">Mentee</TabsTrigger>
-                <TabsTrigger value="mentor">Mentor</TabsTrigger>
+                <TabsTrigger value={UserType.MENTEE}>Mentee</TabsTrigger>
+                <TabsTrigger value={UserType.MENTOR}>Mentor</TabsTrigger>
               </TabsList>
-              <TabsContent value="mentee">
+              <TabsContent value="MENTEE">
                 <p className="my-5 font-normal text-gray-600">
                   Dive into your growth journey! Sign up as a <span className="font-semibold">mentee</span> and discover
                   the ideal mentor for your path ahead.
@@ -244,7 +256,7 @@ export default function Register() {
                   </Button>
                 </div>
               </TabsContent>
-              <TabsContent value="mentor">
+              <TabsContent value="MENTOR">
                 <p className="my-5 font-normal text-gray-600">
                   Share your experience! Register as a <span className="font-semibold">mentor</span> and support
                   individuals keen on advancing their journey.

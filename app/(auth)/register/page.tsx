@@ -21,11 +21,6 @@ export default function Register() {
   const { status } = useSession();
   const [userType, setUserType] = useState<UserType>(UserType.MENTEE);
 
-  const imageUrl =
-    userType === UserType.MENTEE
-      ? 'https://images.unsplash.com/photo-1497493292307-31c376b6e479?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3871&q=80'
-      : 'https://images.unsplash.com/photo-1513477967668-2aaf11838bd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3774&q=80';
-
   const formValidationSchema = z
     .object({
       firstName: z.string().min(1, { message: 'First Name is required' }),
@@ -365,7 +360,13 @@ export default function Register() {
         </div>
       </div>
       <div className="relative hidden w-0 flex-1 lg:block">
-        <Image className="absolute inset-0 h-full w-full object-cover" src={imageUrl} alt="" fill={true} priority />
+        <Image
+          className="absolute inset-0 h-full w-full object-cover"
+          src={`${userType === UserType.MENTEE ? '/mentee-bg-image.jpg' : '/mentor-bg-image.jpg'}`}
+          alt=""
+          fill={true}
+          priority
+        />
       </div>
     </div>
   );

@@ -76,7 +76,9 @@ export default function Register() {
     if (url.hash === '#mentor-registration-form') {
       setUserType(UserType.MENTOR);
     }
+  }, []);
 
+  useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
       form.reset({
         firstName: '',
@@ -362,6 +364,7 @@ export default function Register() {
       <div className="relative hidden w-0 flex-1 lg:block">
         <Image
           className="absolute inset-0 h-full w-full object-cover"
+          title={`Photo by  ${userType === UserType.MENTEE ? 'Prateek Katyal' : 'Nathon Lemon'} via Unsplash`}
           src={`${userType === UserType.MENTEE ? '/mentee-bg-image.jpg' : '/mentor-bg-image.jpg'}`}
           alt=""
           fill={true}

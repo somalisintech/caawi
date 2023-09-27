@@ -9,15 +9,17 @@ export default async function TopNav() {
   const session = await getServerSession(authOptions);
 
   if (session) {
-    const initials = session?.user?.name
+    const initials = session.user.name
       ?.split(' ')
       .map((n) => n[0])
       .join('');
 
+    const { image } = session.user;
+
     return (
       <div className="ml-auto mr-5 mt-5 flex space-x-2">
         <Avatar>
-          <AvatarImage src={session?.user?.image!} alt={session?.user?.name!} />
+          <AvatarImage src={image as string} alt="" />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         <Button variant="outline" asChild>

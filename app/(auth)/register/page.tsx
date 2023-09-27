@@ -72,6 +72,11 @@ export default function Register() {
       .catch(() => toast({ title: '😭 Something went wrong!' }));
 
   useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.hash === '#mentor-registration-form') {
+      userType.current = UserType.MENTOR;
+    }
+
     if (form.formState.isSubmitSuccessful) {
       form.reset({
         firstName: '',
@@ -106,7 +111,9 @@ export default function Register() {
             >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value={UserType.MENTEE}>Mentee</TabsTrigger>
-                <TabsTrigger value={UserType.MENTOR}>Mentor</TabsTrigger>
+                <TabsTrigger value={UserType.MENTOR} id="mentor-registration-form">
+                  Mentor
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="MENTEE">
                 <p className="my-5 font-normal text-gray-600">

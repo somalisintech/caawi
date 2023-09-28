@@ -14,12 +14,14 @@ export default async function Profile() {
   const profile = await getProfile(session);
 
   return (
-    <main>
-      <div className="flex flex-col items-center justify-between p-24">
+    <div className="flex h-full flex-col">
+      <div className="ml-auto">
         <TopNav />
+      </div>
+      <div className="overflow-auto p-6">
         <h1 className="text-4xl font-bold">Profile</h1>
         <pre>{JSON.stringify(profile, null, 2)}</pre>
       </div>
-    </main>
+    </div>
   );
 }

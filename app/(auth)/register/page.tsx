@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { $Enums } from '.prisma/client';
 import UserType = $Enums.UserType;
+import { CaawiLogo } from '@/components/CaawiLogo';
 
 export default function Register() {
   const { status } = useSession();
@@ -102,6 +103,7 @@ export default function Register() {
     <div className="flex min-h-full">
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
+          <CaawiLogo />
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Register for an account</h2>
           <div className="mt-8">
             <Tabs

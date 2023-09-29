@@ -173,7 +173,7 @@ export default function Login() {
         <Image
           className="absolute inset-0 h-full w-full object-cover"
           src="https://images.unsplash.com/photo-1556711905-b3f402e1ff80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2970&q=80"
-          alt="image which reads YOU GOT THIS"
+          alt="Photo by Prateek Katyal on Unsplash"
           fill={true}
           priority
         />

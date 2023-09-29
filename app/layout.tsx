@@ -23,7 +23,7 @@ export default function RootLayout({ children }: Props) {
   return (
     <html className="h-full" lang="en">
       <body className={`h-full ${inter.className}`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             {children}
             <Analytics />

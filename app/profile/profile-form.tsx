@@ -14,14 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
 const profileFormSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: 'Username must be at least 2 characters.'
-    })
-    .max(30, {
-      message: 'Username must not be longer than 30 characters.'
-    }),
   email: z
     .string({
       required_error: 'Please select an email to display.'
@@ -48,8 +40,7 @@ const defaultValues: Partial<ProfileFormValues> = {
 export function ProfileForm() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: 'onChange'
+    defaultValues
   });
 
   const { fields, append } = useFieldArray({
@@ -58,6 +49,7 @@ export function ProfileForm() {
   });
 
   function onSubmit(data: ProfileFormValues) {
+    // This is where you'd send the data to your API.
     toast({
       title: 'You submitted the following values:',
       description: (
@@ -71,23 +63,6 @@ export function ProfileForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name. It can be your real name or a pseudonym. You can only change this once
-                every 30 days.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="email"
@@ -107,7 +82,8 @@ export function ProfileForm() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                You can manage verified email addresses in your <Link href="/forms">email settings</Link>.
+                You can manage verified email addresses in your{' '}
+                <Link href="/profile/notifications">email settings</Link>.
               </FormDescription>
               <FormMessage />
             </FormItem>

@@ -161,7 +161,7 @@ export default function Register() {
                         <FormItem>
                           <FormLabel className="block text-sm font-medium text-gray-700">Email address</FormLabel>
                           <FormControl>
-                            <Input {...field} type={'email'} />
+                            <Input {...field} type={'email'} autoComplete="email" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -309,7 +309,7 @@ export default function Register() {
                         <FormItem>
                           <FormLabel className="block text-sm font-medium text-gray-700">Email address</FormLabel>
                           <FormControl>
-                            <Input {...field} type={'email'} />
+                            <Input {...field} type={'email'} autoComplete={'email'} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -370,6 +370,7 @@ export default function Register() {
           src={`${userType === UserType.MENTEE ? '/mentee-bg-image.jpg' : '/mentor-bg-image.jpg'}`}
           alt=""
           fill={true}
+          sizes={'(min-width: 1280px) 1280px, 100vw'}
           priority
         />
       </div>

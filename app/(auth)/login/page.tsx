@@ -76,7 +76,7 @@ export default function Login() {
                     <FormItem>
                       <FormLabel className="block text-sm font-medium text-gray-700">Email address</FormLabel>
                       <FormControl>
-                        <Input {...field} type={'email'} autoFocus />
+                        <Input {...field} type={'email'} autoFocus autoComplete={'email'} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -175,6 +175,7 @@ export default function Login() {
           src="/signin-bg-image.jpg"
           alt="Photo by Prateek Katyal on Unsplash"
           fill={true}
+          sizes={'(min-width: 1280px) 1280px, 100vw'}
           priority
         />
       </div>

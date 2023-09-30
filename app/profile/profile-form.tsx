@@ -17,8 +17,10 @@ import Gender = $Enums.Gender;
 const profileFormSchema = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
   lastName: z.string().min(1, { message: 'Last Name is required' }),
-  gender: z.enum(['MALE', 'FEMALE']),
-  bio: z.string().max(160).min(4),
+  gender: z.enum(['MALE', 'FEMALE'], {
+    invalid_type_error: 'Required'
+  }),
+  bio: z.string(),
   urls: z
     .array(
       z.object({
@@ -50,10 +52,10 @@ interface Props {
 }
 
 export function ProfileForm({ firstName, lastName, profile }: Props) {
-  defaultValues.firstName = firstName as string;
-  defaultValues.lastName = lastName as string;
+  defaultValues.firstName = firstName || '';
+  defaultValues.lastName = lastName || '';
   defaultValues.gender = profile?.gender as Gender;
-  defaultValues.bio = profile?.bio as string;
+  defaultValues.bio = profile?.bio || '';
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -65,13 +67,26 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
     control: form.control
   });
 
-  function onSubmit(data: ProfileFormValues) {
+  async function onSubmit({ firstName, lastName, bio, gender }: ProfileFormValues) {
     // This is where you'd send the data to your API.
+
+    const user = await fetch('/api/users', {
+      method: 'POST',
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        profile: {
+          gender,
+          bio
+        }
+      })
+    }).then((res) => res.json());
+
     toast({
       title: 'You submitted the following values:',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(user, null, 2)}</code>
         </pre>
       )
     });
@@ -122,13 +137,13 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="MALE" />
+                      <RadioGroupItem value={Gender.MALE} />
                     </FormControl>
                     <FormLabel className="font-normal">Male</FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="FEMALE" />
+                      <RadioGroupItem value={Gender.FEMALE} />
                     </FormControl>
                     <FormLabel className="font-normal">Female</FormLabel>
                   </FormItem>

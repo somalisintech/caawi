@@ -10,11 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { RxTrash } from 'react-icons/rx';
-import { Profile } from '@prisma/client';
+import { $Enums, Profile } from '@prisma/client';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import Gender = $Enums.Gender;
 
 const profileFormSchema = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
   lastName: z.string().min(1, { message: 'Last Name is required' }),
+  gender: z.enum(['MALE', 'FEMALE']),
   bio: z.string().max(160).min(4),
   urls: z
     .array(
@@ -47,9 +50,10 @@ interface Props {
 }
 
 export function ProfileForm({ firstName, lastName, profile }: Props) {
-  defaultValues.firstName = firstName || '';
-  defaultValues.lastName = lastName || '';
-  defaultValues.bio = profile?.bio || '';
+  defaultValues.firstName = firstName as string;
+  defaultValues.lastName = lastName as string;
+  defaultValues.gender = profile?.gender as Gender;
+  defaultValues.bio = profile?.bio as string;
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -104,6 +108,36 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Gender</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="MALE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Male</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="FEMALE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Female</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="bio"

@@ -67,6 +67,7 @@ model Profile {
   id           String      @id @default(cuid())
   userType     UserType    @default(MENTEE)
   bio          String?
+  gender       Gender?
   location     Location?   @relation(fields: [locationId], references: [id])
   occupation   Occupation? @relation(fields: [occupationId], references: [id])
   user         User?
@@ -101,4 +102,9 @@ model Company {
 enum UserType {
   MENTOR
   MENTEE
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }

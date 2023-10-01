@@ -174,7 +174,7 @@ export default function Register() {
                         <FormItem>
                           <FormLabel className="block text-sm font-medium text-gray-700">Password</FormLabel>
                           <FormControl>
-                            <Input {...field} type={'password'} />
+                            <Input {...field} type={'password'} autoComplete={'new-password'} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -187,7 +187,7 @@ export default function Register() {
                         <FormItem>
                           <FormLabel className="block text-sm font-medium text-gray-700">Confirm Password</FormLabel>
                           <FormControl>
-                            <Input {...field} type={'password'} />
+                            <Input {...field} type={'password'} autoComplete={'new-password'} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

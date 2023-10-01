@@ -17,6 +17,7 @@ import Gender = $Enums.Gender;
 const profileFormSchema = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
   lastName: z.string().min(1, { message: 'Last Name is required' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
   gender: z.enum(['MALE', 'FEMALE'], {
     invalid_type_error: 'Required'
   }),
@@ -50,9 +51,10 @@ interface Props {
   profile: Profile | null;
 }
 
-export function ProfileForm({ firstName, lastName, profile }: Props) {
+export function ProfileForm({ firstName, lastName, email, profile }: Props) {
   defaultValues.firstName = firstName || '';
   defaultValues.lastName = lastName || '';
+  defaultValues.email = email || '';
   defaultValues.gender = profile?.gender as Gender;
   defaultValues.bio = profile?.bio || '';
 
@@ -115,6 +117,19 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
         </div>
         <FormField
           control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="block text-sm font-medium text-gray-700">Email</FormLabel>
+              <FormControl>
+                <Input {...field} type={'email'} disabled />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="gender"
           render={({ field }) => (
             <FormItem className="space-y-3">
@@ -161,6 +176,10 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
                   }}
                 />
               </FormControl>
+              <FormDescription>
+                Share a glimpse of who you are with us and your potential mentees. Speak in the first person, as though
+                you&apos;re conversing with a mentee. This information will be publicly displayed.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { SignOutButton } from '@/components/SignOutButton';
+import { CaawiLogo } from '@/components/CaawiLogo';
 
 export default async function TopNav() {
   const session = await getServerSession(authOptions);
@@ -17,8 +18,9 @@ export default async function TopNav() {
     const { image } = session.user;
 
     return (
-      <div className="ml-auto mr-5 mt-5 flex space-x-2">
-        <Avatar>
+      <div className="flex space-x-2 p-5">
+        <CaawiLogo className="mr-auto" />
+        <Avatar className="ml-auto">
           <AvatarImage src={image as string} alt="" />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
@@ -31,8 +33,9 @@ export default async function TopNav() {
   }
 
   return (
-    <div className="ml-auto mr-5 mt-5 flex space-x-2">
-      <Button variant="outline" asChild>
+    <div className="flex space-x-2 p-5">
+      <CaawiLogo className="mr-auto" />
+      <Button variant="outline" asChild className="ml-auto">
         <Link href={'/login'}>Sign in</Link>
       </Button>
       <Button asChild>

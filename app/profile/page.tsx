@@ -32,12 +32,14 @@ export default async function SettingsProfilePage() {
     <div className="space-y-6">
       <div>
         <div className="flex">
-          <h3 className="text-lg font-medium">Profile</h3>
-          <Badge variant="outline" className="ml-auto">
-            {user.profile.userType}
-          </Badge>
+          <div>
+            <h3 className="text-lg font-medium">Profile</h3>
+            <p className="text-sm text-muted-foreground">This is how others will see you on the site.</p>
+          </div>
+          <div className="ml-auto self-baseline">
+            <Badge variant="outline">{user.profile.userType}</Badge>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground">This is how others will see you on the site.</p>
       </div>
       <Separator />
       <ProfileForm {...user} />

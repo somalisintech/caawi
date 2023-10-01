@@ -32,7 +32,6 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
   firstName: '',
   lastName: '',
@@ -67,28 +66,19 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
     control: form.control
   });
 
-  async function onSubmit({ firstName, lastName, bio, gender }: ProfileFormValues) {
-    // This is where you'd send the data to your API.
-
-    const user = await fetch('/api/users', {
+  async function onSubmit(data: ProfileFormValues) {
+    const response = await fetch('/api/users', {
       method: 'POST',
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        profile: {
-          gender,
-          bio
-        }
-      })
-    }).then((res) => res.json());
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      toast({ title: 'Update failed', variant: 'destructive' });
+      return;
+    }
 
     toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(user, null, 2)}</code>
-        </pre>
-      )
+      title: 'Updated'
     });
   }
 
@@ -160,7 +150,16 @@ export function ProfileForm({ firstName, lastName, profile }: Props) {
             <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
-                <Textarea placeholder="Tell us a little bit about yourself" className="resize-none" {...field} />
+                <Textarea
+                  placeholder="Tell us a little bit about yourself"
+                  className="resize-none"
+                  {...field}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' && event.metaKey) {
+                      form.handleSubmit(onSubmit)();
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -5,23 +5,24 @@ import prisma from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
+
   if (!session) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  const body = await request.json();
+  const { firstName, lastName, bio, gender } = await request.json();
 
   const user = await prisma.user.update({
     where: {
       id: session.user.id
     },
     data: {
-      firstName: body.firstName,
-      lastName: body.lastName,
+      firstName,
+      lastName,
       profile: {
         update: {
-          bio: body.bio,
-          gender: body.profile.gender
+          bio,
+          gender
         }
       }
     },

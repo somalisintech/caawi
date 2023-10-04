@@ -12,6 +12,7 @@
     "@typescript-eslint"
   ],
   "rules": {
-    "tailwindcss/no-custom-classname": "off"
+    "tailwindcss/no-custom-classname": "off",
+    "@typescript-eslint/no-var-requires": "off"
   }
 }

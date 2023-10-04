@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import prisma from '@/lib/db';
-import { NextRequest, NextResponse } from 'next/server';
+import { AxiomRequest, withAxiom } from 'next-axiom';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
-  const body = await request.json();
+export const POST = withAxiom(async ({ log, json }: AxiomRequest) => {
+  const body = await json();
   const { firstName, lastName, email, password, userType } = body;
 
   if (!firstName || !lastName || !email || !password) {
@@ -17,6 +18,9 @@ export async function POST(request: NextRequest) {
   });
 
   if (exist) {
+    log.debug('Attempt to create user with existing email', {
+      email
+    });
     return NextResponse.json({ message: 'User already exists' }, { status: 409, statusText: 'User already exists' });
   }
 
@@ -40,5 +44,10 @@ export async function POST(request: NextRequest) {
     }
   });
 
+  log.info('New user registered', {
+    userId: user.id,
+    userType: user.profile.userType
+  });
+
   return NextResponse.json(user, { status: 201 });
-}
+});

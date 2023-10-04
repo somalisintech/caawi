@@ -1,16 +1,17 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { NextRequest, NextResponse } from 'next/server';
+import { AxiomRequest, withAxiom } from 'next-axiom';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
-export async function POST(request: NextRequest) {
+export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  const { firstName, lastName, bio, gender } = await request.json();
+  const { firstName, lastName, bio, gender } = await json();
 
   const user = await prisma.user.update({
     where: {
@@ -34,5 +35,9 @@ export async function POST(request: NextRequest) {
     }
   });
 
+  log.debug('User profile updated', {
+    userId: session.user.id
+  });
+
   return NextResponse.json(user);
-}
+});

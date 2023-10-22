@@ -20,6 +20,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     data: {
       firstName,
       lastName,
+      name: `${firstName} ${lastName}`,
       profile: {
         update: {
           bio,

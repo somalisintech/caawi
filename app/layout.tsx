@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const ThemeProvider = dynamic(() => import('@/components/ThemeProvider'), { ssr: false });
 const inter = Inter({ subsets: ['latin'] });
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Props) {
           <AuthProvider>
             {children}
             <Analytics />
+            <SpeedInsights />
             <AxiomWebVitals />
           </AuthProvider>
         </ThemeProvider>

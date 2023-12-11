@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/authOptions';
 import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';

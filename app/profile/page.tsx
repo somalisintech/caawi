@@ -1,6 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { ProfileForm } from './profile-form';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/authOptions';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';

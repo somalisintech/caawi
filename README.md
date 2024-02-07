@@ -23,6 +23,7 @@ secure user connections.
 ### Prerequisites
 
 - Node.js
+- PNPM
 - Docker (if setting up a local PostgreSQL database)
 - Doppler CLI (for managing environment variables)
 
@@ -41,23 +42,23 @@ remote database. To run the application with a local database:
 3. **Database Migrations**: Before applying migrations, confirm they are intended for your local setup to avoid
    affecting production data.
    ```bash
-   npm run migrate
+   pnpm migrate
    ```
 4. **Database Seeding**: To seed the database with initial data:
    ```bash
-   npm run seed
+   pnpm seed
    ```
 5. **Start the Application**: Finally, launch the application:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 ## Development Scripts
 
-- `npm run build`: Builds the application for production.
-- `npm run start`: Runs the built application in production mode.
-- `npm run lint`: Enforces code quality.
-- `npm run check-types`: Ensures TypeScript correctness.
+- `pnpm build`: Builds the application for production.
+- `pnpm start`: Runs the built application in production mode.
+- `pnpm lint`: Enforces code quality.
+- `pnpm check-types`: Ensures TypeScript correctness.
 
 ## Contributing
 

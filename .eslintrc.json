@@ -8,9 +8,7 @@
     "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "tailwindcss/no-custom-classname": "off",
     "@typescript-eslint/no-var-requires": "off"

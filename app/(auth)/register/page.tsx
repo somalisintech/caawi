@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { $Enums } from '.prisma/client';
+import { $Enums } from '@prisma/client';
 import UserType = $Enums.UserType;
 import { CaawiLogo } from '@/components/CaawiLogo';
 

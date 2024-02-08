@@ -18,7 +18,7 @@ export default async function Header() {
           {session && (
             <li>
               <Button variant="ghost" size="lg" asChild>
-                <Link href="/profile">Profile</Link>
+                <Link href="/dashboard">Dashboard</Link>
               </Button>
             </li>
           )}

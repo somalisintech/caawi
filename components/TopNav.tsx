@@ -25,7 +25,7 @@ export default async function TopNav() {
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         <Button variant="outline" asChild>
-          <Link href={'/profile'}>Profile</Link>
+          <Link href={'/dashboard'}>Dashboard</Link>
         </Button>
         <SignOutButton />
       </div>

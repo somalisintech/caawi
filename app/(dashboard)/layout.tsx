@@ -1,34 +1,34 @@
 import { Metadata } from 'next';
 import { ReactNode } from 'react';
-import { SidebarNav } from './components/sidebar-nav';
+import { SidebarNav } from './dashboard/components/sidebar-nav';
 import { Separator } from '@/components/ui/separator';
 import TopNav from '@/components/TopNav';
 
 export const metadata: Metadata = {
-  title: 'Profile Settings',
-  description: 'Caawi profile settings page.'
+  title: 'Dashboard',
+  description: 'Caawi dashboard page.'
 };
 
 const sidebarNavItems = [
   {
     title: 'Profile',
-    href: '/profile'
+    href: '/dashboard'
   },
   {
     title: 'Account',
-    href: '/profile/account'
+    href: '/dashboard/account'
   },
   {
     title: 'Appearance',
-    href: '/profile/appearance'
+    href: '/dashboard/appearance'
   },
   {
     title: 'Notifications',
-    href: '/profile/notifications'
+    href: '/dashboard/notifications'
   },
   {
     title: 'Display',
-    href: '/profile/display'
+    href: '/dashboard/display'
   }
 ];
 

@@ -165,7 +165,7 @@ export function NotificationsForm() {
                 <FormLabel>Use different settings for my mobile devices</FormLabel>
                 <FormDescription>
                   You can manage your mobile notifications in the{' '}
-                  <Link href="/profile/notifications">mobile settings</Link> page.
+                  <Link href="/dashboard/notifications">mobile settings</Link> page.
                 </FormDescription>
               </div>
             </FormItem>

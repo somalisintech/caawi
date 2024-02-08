@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { ReactNode } from 'react';
-import { SidebarNav } from './dashboard/components/sidebar-nav';
+import { SidebarNav } from '@/app/(dashboard)/dashboard/components/sidebar-nav';
 import { Separator } from '@/components/ui/separator';
 import TopNav from '@/components/TopNav';
 

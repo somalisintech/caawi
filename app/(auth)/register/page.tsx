@@ -96,7 +96,7 @@ export default function Register() {
   }
 
   if (status === 'authenticated') {
-    redirect('/profile');
+    redirect('/dashboard');
   }
 
   return (
@@ -220,7 +220,7 @@ export default function Register() {
                     onClick={() =>
                       signIn('google', {
                         redirect: false,
-                        callbackUrl: '/profile'
+                        callbackUrl: '/dashboard'
                       })
                     }
                   >
@@ -233,7 +233,7 @@ export default function Register() {
                     onClick={() =>
                       signIn('twitter', {
                         redirect: false,
-                        callbackUrl: '/profile'
+                        callbackUrl: '/dashboard'
                       })
                     }
                   >
@@ -246,7 +246,7 @@ export default function Register() {
                     onClick={() =>
                       signIn('github', {
                         redirect: false,
-                        callbackUrl: '/profile'
+                        callbackUrl: '/dashboard'
                       })
                     }
                   >
@@ -259,7 +259,7 @@ export default function Register() {
                     onClick={() =>
                       signIn('linkedin', {
                         redirect: false,
-                        callbackUrl: '/profile'
+                        callbackUrl: '/dashboard'
                       })
                     }
                   >
@@ -365,7 +365,7 @@ export default function Register() {
       </div>
       <div className="relative hidden w-0 flex-1 lg:block">
         <Image
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 size-full object-cover"
           title={`Photo by ${userType === UserType.MENTEE ? 'Simon Abrams' : 'Nathon Lemon'} via Unsplash`}
           src={`${userType === UserType.MENTEE ? '/mentee-bg-image.jpg' : '/mentor-bg-image.jpg'}`}
           alt=""

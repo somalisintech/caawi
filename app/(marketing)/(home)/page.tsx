@@ -1,3 +1,11 @@
+import { Hero } from './components/hero';
+import { Companies } from './components/companies';
+
 export default function Home() {
-  return <h1 className="text-4xl font-bold">Landing Page</h1>;
+  return (
+    <>
+      <Hero />
+      <Companies />
+    </>
+  );
 }

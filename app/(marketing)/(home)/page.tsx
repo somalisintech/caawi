@@ -1,10 +1,11 @@
-import TopNav from '@/components/TopNav';
+import { Hero } from './components/hero';
+import { Companies } from './components/companies';
 
 export default function Home() {
   return (
-    <div className="flex flex-col">
-      <TopNav />
-      <h1 className="text-4xl font-bold">Landing Page</h1>
-    </div>
+    <>
+      <Hero />
+      <Companies />
+    </>
   );
 }

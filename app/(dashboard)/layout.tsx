@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import { ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
 import { SidebarNav } from '@/app/(dashboard)/dashboard/components/sidebar-nav';
 import { Separator } from '@/components/ui/separator';
-import TopNav from '@/components/TopNav';
+import { Header } from '@/components/layout/header';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -32,14 +32,10 @@ const sidebarNavItems = [
   }
 ];
 
-interface SettingsLayoutProps {
-  children: ReactNode;
-}
-
-export default async function SettingsLayout({ children }: SettingsLayoutProps) {
+export default async function DashboardLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <TopNav />
+      <Header />
       <div className="space-y-6 px-10 pb-16 md:block">
         <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
@@ -50,7 +46,7 @@ export default async function SettingsLayout({ children }: SettingsLayoutProps) 
           <aside className="-mx-4 lg:w-1/5">
             <SidebarNav items={sidebarNavItems} className="overflow-auto scrollbar-hide" />
           </aside>
-          <div className="flex-1 lg:max-w-2xl">{children}</div>
+          <main className="flex-1 lg:max-w-2xl">{children}</main>
         </div>
       </div>
     </>

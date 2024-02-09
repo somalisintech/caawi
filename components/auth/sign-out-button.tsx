@@ -1,10 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
 
 export const SignOutButton = () => (
-  <Button
+  <div
+    role="button"
     onClick={() =>
       signOut({
         callbackUrl: '/'
@@ -12,5 +12,5 @@ export const SignOutButton = () => (
     }
   >
     Sign out
-  </Button>
+  </div>
 );

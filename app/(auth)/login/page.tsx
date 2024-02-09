@@ -13,7 +13,7 @@ import { toast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { CaawiLogo } from '@/components/CaawiLogo';
+import { CaawiLogo } from '@/components/brand/caawi-logo';
 
 export default function Login() {
   const { status } = useSession();
@@ -57,7 +57,7 @@ export default function Login() {
   }
 
   if (status === 'authenticated') {
-    redirect('/');
+    redirect('/dashboard');
   }
 
   return (
@@ -171,7 +171,7 @@ export default function Login() {
       </div>
       <div className="relative hidden w-0 flex-1 lg:block">
         <Image
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 size-full object-cover"
           src="/signin-bg-image.jpg"
           alt="Photo by Prateek Katyal on Unsplash"
           fill={true}

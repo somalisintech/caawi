@@ -2,7 +2,7 @@
 
 import { signOut } from 'next-auth/react';
 
-export const SignOutButton = () => (
+export const SignOutMenuButton = () => (
   <div
     role="button"
     onClick={() =>

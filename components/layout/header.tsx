@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CaawiLogo } from '@/components/brand/caawi-logo';
-import { SignOutButton } from '@/components/auth/sign-out-button';
+import { SignOutMenuButton } from '@/components/auth/sign-out-menu-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -49,7 +49,7 @@ export async function Header() {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <SignOutButton />
+              <SignOutMenuButton />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

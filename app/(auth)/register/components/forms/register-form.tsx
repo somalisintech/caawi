@@ -10,16 +10,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { RegisterFormValidation, registerFormSchema } from './register-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { UserType } from '@prisma/client';
 
 export function RegisterForm() {
   const router = useRouter();
+  const params = useSearchParams();
+
+  const defaultUserType = (params.get('type')?.toUpperCase() as UserType) ?? UserType.MENTEE;
 
   const form = useForm<RegisterFormValidation>({
     defaultValues: {
-      userType: UserType.MENTEE,
+      userType: defaultUserType in UserType ? defaultUserType : UserType.MENTEE,
       firstName: '',
       lastName: '',
       email: '',

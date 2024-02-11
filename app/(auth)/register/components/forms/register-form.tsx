@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -70,12 +70,12 @@ export function RegisterForm() {
           render={({ field }) => (
             <FormItem className="mb-4 space-y-2">
               <FormControl>
-                <div className="flex gap-2 rounded-xl bg-zinc-100 p-1.5 dark:bg-zinc-900">
+                <div className="flex gap-2 rounded-md bg-zinc-100 p-1.5 dark:bg-zinc-900">
                   <Button
                     onClick={() => field.onChange(UserType.MENTEE)}
                     type="button"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 rounded-sm"
                     variant={field.value === UserType.MENTEE ? 'default' : 'ghost'}
                   >
                     Mentee
@@ -84,7 +84,7 @@ export function RegisterForm() {
                     onClick={() => field.onChange(UserType.MENTOR)}
                     type="button"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 rounded-sm"
                     variant={field.value === UserType.MENTOR ? 'default' : 'ghost'}
                   >
                     Mentor
@@ -92,6 +92,12 @@ export function RegisterForm() {
                 </div>
               </FormControl>
               <FormMessage />
+              <FormDescription>
+                {field.value === 'MENTEE'
+                  ? `Dive into your growth journey! Sign up as a mentee and discover the ideal mentor for your path
+                    ahead.`
+                  : `Share your experience! Register as a mentor and support individuals keen on advancing their journey.`}
+              </FormDescription>
             </FormItem>
           )}
         />

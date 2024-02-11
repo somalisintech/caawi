@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import Image from 'next/image';
 
-export default function AuthTemplate({ children }: PropsWithChildren) {
+export default function AuthLayout({ children }: PropsWithChildren) {
   return (
     <div className="flex min-h-full">
       <div className="flex flex-1 flex-col items-center justify-center lg:flex-row lg:justify-stretch">

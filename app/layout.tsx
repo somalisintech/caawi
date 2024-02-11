@@ -19,7 +19,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html className="h-full" lang="en" suppressHydrationWarning>
       <body className={`h-full ${inter.className}`}>
-        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="dark">
+        <ThemeProvider attribute="class" defaultTheme="light">
           <AuthProvider>
             {children}
             <Analytics />

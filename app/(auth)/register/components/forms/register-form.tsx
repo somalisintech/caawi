@@ -33,13 +33,12 @@ export function RegisterForm() {
   });
 
   const onSubmit: SubmitHandler<RegisterFormValidation> = async (data) => {
-    // TODO: Is there anyway to expose a signUp method from next auth?
-    const signInResponse = await fetch('/api/auth/register', {
+    const registrationResponse = await fetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data)
     });
 
-    if (!signInResponse?.ok) {
+    if (!registrationResponse?.ok) {
       form.setError('root', { message: 'Error regestering' });
       return;
     }

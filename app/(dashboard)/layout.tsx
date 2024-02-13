@@ -19,10 +19,6 @@ const sidebarNavItems = [
     href: '/dashboard/profile'
   },
   {
-    title: 'Account',
-    href: '/dashboard/account'
-  },
-  {
     title: 'Notifications',
     href: '/dashboard/notifications'
   }

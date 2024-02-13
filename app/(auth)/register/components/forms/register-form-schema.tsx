@@ -15,4 +15,4 @@ export const registerFormSchema = z
     path: ['confirm']
   });
 
-export type RegisterFormValidation = z.infer<typeof registerFormSchema>;
+export type RegisterFormFields = z.infer<typeof registerFormSchema>;

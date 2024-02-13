@@ -1,53 +1,28 @@
 'use client';
 
-import Link from 'next/link';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { toast } from '@/components/ui/use-toast';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Switch } from '@/components/ui/switch';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-const notificationsFormSchema = z.object({
-  type: z.enum(['all', 'mentions', 'none'], {
-    required_error: 'You need to select a notification type.'
-  }),
-  mobile: z.boolean().default(false).optional(),
-  communication_emails: z.boolean().default(false).optional(),
-  social_emails: z.boolean().default(false).optional(),
-  marketing_emails: z.boolean().default(false).optional(),
-  security_emails: z.boolean()
-});
-
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
-
-// This can come from your database or API.
-const defaultValues: Partial<NotificationsFormValues> = {
-  communication_emails: false,
-  marketing_emails: false,
-  social_emails: true,
-  security_emails: true
-};
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { NotificationsFormFields, notificationsFormSchema } from './notifications-form-schema';
 
 export function NotificationsForm() {
-  const form = useForm<NotificationsFormValues>({
-    resolver: zodResolver(notificationsFormSchema),
-    defaultValues
+  const form = useForm<NotificationsFormFields>({
+    defaultValues: {
+      communication_emails: false,
+      marketing_emails: false,
+      social_emails: true,
+      security_emails: true
+    },
+    resolver: zodResolver(notificationsFormSchema)
   });
 
-  function onSubmit(data: NotificationsFormValues) {
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      )
-    });
-  }
+  const onSubmit: SubmitHandler<NotificationsFormFields> = async () => {
+    alert('Not implemented');
+  };
 
   return (
     <Form {...form}>
@@ -153,24 +128,6 @@ export function NotificationsForm() {
             />
           </div>
         </div>
-        <FormField
-          control={form.control}
-          name="mobile"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Use different settings for my mobile devices</FormLabel>
-                <FormDescription>
-                  You can manage your mobile notifications in the{' '}
-                  <Link href="/dashboard/notifications">mobile settings</Link> page.
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
         <Button type="submit">Update notifications</Button>
       </form>
     </Form>

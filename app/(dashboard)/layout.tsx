@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { PropsWithChildren } from 'react';
-import { SidebarNav } from '@/app/(dashboard)/dashboard/components/sidebar-nav';
 import { Separator } from '@/components/ui/separator';
+import { SidebarNav } from '@/components/layout/sidebar-nav';
 import { Header } from '@/components/layout/header';
 
 export const metadata: Metadata = {

@@ -4,7 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+interface Props {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
+export default function Error({ error, reset }: Props) {
   return (
     <div className="space-y-4">
       <Alert variant="destructive">

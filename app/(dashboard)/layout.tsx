@@ -25,10 +25,6 @@ const sidebarNavItems = [
   {
     title: 'Notifications',
     href: '/dashboard/notifications'
-  },
-  {
-    title: 'Display',
-    href: '/dashboard/display'
   }
 ];
 

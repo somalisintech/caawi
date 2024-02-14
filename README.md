@@ -62,43 +62,25 @@ remote database. To run the application with a local database:
 
 ## Commit Message Guidelines
 
-To ensure consistency and readability of our project's history, we enforce specific commit message rules
-using `commitlint`. This helps in tracking changes and linking them back to our project management tools. Here’s what
-you need to know:
+Our project adheres to a structured commit message format to ensure clarity and ease of tracking changes. This approach
+aids in maintaining a detailed and understandable history.
 
-- **Commit Message Structure**: Our commit messages are structured to include a type, scope (optional), and a subject,
-  followed by a body that details the change and, optionally, a footer that can reference issue tracker IDs.
+- **Structure**: Commits should begin with a `type`, optionally followed by a `(scope)`, and a succinct `subject`:
+  - `type` identifies the nature of the change (e.g., `feat`, `fix`, `docs`).
+  - `(scope)` is optional and indicates the specific area affected.
+  - `subject` offers a brief description of the changes.
+- **Details**: The body should thoroughly explain the change, its motivation, and how it differs from previous behavior.
+- **Tracking**: Include a JIRA task ID in the `CAAWI-XXX` format within the body for project tracking purposes.
 
-  Example:
-  ```text
-  feat(database): add indexing to improve query performance
-  
-  The new indexing significantly speeds up user search queries. Benchmarks indicate a 50% improvement on average.
-  
-  CAAWI-123
-  ```
+### Commit Example
 
-- **Type**: Indicates the kind of change you're making, such as `feat` (new feature), `fix` (bug fix), `docs` (
-  documentation), etc.
+```bash
+feat(database): optimize query performance
 
-- **Scope** (Optional): Provides additional context on where the change applies, such as `database`, `frontend`, etc.
+Enhances database efficiency by adding indexes to heavily queried columns, significantly cutting down response times.
 
-- **Subject**: A brief description of the change.
-
-- **Body** (Mandatory for JIRA ID): Should provide a detailed description of the change. **Include the JIRA job ID (
-  e.g., CAAWI-1234) here to link the commit to our project management tool.**
-
-- **Footer** (Optional): Can include additional notes, such as `BREAKING CHANGE` or references to issue tracker IDs.
-
-### Enforced Rules:
-
-- **Header**: Must not exceed 100 characters. This encourages succinct and precise summaries of changes.
-- **Body**: Must include a JIRA job ID for traceability (e.g., "Refs CAAWI-1234"). This is crucial for linking commits
-  to specific tasks or issues in our project management tool.
-- **No Trailing Period**: Commit titles should not end with a period.
-
-For a detailed list of all the `commitlint` rules we follow, please refer to our `commitlint.config.js` file in the
-repository.
+CAAWI-123
+```
 
 ## Contributing
 

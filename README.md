@@ -70,7 +70,8 @@ aids in maintaining a detailed and understandable history.
   - `(scope)` is optional and indicates the specific area affected.
   - `subject` offers a brief description of the changes.
 - **Details**: The body should thoroughly explain the change, its motivation, and how it differs from previous behavior.
-- **Tracking**: Include a JIRA task ID in the `CAAWI-XXX` format within the body for project tracking purposes.
+- **Tracking**: Include a JIRA task ID in the format `CAAWI-XXX` anywhere within the commit message for project tracking
+  purposes.
 
 ### Commit Example
 

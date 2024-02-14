@@ -1,16 +1,15 @@
-import { Separator } from '@/components/ui/separator';
-import { ProfileForm } from './components/profile-form';
-import { authOptions } from '@/app/api/auth/authOptions';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
 import prisma from '@/lib/db';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { authOptions } from '@/app/api/auth/authOptions';
+import { Session, getServerSession } from 'next-auth';
+
+import { ProfileForm } from './components/forms';
 
 export default async function SettingsProfilePage() {
-  const session = await getServerSession(authOptions);
-  if (!session) return redirect('/login');
+  const session = (await getServerSession(authOptions)) as Session;
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findUniqueOrThrow({
     where: {
       id: session.user.id
     },
@@ -26,8 +25,6 @@ export default async function SettingsProfilePage() {
     }
   });
 
-  if (!user) return redirect('/login');
-
   return (
     <div className="space-y-6">
       <div>
@@ -42,7 +39,7 @@ export default async function SettingsProfilePage() {
         </div>
       </div>
       <Separator />
-      <ProfileForm {...user} />
+      <ProfileForm user={user} />
     </div>
   );
 }

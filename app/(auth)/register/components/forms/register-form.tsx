@@ -7,7 +7,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegisterFormValidation, registerFormSchema } from './register-form-schema';
+import { RegisterFormFields, registerFormSchema } from './register-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,7 +20,7 @@ export function RegisterForm() {
 
   const defaultUserType = (params.get('type')?.toUpperCase() as UserType) ?? UserType.MENTEE;
 
-  const form = useForm<RegisterFormValidation>({
+  const form = useForm<RegisterFormFields>({
     defaultValues: {
       userType: defaultUserType in UserType ? defaultUserType : UserType.MENTEE,
       firstName: '',
@@ -32,7 +32,7 @@ export function RegisterForm() {
     resolver: zodResolver(registerFormSchema)
   });
 
-  const onSubmit: SubmitHandler<RegisterFormValidation> = async (data) => {
+  const onSubmit: SubmitHandler<RegisterFormFields> = async (data) => {
     const registrationResponse = await fetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data)

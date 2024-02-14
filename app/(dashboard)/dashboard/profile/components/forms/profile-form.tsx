@@ -1,66 +1,35 @@
 'use client';
 
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { cn } from '@/lib/utils';
-import { toast } from '@/components/ui/use-toast';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { RxTrash } from 'react-icons/rx';
-import { $Enums, Profile } from '@prisma/client';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import Gender = $Enums.Gender;
-
-const profileFormSchema = z.object({
-  firstName: z.string().min(1, { message: 'First Name is required' }),
-  lastName: z.string().min(1, { message: 'Last Name is required' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  gender: z.enum(['MALE', 'FEMALE'], {
-    invalid_type_error: 'Required'
-  }),
-  bio: z.string(),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url({ message: 'Please enter a valid URL.' })
-      })
-    )
-    .optional()
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-const defaultValues: Partial<ProfileFormValues> = {
-  firstName: '',
-  lastName: '',
-  bio: '',
-  urls: [{ value: '' }]
-};
+import { Gender, Profile, User } from '@prisma/client';
+import { TrashIcon } from 'lucide-react';
 
 interface Props {
-  name: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  image: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  profile: Profile | null;
+  user: Partial<User & { profile: Profile }>;
 }
 
-export function ProfileForm({ firstName, lastName, email, profile }: Props) {
-  defaultValues.firstName = firstName || '';
-  defaultValues.lastName = lastName || '';
-  defaultValues.email = email || '';
-  defaultValues.gender = profile?.gender as Gender;
-  defaultValues.bio = profile?.bio || '';
+export function ProfileForm({ user }: Props) {
+  const { firstName, lastName, email, profile } = user;
 
-  const form = useForm<ProfileFormValues>({
+  const form = useForm<ProfileFormFields>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues
+    defaultValues: {
+      firstName: firstName || '',
+      lastName: lastName || '',
+      email: email || '',
+      gender: profile?.gender as Gender,
+      bio: profile?.bio || '',
+      urls: [{ value: '' }]
+    }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -68,10 +37,12 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
     control: form.control
   });
 
-  async function onSubmit(data: ProfileFormValues) {
+  async function onSubmit(data: ProfileFormFields) {
+    const urls = data.urls?.filter((url) => !!url.value);
+
     const response = await fetch('/api/users', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify({ ...data, urls })
     });
 
     if (!response.ok) {
@@ -87,15 +58,15 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="flex w-full max-w-sm items-center space-x-2">
+        <div className="flex max-w-sm items-center space-x-2">
           <FormField
             control={form.control}
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700">First Name</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input {...field} type={'text'} />
+                  <Input {...field} type="text" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -106,9 +77,9 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700">Last Name</FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input {...field} type={'text'} />
+                  <Input {...field} type="text" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,9 +91,9 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="block text-sm font-medium text-gray-700">Email</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} type={'email'} disabled />
+                <Input {...field} type="email" disabled />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -166,9 +137,9 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
               <FormLabel>Bio</FormLabel>
               <FormControl>
                 <Textarea
+                  {...field}
                   placeholder="Tell us a little bit about yourself"
                   className="resize-none"
-                  {...field}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' && event.metaKey) {
                       form.handleSubmit(onSubmit)();
@@ -197,7 +168,7 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
                     Add links to your website, blog, or social media profiles.
                   </FormDescription>
                   <FormControl>
-                    <div className="flex w-full max-w-sm items-center space-x-1">
+                    <div className="flex max-w-sm items-center space-x-2">
                       <Input {...field} />
                       <Button
                         variant="secondary"
@@ -206,7 +177,7 @@ export function ProfileForm({ firstName, lastName, email, profile }: Props) {
                         onClick={() => remove(index)}
                         title="Delete URL"
                       >
-                        <RxTrash size={16} />
+                        <TrashIcon size={16} />
                       </Button>
                     </div>
                   </FormControl>

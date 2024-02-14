@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormValidation, loginFormSchema } from './login-form-schema';
+import { LoginFormFields, loginFormSchema } from './login-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ import { signIn } from 'next-auth/react';
 export function LoginForm() {
   const router = useRouter();
 
-  const form = useForm<LoginFormValidation>({
+  const form = useForm<LoginFormFields>({
     defaultValues: {
       email: '',
       password: ''
@@ -24,7 +24,7 @@ export function LoginForm() {
     resolver: zodResolver(loginFormSchema)
   });
 
-  const onSubmit: SubmitHandler<LoginFormValidation> = async (data) => {
+  const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
     const signInResponse = await signIn('credentials', { ...data, redirect: false, callbackUrl: '/dashboard' });
 
     if (signInResponse?.error) {

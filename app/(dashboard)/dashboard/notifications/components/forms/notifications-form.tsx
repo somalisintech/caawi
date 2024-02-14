@@ -12,10 +12,10 @@ import { NotificationsFormFields, notificationsFormSchema } from './notification
 export function NotificationsForm() {
   const form = useForm<NotificationsFormFields>({
     defaultValues: {
-      communication_emails: false,
-      marketing_emails: false,
-      social_emails: true,
-      security_emails: true
+      communicationEmails: false,
+      marketingEmails: false,
+      socialEmails: true,
+      securityEmails: true
     },
     resolver: zodResolver(notificationsFormSchema)
   });
@@ -68,7 +68,7 @@ export function NotificationsForm() {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="communication_emails"
+              name="communicationEmails"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
@@ -83,7 +83,7 @@ export function NotificationsForm() {
             />
             <FormField
               control={form.control}
-              name="marketing_emails"
+              name="marketingEmails"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
@@ -98,7 +98,7 @@ export function NotificationsForm() {
             />
             <FormField
               control={form.control}
-              name="social_emails"
+              name="socialEmails"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
@@ -113,7 +113,7 @@ export function NotificationsForm() {
             />
             <FormField
               control={form.control}
-              name="security_emails"
+              name="securityEmails"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">

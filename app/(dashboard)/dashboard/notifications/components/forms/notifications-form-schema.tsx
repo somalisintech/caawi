@@ -5,10 +5,10 @@ export const notificationsFormSchema = z.object({
     required_error: 'You need to select a notification type.'
   }),
   mobile: z.boolean().default(false).optional(),
-  communication_emails: z.boolean().default(false).optional(),
-  social_emails: z.boolean().default(false).optional(),
-  marketing_emails: z.boolean().default(false).optional(),
-  security_emails: z.boolean()
+  communicationEmails: z.boolean().default(false).optional(),
+  socialEmails: z.boolean().default(false).optional(),
+  marketingEmails: z.boolean().default(false).optional(),
+  securityEmails: z.boolean()
 });
 
 export type NotificationsFormFields = z.infer<typeof notificationsFormSchema>;

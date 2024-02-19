@@ -73,6 +73,7 @@ model Profile {
   user         User?
   locationId   Int?
   occupationId Int?
+  isComplete   Boolean     @default(false)
 
   updatedAt DateTime @updatedAt
 }

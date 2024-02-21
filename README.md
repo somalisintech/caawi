@@ -60,6 +60,29 @@ remote database. To run the application with a local database:
 - `pnpm lint`: Enforces code quality.
 - `pnpm check-types`: Ensures TypeScript correctness.
 
+## Commit Message Guidelines
+
+Our project adheres to a structured commit message format to ensure clarity and ease of tracking changes. This approach
+aids in maintaining a detailed and understandable history.
+
+- **Structure**: Commits should begin with a `type`, optionally followed by a `(scope)`, and a succinct `subject`:
+  - `type` identifies the nature of the change (e.g., `feat`, `fix`, `docs`).
+  - `(scope)` is optional and indicates the specific area affected.
+  - `subject` offers a brief description of the changes.
+- **Details**: The body should thoroughly explain the change, its motivation, and how it differs from previous behavior.
+- **Tracking**: Include a JIRA task ID in the format `CAAWI-XXX` anywhere within the commit message for project tracking
+  purposes.
+
+### Commit Example
+
+```bash
+feat(database): optimize query performance
+
+Enhances database efficiency by adding indexes to heavily queried columns, significantly cutting down response times.
+
+CAAWI-123
+```
+
 ## Contributing
 
 We welcome contributions! For guidelines on how to get involved, please consult our contributing guide.

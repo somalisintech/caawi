@@ -1,19 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CompleteProfileForm } from './forms';
+import { Profile, User } from '@prisma/client';
 
-export function CompleteProfile() {
-  const { data } = useSession();
+type Props = {
+  user: Partial<User & { profile: Profile }>;
+};
+
+export function CompleteProfile({ user }: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (data && !data.user.isComplete) {
+    if (!user.profile?.isComplete) {
       setOpen(true);
     }
-  }, [data]);
+  }, [user]);
 
   return (
     <Dialog open={open}>
@@ -21,7 +24,7 @@ export function CompleteProfile() {
         <DialogHeader>
           <DialogTitle>Complete your profile</DialogTitle>
           <DialogDescription>Tell us a little more about yourself.</DialogDescription>
-          {data?.user && <CompleteProfileForm user={data.user} onComplete={() => setOpen(false)} />}
+          <CompleteProfileForm user={user} onComplete={() => setOpen(false)} />
         </DialogHeader>
       </DialogContent>
     </Dialog>

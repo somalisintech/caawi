@@ -5,7 +5,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 model VerificationToken {
@@ -98,6 +99,20 @@ model Company {
   id         Int          @id @default(autoincrement())
   name       String
   occupation Occupation[]
+}
+
+view MentorProfile {
+  id                String    @unique
+  userType          UserType?
+  firstName         String?
+  lastName          String?
+  bio               String?
+  gender            Gender?
+  city              String?
+  country           String?
+  role              String?
+  yearsOfExperience Int?
+  company           String?
 }
 
 enum UserType {

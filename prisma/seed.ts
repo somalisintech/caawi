@@ -7,13 +7,6 @@ async function main() {
   if (process.env.NODE_ENV !== 'development') {
     throw new Error('Seeding is only allowed in development environment');
   }
-  console.log('Clearing database 🗑️');
-
-  await prisma.user.deleteMany();
-  await prisma.profile.deleteMany();
-  await prisma.location.deleteMany();
-  await prisma.occupation.deleteMany();
-  await prisma.company.deleteMany();
 
   console.log('Start seeding 🌱');
 

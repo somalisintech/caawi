@@ -7,7 +7,7 @@ export const completeProfileFormSchema = z.object({
   gender: z.enum(['MALE', 'FEMALE'], {
     invalid_type_error: 'Required'
   }),
-  bio: z.string()
+  bio: z.string().optional()
 });
 
 export type CompleteProfileFormFields = z.infer<typeof completeProfileFormSchema>;

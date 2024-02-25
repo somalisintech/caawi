@@ -4,8 +4,6 @@ import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
-// TODO: Allow updating email and isComplete flag
-
 export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
   const session = await getServerSession(authOptions);
 
@@ -13,7 +11,9 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  const { firstName, lastName, bio, gender } = await json();
+  const { firstName, lastName, email, gender, bio } = await json();
+
+  const isProfileComplete = !!(firstName && lastName && email && gender);
 
   const user = await prisma.user.update({
     where: {
@@ -26,7 +26,8 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
       profile: {
         update: {
           bio,
-          gender
+          gender,
+          isComplete: isProfileComplete
         }
       }
     },

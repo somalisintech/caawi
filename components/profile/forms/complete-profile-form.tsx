@@ -22,16 +22,15 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
   const form = useForm<CompleteProfileFormFields>({
     resolver: zodResolver(completeProfileFormSchema),
     defaultValues: {
-      firstName: firstName || undefined,
-      lastName: lastName || undefined,
-      email: email || undefined,
-      gender: (profile?.gender as Gender) || undefined,
-      bio: profile?.bio || undefined
+      firstName: firstName || '',
+      lastName: lastName || '',
+      email: email || '',
+      gender: profile?.gender as Gender,
+      bio: profile?.bio || ''
     }
   });
 
   async function onSubmit(data: CompleteProfileFormFields) {
-    // TODO: Call update user endpoint
     const response = await fetch('/api/users', {
       method: 'POST',
       body: JSON.stringify(data)
@@ -53,7 +52,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
             control={form.control}
             name="firstName"
             render={({ field }) => (
-              <FormItem className="flex flex-1 flex-col items-start">
+              <FormItem className="flex-1">
                 <FormLabel>First Name</FormLabel>
                 <FormControl>
                   <Input {...field} type="text" />
@@ -66,7 +65,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
             control={form.control}
             name="lastName"
             render={({ field }) => (
-              <FormItem className="flex flex-1 flex-col items-start">
+              <FormItem className="flex-1">
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
                   <Input {...field} type="text" />
@@ -96,11 +95,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
             <FormItem className="flex flex-1 flex-col items-start gap-2">
               <FormLabel>Gender</FormLabel>
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className=" space-y-1">
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
                       <RadioGroupItem value={Gender.MALE} />
@@ -123,7 +118,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
           control={form.control}
           name="bio"
           render={({ field }) => (
-            <FormItem className="flex flex-col items-start">
+            <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
                 <Textarea

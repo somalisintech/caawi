@@ -4,6 +4,8 @@ import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
+// TODO: Allow updating email and isComplete flag
+
 export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
   const session = await getServerSession(authOptions);
 

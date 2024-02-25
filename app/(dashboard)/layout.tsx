@@ -3,6 +3,7 @@ import { PropsWithChildren } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { SidebarNav } from '@/components/layout/sidebar-nav';
 import { Header } from '@/components/layout/header';
+import { CompleteProfile } from '@/components/profile/complete-profile';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -27,6 +28,7 @@ const sidebarNavItems = [
 export default async function DashboardLayout({ children }: PropsWithChildren) {
   return (
     <>
+      <CompleteProfile />
       <Header />
       <div className="container max-w-screen-2xl pb-8">
         <div className="space-y-0.5">

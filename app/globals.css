@@ -73,4 +73,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .hide-dialog-close > button { 
+    display: none;
+  }
 }

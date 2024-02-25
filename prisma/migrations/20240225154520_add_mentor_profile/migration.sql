@@ -1,4 +1,4 @@
-CREATE VIEW MentorProfile AS
+CREATE VIEW "MentorProfile" AS
 SELECT
   p.id,
   p."userType",

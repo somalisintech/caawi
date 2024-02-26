@@ -3,6 +3,10 @@ import { PropsWithChildren } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { SidebarNav } from '@/components/layout/sidebar-nav';
 import { Header } from '@/components/layout/header';
+import { CompleteProfile } from '@/components/profile/complete-profile';
+import { Session, getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/authOptions';
+import prisma from '@/lib/db';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -25,8 +29,34 @@ const sidebarNavItems = [
 ];
 
 export default async function DashboardLayout({ children }: PropsWithChildren) {
+  const session = (await getServerSession(authOptions)) as Session;
+
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: session.user.id
+    },
+    select: {
+      name: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+      profile: {
+        select: {
+          id: true,
+          bio: true,
+          userType: true,
+          isComplete: true
+        }
+      }
+    }
+  });
+
   return (
     <>
+      <CompleteProfile user={user} />
       <Header />
       <div className="container max-w-screen-2xl pb-8">
         <div className="space-y-0.5">

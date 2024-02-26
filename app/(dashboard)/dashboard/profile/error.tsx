@@ -6,7 +6,7 @@ import { AlertCircleIcon } from 'lucide-react';
 
 interface Props {
   error: Error & { digest?: string };
-  reset: () => void;
+  reset: CallableFunction;
 }
 
 export default function Error({ error, reset }: Props) {

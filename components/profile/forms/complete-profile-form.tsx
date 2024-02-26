@@ -12,8 +12,8 @@ import { Gender, Profile, User } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 
 interface Props {
-  user: Partial<User & { profile: Profile }>;
-  onComplete: () => void;
+  user: Partial<User & { profile: Partial<Profile> }>;
+  onComplete: CallableFunction;
 }
 
 export function CompleteProfileForm({ user, onComplete }: Props) {

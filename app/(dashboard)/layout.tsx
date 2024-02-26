@@ -43,7 +43,14 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
       image: true,
       createdAt: true,
       updatedAt: true,
-      profile: true
+      profile: {
+        select: {
+          id: true,
+          bio: true,
+          userType: true,
+          isComplete: true
+        }
+      }
     }
   });
 

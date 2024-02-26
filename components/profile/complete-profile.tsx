@@ -6,7 +6,7 @@ import { CompleteProfileForm } from './forms';
 import { Profile, User } from '@prisma/client';
 
 type Props = {
-  user: Partial<User & { profile: Profile }>;
+  user: Partial<User & { profile: Partial<Profile> }>;
 };
 
 export function CompleteProfile({ user }: Props) {

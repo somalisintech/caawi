@@ -10,12 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { RegisterFormFields, registerFormSchema } from './register-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 
 export function RegisterForm() {
-  const router = useRouter();
-
   const form = useForm<RegisterFormFields>({
     defaultValues: {
       email: ''
@@ -24,28 +20,14 @@ export function RegisterForm() {
   });
 
   const onSubmit: SubmitHandler<RegisterFormFields> = async (data) => {
-    const registrationResponse = await fetch('/api/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    // TODO: Implement magic link auth
 
-    if (!registrationResponse?.ok) {
-      form.setError('root', { message: 'Error regestering' });
-      return;
-    }
+    console.log({ data });
 
-    const response = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      redirect: false
-    });
-
-    if (response?.error) {
-      form.setError('root', { message: response.error });
-      return;
-    }
-
-    router.push('/dashboard');
+    // signIn('email', {
+    //   redirect: false,
+    //   callbackUrl: '/dashboard'
+    // });
   };
 
   return (

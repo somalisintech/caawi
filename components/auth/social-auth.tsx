@@ -2,26 +2,27 @@
 
 import { Button } from '@/components/ui/button';
 import { signIn } from 'next-auth/react';
-import { FaGithub, FaGoogle, FaLinkedin, FaTwitter } from 'react-icons/fa6';
+import { FaGithub, FaGoogle, FaLinkedin } from 'react-icons/fa6';
 
 const socialLogins = [
   {
-    title: 'Sign in with Google',
+    title: 'Continue with Google',
     icon: FaGoogle,
     provider: 'google'
   },
+  // TODO: Disable twitter auth
+  // {
+  //   title: 'Continue with Twitter',
+  //   icon: FaTwitter,
+  //   provider: 'twitter'
+  // },
   {
-    title: 'Sign in with Twitter',
-    icon: FaTwitter,
-    provider: 'twitter'
-  },
-  {
-    title: 'Sign in with GitHub',
+    title: 'Continue with GitHub',
     icon: FaGithub,
     provider: 'github'
   },
   {
-    title: 'Sign in with LinkedIn',
+    title: 'Continue with LinkedIn',
     icon: FaLinkedin,
     provider: 'linkedin'
   }
@@ -29,11 +30,11 @@ const socialLogins = [
 
 export function SocialAuth() {
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 gap-3">
       {socialLogins.map((login) => (
         <Button
           key={login.provider}
-          className="text-muted-foreground"
+          className="relative gap-2 text-muted-foreground"
           variant="outline"
           title={login.title}
           onClick={() =>
@@ -43,7 +44,10 @@ export function SocialAuth() {
             })
           }
         >
-          <login.icon size={18} />
+          <div className="absolute left-4">
+            <login.icon size={18} />
+          </div>
+          <div>{login.title}</div>
         </Button>
       ))}
     </div>

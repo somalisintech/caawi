@@ -1,23 +1,10 @@
 import { PropsWithChildren } from 'react';
-import Image from 'next/image';
 
 export default function AuthLayout({ children }: PropsWithChildren) {
   return (
-    <div className="flex min-h-full">
-      <div className="flex flex-1 flex-col items-center justify-center lg:flex-row lg:justify-stretch">
-        <div className="p-6 lg:p-24">
-          <div className="mx-auto w-full max-w-sm lg:w-96">{children}</div>
-        </div>
-        <div className="relative hidden size-full lg:block">
-          <Image
-            priority
-            fill
-            className="object-cover"
-            src="/auth-bg.jpg"
-            alt="Cover photo"
-            sizes="(min-width: 1280px) 1280px, 100vw"
-          />
-        </div>
+    <div className="flex min-h-dvh bg-gradient-to-b from-zinc-50 to-primary/20">
+      <div className="flex flex-1 items-center justify-center">
+        <div className="container max-w-lg">{children}</div>
       </div>
     </div>
   );

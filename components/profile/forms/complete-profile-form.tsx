@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { CompleteProfileFormFields, completeProfileFormSchema } from './complete-profile-schema-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Gender, Profile, User } from '@prisma/client';
+import { Gender, Profile, User, UserType } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 
 interface Props {
@@ -22,6 +22,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
   const form = useForm<CompleteProfileFormFields>({
     resolver: zodResolver(completeProfileFormSchema),
     defaultValues: {
+      userType: profile?.userType as UserType,
       firstName: firstName || '',
       lastName: lastName || '',
       email: email || '',
@@ -46,7 +47,33 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <FormField
+          control={form.control}
+          name="userType"
+          render={({ field }) => (
+            <FormItem className="flex flex-1 flex-col items-start gap-2">
+              <FormLabel>User type</FormLabel>
+              <FormControl>
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className=" space-y-1">
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value={UserType.MENTEE} />
+                    </FormControl>
+                    <FormLabel className="font-normal">Mentee</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value={UserType.MENTOR} />
+                    </FormControl>
+                    <FormLabel className="font-normal">Mentor</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className="flex gap-2">
           <FormField
             control={form.control}

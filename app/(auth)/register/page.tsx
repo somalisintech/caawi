@@ -10,7 +10,7 @@ export default function Register() {
   return (
     <div className="flex flex-col items-center">
       <CaawiLogo className="size-18 mb-14" width={74} height={74} />
-      <Card className="mb-8 min-w-[380px]">
+      <Card className="mb-8 w-full max-w-[380px]">
         <CardContent className="p-8">
           <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">Register for an account</h2>
           <div className="space-y-6">

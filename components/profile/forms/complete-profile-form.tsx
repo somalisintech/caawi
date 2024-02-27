@@ -55,7 +55,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
             <FormItem className="flex flex-1 flex-col items-start gap-2">
               <FormLabel>User type</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className=" space-y-1">
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
                       <RadioGroupItem value={UserType.MENTEE} />
@@ -122,7 +122,7 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
             <FormItem className="flex flex-1 flex-col items-start gap-2">
               <FormLabel>Gender</FormLabel>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className=" space-y-1">
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-1">
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
                       <RadioGroupItem value={Gender.MALE} />

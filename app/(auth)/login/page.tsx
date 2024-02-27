@@ -8,9 +8,9 @@ import { LoginForm } from './components/forms';
 
 export default function Login() {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col">
       <CaawiLogo className="size-18 mb-14" width={74} height={74} />
-      <Card className="mb-8 min-w-[380px]">
+      <Card className="mb-8">
         <CardContent className="p-8">
           <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">Welcome back 👋🏾</h2>
           <div className="space-y-6">

@@ -47,6 +47,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
         select: {
           id: true,
           bio: true,
+          gender: true,
           userType: true,
           isComplete: true
         }

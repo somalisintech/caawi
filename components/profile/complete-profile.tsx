@@ -24,8 +24,8 @@ export function CompleteProfile({ user }: Props) {
         <DialogHeader>
           <DialogTitle>Complete your profile</DialogTitle>
           <DialogDescription>Tell us a little more about yourself.</DialogDescription>
-          <CompleteProfileForm user={user} onComplete={() => setOpen(false)} />
         </DialogHeader>
+        <CompleteProfileForm user={user} onComplete={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );

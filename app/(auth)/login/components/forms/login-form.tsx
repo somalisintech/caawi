@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
@@ -10,29 +10,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginFormFields, loginFormSchema } from './login-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 
 export function LoginForm() {
-  const router = useRouter();
-
   const form = useForm<LoginFormFields>({
     defaultValues: {
-      email: '',
-      password: ''
+      email: ''
     },
     resolver: zodResolver(loginFormSchema)
   });
 
   const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
-    const signInResponse = await signIn('credentials', { ...data, redirect: false, callbackUrl: '/dashboard' });
+    // TODO: Implement magic link auth
 
-    if (signInResponse?.error) {
-      form.setError('root', { message: signInResponse.error });
-      return;
-    }
+    console.log({ data });
 
-    router.push('/dashboard');
+    // signIn('email', {
+    //   redirect: false,
+    //   callbackUrl: '/dashboard'
+    // });
   };
 
   return (
@@ -44,36 +39,25 @@ export function LoginForm() {
             <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
           </Alert>
         )}
+
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium text-muted-foreground">Email address</FormLabel>
+              <FormLabel>Email address</FormLabel>
               <FormControl>
-                <Input {...field} type="email" autoFocus autoComplete="email" />
+                <Input {...field} type="email" autoComplete="email" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm font-medium text-muted-foreground">Password</FormLabel>
-              <FormControl>
-                <Input {...field} type="password" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <div>
-          <Button className="mt-3 w-full gap-2" type="submit">
+          <Button className="mt-2 w-full gap-2" type="submit">
             {form.formState.isSubmitting && <FaSpinner className="animate-spin" size={16} />}
-            Sign in
+            Sign in with email
           </Button>
         </div>
       </form>

@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ThemeProvider, AuthProvider } from '@/providers';
+import { CSPostHogProvider } from '@/providers/posthog-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,7 +22,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body className={`h-full ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="light">
           <AuthProvider>
-            {children}
+            <CSPostHogProvider>{children}</CSPostHogProvider>
             <Analytics />
             <SpeedInsights />
             <AxiomWebVitals />

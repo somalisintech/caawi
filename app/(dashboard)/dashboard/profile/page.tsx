@@ -26,7 +26,7 @@ export default async function SettingsProfilePage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:max-w-2xl">
       <div>
         <div className="flex">
           <div>

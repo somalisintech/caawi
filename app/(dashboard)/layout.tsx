@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { PropsWithChildren } from 'react';
+import { UserType } from '@prisma/client';
 import { Separator } from '@/components/ui/separator';
 import { SidebarNav } from '@/components/layout/sidebar-nav';
 import { Header } from '@/components/layout/header';
@@ -16,15 +17,23 @@ export const metadata: Metadata = {
 const sidebarNavItems = [
   {
     title: 'Overview',
-    href: '/dashboard'
+    href: '/dashboard',
+    roles: [UserType.MENTEE, UserType.MENTOR]
   },
   {
     title: 'Profile',
-    href: '/dashboard/profile'
+    href: '/dashboard/profile',
+    roles: [UserType.MENTEE, UserType.MENTOR]
   },
   {
     title: 'Notifications',
-    href: '/dashboard/notifications'
+    href: '/dashboard/notifications',
+    roles: [UserType.MENTEE, UserType.MENTOR]
+  },
+  {
+    title: 'Mentors',
+    href: '/dashboard/mentors',
+    roles: [UserType.MENTEE]
   }
 ];
 
@@ -55,6 +64,8 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     }
   });
 
+  const filteredSidebarNavItems = sidebarNavItems.filter((item) => item.roles.includes(user.profile.userType));
+
   return (
     <>
       <CompleteProfile user={user} />
@@ -67,9 +78,9 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
           <aside className="-mx-4 lg:w-1/5">
-            <SidebarNav items={sidebarNavItems} className="overflow-auto scrollbar-hide" />
+            <SidebarNav items={filteredSidebarNavItems} className="overflow-auto scrollbar-hide" />
           </aside>
-          <main className="flex-1 lg:max-w-2xl">{children}</main>
+          <main className="flex-1">{children}</main>
         </div>
       </div>
     </>

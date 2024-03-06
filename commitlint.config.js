@@ -1,7 +1,8 @@
 module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    'jira-id-in-message': [2, 'always']
+    'jira-id-in-message': [2, 'always'],
+    'body-max-line-length': [0, 'always']
   },
   plugins: [
     {

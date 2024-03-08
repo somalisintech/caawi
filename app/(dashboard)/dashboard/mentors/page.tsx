@@ -1,8 +1,43 @@
 import prisma from '@/lib/db';
-import { MentorsList } from './components/mentors';
+import { MentorsList, MentorsSearch } from './components/mentors';
 
-export default async function SettingsNotificationsPage() {
-  const mentors = await prisma.mentorProfile.findMany();
+export default async function SettingsNotificationsPage({ searchParams }: { searchParams: { search: string } }) {
+  const search = searchParams.search;
+
+  const mentors = await prisma.mentorProfile.findMany({
+    ...(search
+      ? {
+          where: {
+            OR: [
+              {
+                firstName: {
+                  contains: search,
+                  mode: 'insensitive'
+                }
+              },
+              {
+                lastName: {
+                  contains: search,
+                  mode: 'insensitive'
+                }
+              },
+              {
+                role: {
+                  contains: search,
+                  mode: 'insensitive'
+                }
+              },
+              {
+                company: {
+                  contains: search,
+                  mode: 'insensitive'
+                }
+              }
+            ]
+          }
+        }
+      : {})
+  });
 
   return (
     <div className="space-y-6">
@@ -11,6 +46,7 @@ export default async function SettingsNotificationsPage() {
           <h3 className="text-lg font-medium">Search</h3>
           <p className="text-sm text-muted-foreground">Search for mentors</p>
         </div>
+        <MentorsSearch />
         <MentorsList mentors={mentors} />
       </div>
     </div>

@@ -33,7 +33,7 @@ const sidebarNavItems = [
   {
     title: 'Mentors',
     href: '/dashboard/mentors',
-    roles: [UserType.MENTEE]
+    roles: [UserType.MENTEE, UserType.MENTOR]
   }
 ];
 

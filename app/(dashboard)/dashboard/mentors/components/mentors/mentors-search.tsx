@@ -5,16 +5,20 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export function MentorsSearch() {
+type Props = {
+  searchQuery?: string;
+};
+
+export function MentorsSearch({ searchQuery }: Props) {
   const router = useRouter();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchQuery);
   const debouncedSearch = useDebounce(search, 500);
 
   useEffect(() => {
     if (debouncedSearch) {
       return router.push(`?search=${debouncedSearch}`);
     }
-    router.push('?');
+    return router.push('?');
   }, [router, debouncedSearch]);
 
   return (

@@ -1,7 +1,7 @@
 import prisma from '@/lib/db';
 import { MentorsList, MentorsSearch } from './components/mentors';
 
-export default async function SettingsNotificationsPage({ searchParams }: { searchParams: { search: string } }) {
+export default async function SettingsNotificationsPage({ searchParams }: { searchParams: { search?: string } }) {
   const search = searchParams.search;
 
   const mentors = await prisma.mentorProfile.findMany({
@@ -46,7 +46,7 @@ export default async function SettingsNotificationsPage({ searchParams }: { sear
           <h3 className="text-lg font-medium">Search</h3>
           <p className="text-sm text-muted-foreground">Search for mentors</p>
         </div>
-        <MentorsSearch />
+        <MentorsSearch searchQuery={search} />
         <MentorsList mentors={mentors} />
       </div>
     </div>

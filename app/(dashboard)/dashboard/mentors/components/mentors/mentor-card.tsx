@@ -2,6 +2,7 @@ import { MentorProfile } from '@prisma/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type Props = {
   mentor: MentorProfile;
@@ -32,7 +33,9 @@ export function MentorCard({ mentor }: Props) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button>View profile</Button>
+        <Button asChild>
+          <Link href={`/dashboard/mentors/${mentor.id}`}>View profile</Link>
+        </Button>
       </CardFooter>
     </Card>
   );

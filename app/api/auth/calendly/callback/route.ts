@@ -8,7 +8,7 @@ export const GET = withAxiom(async ({ log, url }: AxiomRequest) => {
   const encodedParams = new URLSearchParams();
   encodedParams.set('grant_type', 'authorization_code');
   encodedParams.set('code', searchParams.get('code')!);
-  encodedParams.set('redirect_uri', origin + '/auth/calendly');
+  encodedParams.set('redirect_uri', origin + '/api/auth/calendly/callback');
 
   try {
     log.info('Fetching access token');
@@ -30,9 +30,7 @@ export const GET = withAxiom(async ({ log, url }: AxiomRequest) => {
 
     // TODO: Save access and refresh tokens to the database and redirect to the dashboard
 
-    return NextResponse.redirect(origin + '/dashboard/profile', {
-      headers: data
-    });
+    return NextResponse.redirect(origin + '/dashboard/profile');
   } catch (error) {
     log.error('Error fetching access token', { error });
     return NextResponse.json(

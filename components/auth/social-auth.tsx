@@ -26,7 +26,6 @@ const socialLogins = [
 export function SocialAuth() {
   const params = useSearchParams();
 
-  console.log(params.get('callbackUrl'));
   return (
     <div className="grid grid-cols-1 gap-3">
       {socialLogins.map((login) => (

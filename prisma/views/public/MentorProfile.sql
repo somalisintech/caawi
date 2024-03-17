@@ -5,12 +5,12 @@ SELECT
   u."lastName",
   p.bio,
   p.gender,
+  p."sameGenderPref",
   l.city,
   l.country,
   o.role,
   o."yearsOfExperience",
-  c.name AS company,
-  p."sameGenderPref"
+  c.name AS company
 FROM
   (
     (

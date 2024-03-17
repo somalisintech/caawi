@@ -123,12 +123,12 @@ view MentorProfile {
   lastName          String?
   bio               String?
   gender            Gender?
+  sameGenderPref    Boolean?
   city              String?
   country           String?
   role              String?
   yearsOfExperience Int?
   company           String?
-  sameGenderPref    Boolean?
 }
 
 enum UserType {

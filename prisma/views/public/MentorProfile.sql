@@ -4,6 +4,7 @@ SELECT
   u."firstName",
   u."lastName",
   p.bio,
+  u.image,
   p.gender,
   p."sameGenderPref",
   l.city,

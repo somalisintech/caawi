@@ -122,6 +122,7 @@ view MentorProfile {
   firstName         String?
   lastName          String?
   bio               String?
+  image             String?
   gender            Gender?
   sameGenderPref    Boolean?
   city              String?

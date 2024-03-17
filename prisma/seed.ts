@@ -42,11 +42,7 @@ async function main() {
               create: {
                 role: faker.person.jobTitle(),
                 yearsOfExperience: faker.number.int({ min: 1, max: 30 }),
-                company: {
-                  create: {
-                    name: faker.company.name()
-                  }
-                }
+                company: faker.company.name()
               }
             }
           }

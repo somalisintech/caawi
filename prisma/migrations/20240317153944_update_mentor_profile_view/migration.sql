@@ -1,3 +1,4 @@
+CREATE VIEW "MentorProfile" AS
 SELECT
   p.id,
   p."userType",
@@ -19,3 +20,4 @@ FROM "Profile" p
        LEFT JOIN "Occupation" o ON p."occupationId" = o.id
        LEFT JOIN "CalendlyUser" cu ON p."calendlyUserUri" = cu.uri
 WHERE p."userType" = 'MENTOR';
+

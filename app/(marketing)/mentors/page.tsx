@@ -2,7 +2,7 @@ import { MentorsList } from '@/components/mentors/mentors-list';
 import { MentorsSearch } from '@/components/mentors/mentors-search';
 import prisma from '@/lib/db';
 
-export default async function MentorsListPage({ searchParams }: { searchParams: { search?: string } }) {
+export default async function PublicMentorsListPage({ searchParams }: { searchParams: { search?: string } }) {
   const search = searchParams.search;
 
   const mentors = await prisma.mentorProfile.findMany({

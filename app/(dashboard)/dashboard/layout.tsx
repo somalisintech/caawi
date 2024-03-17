@@ -6,7 +6,7 @@ import { SidebarNav } from '@/components/layout/sidebar-nav';
 import { Header } from '@/components/layout/header';
 import { CompleteProfile } from '@/components/profile/complete-profile';
 import { Session, getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/authOptions';
+import { authOptions } from '../../api/auth/authOptions';
 import prisma from '@/lib/db';
 
 export const metadata: Metadata = {

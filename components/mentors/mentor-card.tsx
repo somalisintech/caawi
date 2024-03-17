@@ -10,7 +10,7 @@ type Props = {
 
 // TODO: Include mentor photo
 
-export function MentorCard({ mentor }: Props) {
+export async function MentorCard({ mentor }: Props) {
   return (
     <Card className="flex flex-col">
       <CardHeader>

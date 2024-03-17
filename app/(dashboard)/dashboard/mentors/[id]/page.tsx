@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/db';
 import { Button } from '@/components/ui/button';
-import { MentorProfile } from './components/mentor/mentor-profile';
+import { MentorProfile } from '@/components/mentors/mentor-profile';
 
 export default async function Mentor({ params }: { params: { id: string } }) {
   const mentor = await prisma.mentorProfile.findUniqueOrThrow({

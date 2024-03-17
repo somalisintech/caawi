@@ -1,6 +1,6 @@
-import { MentorProfile as MentorProfileType } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { MentorProfile as MentorProfileType } from '@prisma/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 
@@ -8,7 +8,7 @@ type Props = {
   mentor: MentorProfileType;
 };
 
-export function MentorProfile({ mentor }: Props) {
+export async function MentorProfile({ mentor }: Props) {
   return (
     <Card className="flex flex-col">
       <CardHeader>
@@ -53,7 +53,9 @@ export function MentorProfile({ mentor }: Props) {
       </CardContent>
       <CardFooter>
         <Button asChild>
-          <a href={`https://calendly.com/embed-demo-sales`}>Book a call</a>
+          <a href={`https://calendly.com/embed-demo-sales`} target="_blank">
+            Book a call
+          </a>
         </Button>
       </CardFooter>
     </Card>

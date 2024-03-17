@@ -90,15 +90,8 @@ model Occupation {
   id                Int       @id @default(autoincrement())
   role              String
   yearsOfExperience Int?
-  companyId         Int?
-  company           Company?  @relation(fields: [companyId], references: [id])
+  company           String?
   profile           Profile[]
-}
-
-model Company {
-  id         Int          @id @default(autoincrement())
-  name       String
-  occupation Occupation[]
 }
 
 model CalendlyUser {

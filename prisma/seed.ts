@@ -10,7 +10,7 @@ async function main() {
 
   console.log('Start seeding 🌱');
 
-  for (let i = 0; i < 100; i++) {
+  const promises = Array.from({ length: 100 }, () => {
     const gender = faker.person.sex();
     const firstName = faker.person.firstName(gender as Sex);
     const lastName = faker.person.lastName(gender as Sex);
@@ -20,7 +20,7 @@ async function main() {
       lastName
     });
 
-    await prisma.user.create({
+    return prisma.user.create({
       data: {
         name,
         firstName,
@@ -42,18 +42,17 @@ async function main() {
               create: {
                 role: faker.person.jobTitle(),
                 yearsOfExperience: faker.number.int({ min: 1, max: 30 }),
-                company: {
-                  create: {
-                    name: faker.company.name()
-                  }
-                }
+                company: faker.company.name()
               }
             }
           }
         }
       }
     });
-  }
+  });
+
+  await Promise.all(promises);
+
   console.log('Seeding finished ✅');
 }
 

@@ -22,7 +22,9 @@ export default function Login() {
               <p className="text-sm text-muted-foreground">Or continue with</p>
               <Separator className="flex-1" />
             </div>
-            <SocialAuth />
+            <Suspense>
+              <SocialAuth />
+            </Suspense>
           </div>
         </CardContent>
       </Card>

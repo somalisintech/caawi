@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import { FaGithub, FaGoogle, FaLinkedin } from 'react-icons/fa6';
 
 const socialLogins = [
@@ -10,12 +11,6 @@ const socialLogins = [
     icon: FaGoogle,
     provider: 'google'
   },
-  // TODO: Disable twitter auth
-  // {
-  //   title: 'Continue with Twitter',
-  //   icon: FaTwitter,
-  //   provider: 'twitter'
-  // },
   {
     title: 'Continue with GitHub',
     icon: FaGithub,
@@ -29,6 +24,8 @@ const socialLogins = [
 ];
 
 export function SocialAuth() {
+  const params = useSearchParams();
+
   return (
     <div className="grid grid-cols-1 gap-3">
       {socialLogins.map((login) => (
@@ -40,7 +37,7 @@ export function SocialAuth() {
           onClick={() =>
             signIn(login.provider, {
               redirect: false,
-              callbackUrl: '/dashboard'
+              callbackUrl: params.get('callbackUrl') || '/dashboard'
             })
           }
         >

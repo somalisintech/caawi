@@ -65,18 +65,20 @@ model User {
 }
 
 model Profile {
-  id           String      @id @default(cuid())
-  userType     UserType    @default(MENTEE)
+  id           String        @id @default(cuid())
+  userType     UserType      @default(MENTEE)
   bio          String?
   gender       Gender?
-  location     Location?   @relation(fields: [locationId], references: [id])
-  occupation   Occupation? @relation(fields: [occupationId], references: [id])
+  location     Location?     @relation(fields: [locationId], references: [id])
+  occupation   Occupation?   @relation(fields: [occupationId], references: [id])
   user         User?
   locationId   Int?
   occupationId Int?
-  isComplete   Boolean     @default(false)
+  calendlyUser CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri], onDelete: Cascade)
+  isComplete   Boolean       @default(false)
 
-  updatedAt DateTime @updatedAt
+  updatedAt       DateTime @updatedAt
+  calendlyUserUri String?  @unique
 }
 
 model Location {
@@ -99,6 +101,21 @@ model Company {
   id         Int          @id @default(autoincrement())
   name       String
   occupation Occupation[]
+}
+
+model CalendlyUser {
+  uri                  String    @id
+  name                 String?
+  slug                 String?
+  email                String?
+  scheduling_url       String?
+  timezone             String?
+  avatar_url           String?
+  created_at           DateTime?
+  updated_at           DateTime?
+  current_organization String?
+  resource_type        String?
+  profile              Profile?
 }
 
 view MentorProfile {

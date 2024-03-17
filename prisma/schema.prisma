@@ -70,6 +70,7 @@ model Profile {
   occupationId    Int?
   updatedAt       DateTime      @updatedAt
   gender          Gender?
+  sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
   calendlyUserUri String?       @unique
   calendlyUser    CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri], onDelete: Cascade)

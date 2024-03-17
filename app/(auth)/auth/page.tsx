@@ -4,9 +4,9 @@ import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { SocialAuth } from '@/components/auth/social-auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { LoginForm } from './components/forms';
+import { AuthForm } from './components/forms';
 
-export default function Login() {
+export default function Auth() {
   return (
     <div className="flex flex-col">
       <CaawiLogo className="size-18 mb-14" width={74} height={74} />
@@ -15,7 +15,7 @@ export default function Login() {
           <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">Welcome back 👋🏾</h2>
           <div className="space-y-6">
             <Suspense>
-              <LoginForm />
+              <AuthForm />
             </Suspense>
             <div className="flex items-center gap-4">
               <Separator className="flex-1" />

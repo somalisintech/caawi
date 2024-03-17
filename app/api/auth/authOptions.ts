@@ -96,7 +96,7 @@ export const authOptions = {
   },
   session: { strategy: 'jwt' },
   pages: {
-    signIn: '/login'
+    signIn: '/auth'
   },
   debug: process.env.NODE_ENV === 'development'
 } as NextAuthOptions;

@@ -9,7 +9,8 @@ SELECT
   l.country,
   o.role,
   o."yearsOfExperience",
-  c.name AS company
+  c.name AS company,
+  p."sameGenderPref"
 FROM
   (
     (

@@ -128,6 +128,7 @@ view MentorProfile {
   role              String?
   yearsOfExperience Int?
   company           String?
+  sameGenderPref    Boolean?
 }
 
 enum UserType {

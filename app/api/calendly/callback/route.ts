@@ -48,7 +48,6 @@ export const GET = withAxiom(async ({ log, nextUrl }: AxiomRequest) => {
 
     log.info('Updated user profile with Calendly user data', resource);
 
-    //todo redirect to where the connect calendly button is
     return NextResponse.redirect(nextUrl.origin + '/dashboard/profile');
   } catch (error) {
     log.error('Error fetching access token', { error });

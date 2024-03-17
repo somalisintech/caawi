@@ -1,2 +1,2 @@
-export * from '@/app/api/calendly/services/getAccessToken';
-export * from '@/app/api/calendly/services/getCurrentUser';
+export * from '@/app/api/calendly/services/get-access-token';
+export * from '@/app/api/calendly/services/get-current-user';

@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AuthForm } from './components/forms';
 
-export default function Login() {
+export default function Auth() {
   return (
     <div className="flex flex-col">
       <CaawiLogo className="size-18 mb-14" width={74} height={74} />

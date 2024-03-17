@@ -1,12 +1,12 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-}
-
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["views"]
 }
 
 model VerificationToken {
@@ -32,8 +32,7 @@ model Account {
   scope              String?
   id_token           String?
   session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -55,28 +54,28 @@ model User {
   emailVerified  DateTime?
   image          String?
   hashedPassword String?
+  profileId      String    @unique
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   accounts       Account[]
   sessions       Session[]
   profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId      String    @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Profile {
-  id           String      @id @default(cuid())
-  userType     UserType    @default(MENTEE)
-  bio          String?
-  gender       Gender?
-  location     Location?   @relation(fields: [locationId], references: [id])
-  occupation   Occupation? @relation(fields: [occupationId], references: [id])
-  user         User?
-  locationId   Int?
-  occupationId Int?
-  isComplete   Boolean     @default(false)
-
-  updatedAt DateTime @updatedAt
+  id              String        @id @default(cuid())
+  userType        UserType      @default(MENTEE)
+  bio             String?
+  locationId      Int?
+  occupationId    Int?
+  updatedAt       DateTime      @updatedAt
+  gender          Gender?
+  isComplete      Boolean       @default(false)
+  calendlyUserUri String?       @unique
+  calendlyUser    CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri], onDelete: Cascade)
+  location        Location?     @relation(fields: [locationId], references: [id])
+  occupation      Occupation?   @relation(fields: [occupationId], references: [id])
+  user            User?
 }
 
 model Location {
@@ -90,8 +89,8 @@ model Occupation {
   id                Int       @id @default(autoincrement())
   role              String
   yearsOfExperience Int?
-  company           Company?  @relation(fields: [companyId], references: [id])
   companyId         Int?
+  company           Company?  @relation(fields: [companyId], references: [id])
   profile           Profile[]
 }
 
@@ -99,6 +98,21 @@ model Company {
   id         Int          @id @default(autoincrement())
   name       String
   occupation Occupation[]
+}
+
+model CalendlyUser {
+  uri                  String    @id
+  name                 String?
+  slug                 String?
+  email                String?
+  scheduling_url       String?
+  timezone             String?
+  avatar_url           String?
+  created_at           DateTime?
+  updated_at           DateTime?
+  current_organization String?
+  resource_type        String?
+  profile              Profile?
 }
 
 view MentorProfile {

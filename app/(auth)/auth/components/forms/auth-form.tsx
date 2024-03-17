@@ -11,7 +11,7 @@ import { AuthFormFields, authFormSchema } from './auth-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
 
-export function LoginForm() {
+export function AuthForm() {
   const form = useForm<AuthFormFields>({
     defaultValues: {
       email: ''

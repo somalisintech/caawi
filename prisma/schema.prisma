@@ -70,6 +70,7 @@ model Profile {
   occupationId    Int?
   updatedAt       DateTime      @updatedAt
   gender          Gender?
+  sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
   calendlyUserUri String?       @unique
   calendlyUser    CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri], onDelete: Cascade)
@@ -116,17 +117,20 @@ model CalendlyUser {
 }
 
 view MentorProfile {
-  id                String    @unique
-  userType          UserType?
-  firstName         String?
-  lastName          String?
-  bio               String?
-  gender            Gender?
-  city              String?
-  country           String?
-  role              String?
-  yearsOfExperience Int?
-  company           String?
+  id                    String    @unique
+  userType              UserType?
+  firstName             String?
+  lastName              String?
+  bio                   String?
+  image                 String?
+  calendlySchedulingUrl String?
+  gender                Gender?
+  sameGenderPref        Boolean?
+  city                  String?
+  country               String?
+  role                  String?
+  yearsOfExperience     Int?
+  company               String?
 }
 
 enum UserType {

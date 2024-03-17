@@ -117,19 +117,20 @@ model CalendlyUser {
 }
 
 view MentorProfile {
-  id                String    @unique
-  userType          UserType?
-  firstName         String?
-  lastName          String?
-  bio               String?
-  image             String?
-  gender            Gender?
-  sameGenderPref    Boolean?
-  city              String?
-  country           String?
-  role              String?
-  yearsOfExperience Int?
-  company           String?
+  id                    String    @unique
+  userType              UserType?
+  firstName             String?
+  lastName              String?
+  bio                   String?
+  image                 String?
+  calendlySchedulingUrl String?
+  gender                Gender?
+  sameGenderPref        Boolean?
+  city                  String?
+  country               String?
+  role                  String?
+  yearsOfExperience     Int?
+  company               String?
 }
 
 enum UserType {

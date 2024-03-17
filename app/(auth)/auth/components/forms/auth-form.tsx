@@ -7,19 +7,19 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormFields, loginFormSchema } from './login-form-schema';
+import { AuthFormFields, authFormSchema } from './auth-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
 
 export function LoginForm() {
-  const form = useForm<LoginFormFields>({
+  const form = useForm<AuthFormFields>({
     defaultValues: {
       email: ''
     },
-    resolver: zodResolver(loginFormSchema)
+    resolver: zodResolver(authFormSchema)
   });
 
-  const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
+  const onSubmit: SubmitHandler<AuthFormFields> = async (data) => {
     // TODO: Implement magic link auth
 
     console.log({ data });
@@ -57,7 +57,7 @@ export function LoginForm() {
         <div>
           <Button className="mt-2 w-full gap-2" type="submit">
             {form.formState.isSubmitting && <FaSpinner className="animate-spin" size={16} />}
-            Sign in with email
+            Continue with email
           </Button>
         </div>
       </form>

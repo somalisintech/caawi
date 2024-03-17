@@ -66,10 +66,10 @@ export async function Header() {
       <div className="flex items-center space-x-2">
         <ThemeToggle />
         <Button variant="outline" asChild className="ml-auto">
-          <Link href="/login">Sign in</Link>
+          <Link href="/auth">Sign in</Link>
         </Button>
         <Button asChild>
-          <Link href="/register">Join</Link>
+          <Link href="/auth">Join</Link>
         </Button>
       </div>
     </header>

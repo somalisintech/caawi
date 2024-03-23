@@ -14,7 +14,7 @@ export async function MentorCard({ mentor }: Props) {
       <CardHeader>
         <CardTitle className="space-y-4">
           <Avatar>
-            <AvatarImage src={mentor.image || '-'} />
+            <AvatarImage src={mentor.image || ''} />
             <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
           </Avatar>
           <div>

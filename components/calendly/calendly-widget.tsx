@@ -1,7 +1,8 @@
 'use client';
 
-import { InlineWidget } from 'react-calendly';
 import { useSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
+import { PopupButton } from 'react-calendly';
 
 type CalendlyWidgetProps = {
   scheduling_url: string | null;
@@ -14,14 +15,16 @@ export function CalendlyWidget({ scheduling_url }: CalendlyWidgetProps) {
   }
 
   return (
-    <div className="w-full">
-      <InlineWidget
+    <Button asChild>
+      <PopupButton
         url={scheduling_url}
+        text="Book a meeting"
+        rootElement={document.body}
         prefill={{
           name: session.user.name!,
           email: session.user.email!
         }}
       />
-    </div>
+    </Button>
   );
 }

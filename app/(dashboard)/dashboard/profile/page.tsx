@@ -5,6 +5,7 @@ import { authOptions } from '@/app/api/auth/authOptions';
 import { Session, getServerSession } from 'next-auth';
 
 import { ProfileForm } from './components/forms';
+import { ConnectCalendlyButton } from '@/components/calendly/connect-calendly-button';
 
 export default async function SettingsProfilePage() {
   const session = (await getServerSession(authOptions)) as Session;
@@ -40,6 +41,8 @@ export default async function SettingsProfilePage() {
       </div>
       <Separator />
       <ProfileForm user={user} />
+      <Separator />
+      <ConnectCalendlyButton />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import prisma from '@/lib/db';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export async function ConnectCalendlyButton() {
+export async function CalendlyConnectionButton() {
   const session = await getServerSession(authOptions);
 
   if (!session) {

@@ -8,15 +8,13 @@ type Props = {
   mentor: MentorProfile;
 };
 
-// TODO: Include mentor photo
-
 export async function MentorCard({ mentor }: Props) {
   return (
     <Card className="flex flex-col">
       <CardHeader>
         <CardTitle className="space-y-4">
           <Avatar>
-            <AvatarImage />
+            <AvatarImage src={mentor.image || ''} />
             <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
           </Avatar>
           <div>

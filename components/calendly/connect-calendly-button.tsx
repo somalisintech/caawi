@@ -18,11 +18,16 @@ export async function ConnectCalendlyButton() {
     select: {
       profile: {
         select: {
+          userType: true,
           calendlyUser: true
         }
       }
     }
   });
+
+  if (profile.userType !== 'MENTOR') {
+    return null;
+  }
 
   const scheduling_url = profile?.calendlyUser?.scheduling_url;
 

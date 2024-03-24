@@ -7,6 +7,7 @@ import { PopupButton } from 'react-calendly';
 type CalendlyWidgetProps = {
   scheduling_url: string | null;
 };
+
 export function CalendlyWidget({ scheduling_url }: CalendlyWidgetProps) {
   const { data: session } = useSession();
 

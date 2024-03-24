@@ -11,7 +11,20 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  const { userType, firstName, lastName, email, gender, bio } = await json();
+  const {
+    userType,
+    firstName,
+    lastName,
+    email,
+    gender,
+    bio,
+    sameGenderPref,
+    country,
+    city,
+    role,
+    company,
+    yearsOfExperience
+  } = await json();
 
   const isProfileComplete = !!(firstName && lastName && email && gender);
 
@@ -28,7 +41,34 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           bio,
           gender,
           userType,
-          isComplete: isProfileComplete
+          sameGenderPref,
+          isComplete: isProfileComplete,
+          location: {
+            upsert: {
+              create: {
+                country,
+                city
+              },
+              update: {
+                country,
+                city
+              }
+            }
+          },
+          occupation: {
+            upsert: {
+              create: {
+                role,
+                company,
+                yearsOfExperience
+              },
+              update: {
+                role,
+                company,
+                yearsOfExperience
+              }
+            }
+          }
         }
       }
     },

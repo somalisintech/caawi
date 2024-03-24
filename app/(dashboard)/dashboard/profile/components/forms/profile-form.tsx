@@ -1,20 +1,28 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/use-toast';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { Gender, Profile, User } from '@prisma/client';
-import { TrashIcon } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { CalendlyUser, Gender, Location, Occupation, Profile, User } from '@prisma/client';
 
 interface Props {
-  user: Partial<User & { profile: Profile }>;
+  user: Partial<
+    User & {
+      profile: Profile & {
+        location: Location | null;
+        occupation: Occupation | null;
+        calendlyUser: CalendlyUser | null;
+      };
+    }
+  >;
 }
 
 export function ProfileForm({ user }: Props) {
@@ -28,21 +36,21 @@ export function ProfileForm({ user }: Props) {
       email: email || '',
       gender: profile?.gender as Gender,
       bio: profile?.bio || '',
-      urls: [{ value: '' }]
+      linkedinUrl: '',
+      githubUrl: '',
+      sameGenderPref: profile?.sameGenderPref ?? undefined,
+      country: profile?.location?.country,
+      city: profile?.location?.city,
+      role: profile?.occupation?.role,
+      company: profile?.occupation?.company ?? undefined,
+      yearsOfExperience: profile?.occupation?.yearsOfExperience ?? undefined
     }
   });
 
-  const { fields, append, remove } = useFieldArray({
-    name: 'urls',
-    control: form.control
-  });
-
   async function onSubmit(data: ProfileFormFields) {
-    const urls = data.urls?.filter((url) => !!url.value);
-
     const response = await fetch('/api/users', {
       method: 'POST',
-      body: JSON.stringify({ ...data, urls })
+      body: JSON.stringify({ ...data })
     });
 
     if (!response.ok) {
@@ -58,138 +66,273 @@ export function ProfileForm({ user }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="flex max-w-sm items-center space-x-2">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input {...field} type="text" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input {...field} type="text" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} type="email" disabled />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="gender"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Gender</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
+        <Card>
+          <CardHeader className="border-b-[1px]">
+            <CardTitle>Basic profile</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 py-4">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <RadioGroupItem value={Gender.MALE} />
+                      <Input {...field} type="text" />
                     </FormControl>
-                    <FormLabel className="font-normal">Male</FormLabel>
+                    <FormMessage />
                   </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <RadioGroupItem value={Gender.FEMALE} />
+                      <Input {...field} type="text" />
                     </FormControl>
-                    <FormLabel className="font-normal">Female</FormLabel>
+                    <FormMessage />
                   </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && event.metaKey) {
-                      form.handleSubmit(onSubmit)();
-                    }
-                  }}
-                />
-              </FormControl>
-              <FormDescription>
-                Share a glimpse of who you are with us and your potential mentees. Speak in the first person, as though
-                you&apos;re conversing with a mentee. This information will be publicly displayed.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div>
-          {fields.map((field, index) => (
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a verified email to display" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={Gender.MALE}>Male</SelectItem>
+                        <SelectItem value={Gender.FEMALE}>Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={cn(index !== 0 && 'sr-only')}>URLs</FormLabel>
-                  <FormDescription className={cn(index !== 0 && 'sr-only')}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <div className="flex max-w-sm items-center space-x-2">
-                      <Input {...field} />
-                      <Button
-                        variant="secondary"
-                        type="button"
-                        size="icon"
-                        onClick={() => remove(index)}
-                        title="Delete URL"
-                      >
-                        <TrashIcon size={16} />
-                      </Button>
-                    </div>
+                    <Input {...field} type="email" disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          ))}
-          <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => append({ value: '' })}>
-            Add URL
-          </Button>
-        </div>
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bio</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none"
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' && event.metaKey) {
+                          form.handleSubmit(onSubmit)();
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Share a glimpse of who you are with us and your potential mentees. Speak in the first person, as
+                    though you&apos;re conversing with a mentee. This information will be publicly displayed.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="linkedinUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>LinkedIn</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="githubUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GitHub</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {profile?.userType === 'MENTOR' && (
+          <Card>
+            <CardHeader className="border-b-[1px]">
+              <CardTitle>Preferences</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="sameGenderPref"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="space-y-0.5">
+                      <FormLabel>Same gender</FormLabel>
+                      <FormDescription>
+                        Only mentees with the same gender as you will be able to request mentorship.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader className="border-b-[1px]">
+            <CardTitle>Occupation</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 py-4">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={'Engineer'}>Engineer</SelectItem>
+                        <SelectItem value={'Manager'}>Manager</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="company"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={'Google'}>Google</SelectItem>
+                        <SelectItem value={'Netflix'}>Netflix</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="yearsOfExperience"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Years of Experience</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="border-b-[1px]">
+            <CardTitle>Location</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 py-4">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={'United Kingdom'}>United Kingdom</SelectItem>
+                        <SelectItem value={'Somalia'}>Somalia</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={'London'}>London</SelectItem>
+                        <SelectItem value={'Manchester'}>Manchester</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
         <Button type="submit">Update profile</Button>
       </form>
     </Form>

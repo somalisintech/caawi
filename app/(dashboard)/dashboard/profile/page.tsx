@@ -1,6 +1,5 @@
 import prisma from '@/lib/db';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { authOptions } from '@/app/api/auth/authOptions';
 import { Session, getServerSession } from 'next-auth';
 
@@ -21,7 +20,13 @@ export default async function SettingsProfilePage() {
       image: true,
       createdAt: true,
       updatedAt: true,
-      profile: true
+      profile: {
+        include: {
+          location: true,
+          occupation: true,
+          calendlyUser: true
+        }
+      }
     }
   });
 
@@ -38,7 +43,6 @@ export default async function SettingsProfilePage() {
           </div>
         </div>
       </div>
-      <Separator />
       <ProfileForm user={user} />
     </div>
   );

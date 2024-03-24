@@ -33,6 +33,12 @@ export default async function MentorsListPage({ searchParams }: { searchParams: 
                   contains: search,
                   mode: 'insensitive'
                 }
+              },
+              {
+                country: {
+                  contains: search,
+                  mode: 'insensitive'
+                }
               }
             ]
           }

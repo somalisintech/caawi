@@ -48,7 +48,12 @@ export const GET = withAxiom(async ({ log, nextUrl }: AxiomRequest) => {
 
     log.info('Updated user profile with Calendly user data', resource);
 
-    return NextResponse.redirect(nextUrl.origin + '/dashboard/profile');
+    const response = NextResponse.redirect(nextUrl.origin + '/dashboard/profile');
+    response.cookies.set('calendly_access_token', data.access_token);
+    response.cookies.set('calendly_refresh_token', data.refresh_token);
+    response.cookies.set('calendly_organization', data.organization);
+
+    return response;
   } catch (error) {
     log.error('Error fetching access token', { error });
     return NextResponse.json(

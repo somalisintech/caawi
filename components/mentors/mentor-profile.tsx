@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { MentorProfile as MentorProfileType } from '@prisma/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 
 type Props = {
   mentor: MentorProfileType;
@@ -52,11 +52,7 @@ export async function MentorProfile({ mentor }: Props) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button asChild>
-          <a href={`https://calendly.com/embed-demo-sales`} target="_blank">
-            Book a call
-          </a>
-        </Button>
+        <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} />
       </CardFooter>
     </Card>
   );

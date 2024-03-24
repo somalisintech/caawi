@@ -73,7 +73,7 @@ model Profile {
   sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
   calendlyUserUri String?       @unique
-  calendlyUser    CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri], onDelete: Cascade)
+  calendlyUser    CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri])
   location        Location?     @relation(fields: [locationId], references: [id])
   occupation      Occupation?   @relation(fields: [occupationId], references: [id])
   user            User?

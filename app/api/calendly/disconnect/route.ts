@@ -1,10 +1,11 @@
 import { AxiomRequest, withAxiom } from 'next-axiom';
-import { NextResponse } from 'next/server';
-import { authOptions } from '@/app/api/auth/authOptions';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/authOptions';
+import { NextResponse } from 'next/server';
+import { revokeAccessToken } from '@/app/api/calendly/services';
 import prisma from '@/lib/db';
 
-export const GET = withAxiom(async ({ log, url }: AxiomRequest) => {
+export const GET = withAxiom(async ({ log, nextUrl, cookies }: AxiomRequest) => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -14,6 +15,9 @@ export const GET = withAxiom(async ({ log, url }: AxiomRequest) => {
   log.info('Disconnecting Calendly', {
     userId: session.user.id
   });
+
+  const calendly_access_token = cookies.get('calendly_access_token')?.value;
+  calendly_access_token && (await revokeAccessToken(calendly_access_token));
 
   const user = await prisma.user.findUniqueOrThrow({
     where: {
@@ -28,21 +32,20 @@ export const GET = withAxiom(async ({ log, url }: AxiomRequest) => {
     }
   });
 
-  const callbackUrl = new URL('/dashboard/profile', url);
+  const response = NextResponse.redirect(nextUrl.origin + '/dashboard/profile');
+  response.cookies.delete('calendly_access_token');
+  response.cookies.delete('calendly_refresh_token');
+  response.cookies.delete('calendly_organization');
 
   if (!user.profile?.calendlyUser) {
-    return NextResponse.redirect(callbackUrl);
+    return response;
   }
 
-  const calendlyUser = await prisma.calendlyUser.delete({
+  await prisma.calendlyUser.delete({
     where: {
       uri: user.profile.calendlyUser.uri
     }
   });
 
-  log.info('Calendly user disconnected', {
-    calendlyUser
-  });
-
-  return NextResponse.redirect(callbackUrl);
+  return response;
 });

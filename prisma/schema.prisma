@@ -64,7 +64,7 @@ model User {
 
 model Profile {
   id              String        @id @default(cuid())
-  userType        UserType
+  userType        UserType?
   bio             String?
   locationId      Int?
   occupationId    Int?

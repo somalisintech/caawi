@@ -82,7 +82,7 @@ model Profile {
 model Location {
   id      Int       @id @default(autoincrement())
   city    String
-  country String
+  country String    @unique
   profile Profile[]
 }
 
@@ -90,7 +90,7 @@ model Occupation {
   id                Int       @id @default(autoincrement())
   role              String
   yearsOfExperience Int?
-  company           String?
+  company           String    @unique
   profile           Profile[]
 }
 
@@ -99,7 +99,7 @@ model CalendlyUser {
   name                 String?
   slug                 String?
   email                String?
-  scheduling_url       String?
+  scheduling_url       String?   @unique
   timezone             String?
   avatar_url           String?
   created_at           DateTime?

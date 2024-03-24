@@ -19,39 +19,37 @@ async function main() {
 
     const city = faker.location.city();
     const country = faker.location.country();
-    const location = await prisma.location.upsert({
-      where: { country: country },
-      update: {},
-      create: { city: city, country: country }
-    });
 
     const role = faker.person.jobTitle();
     const yearsOfExperience = faker.number.int({ min: 1, max: 30 });
     const company = faker.company.name();
-    const occupation = await prisma.occupation.upsert({
-      where: { company: company },
-      update: {},
-      create: { role: role, yearsOfExperience: yearsOfExperience, company: company }
-    });
 
-    const profile = await prisma.profile.create({
-      data: {
-        userType: faker.helpers.enumValue(UserType),
-        bio: faker.person.bio(),
-        gender: gender.toUpperCase() as Gender,
-        locationId: location.id,
-        occupationId: occupation.id
-      }
-    });
-
-    await prisma.user.create({
+    return prisma.user.create({
       data: {
         name,
         firstName,
         lastName,
         email,
         image: faker.image.avatar(),
-        profileId: profile.id
+        profile: {
+          create: {
+            userType: faker.helpers.enumValue(UserType),
+            bio: faker.person.bio(),
+            gender: gender.toUpperCase() as Gender,
+            location: {
+              connectOrCreate: {
+                where: { country: country },
+                create: { city: city, country: country }
+              }
+            },
+            occupation: {
+              connectOrCreate: {
+                where: { company: company },
+                create: { role: role, yearsOfExperience: yearsOfExperience, company: company }
+              }
+            }
+          }
+        }
       }
     });
   });

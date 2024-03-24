@@ -1,8 +1,6 @@
-const { CALENDLY_CLIENT_ID, CALENDLY_CLIENT_SECRET } = process.env;
+import { calendlyEnvSchema } from '@/app/api/calendly/validators';
 
-if (!CALENDLY_CLIENT_ID || !CALENDLY_CLIENT_SECRET) {
-  throw new Error('CALENDLY_CLIENT_ID and CALENDLY_CLIENT_SECRET must be provided');
-}
+const { CALENDLY_CLIENT_ID, CALENDLY_CLIENT_SECRET } = calendlyEnvSchema.parse(process.env);
 
 export const revokeAccessToken = async (token: string) => {
   const encodedParams = new URLSearchParams();

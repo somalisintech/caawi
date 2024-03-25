@@ -28,6 +28,9 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
 
   const isProfileComplete = !!(firstName && lastName && email && gender);
 
+  const hasLocation = !!country;
+  const hasOccupation = !!role;
+
   const user = await prisma.user.update({
     where: {
       id: session.user.id
@@ -43,32 +46,49 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           userType,
           sameGenderPref,
           isComplete: isProfileComplete,
-          location: {
-            upsert: {
-              create: {
-                country,
-                city
-              },
-              update: {
-                country,
-                city
+          ...(hasLocation
+            ? {
+                location: {
+                  upsert: {
+                    where: {
+                      country,
+                      city
+                    },
+                    create: {
+                      country,
+                      city
+                    },
+                    update: {
+                      country,
+                      city
+                    }
+                  }
+                }
               }
-            }
-          },
-          occupation: {
-            upsert: {
-              create: {
-                role,
-                company,
-                yearsOfExperience
-              },
-              update: {
-                role,
-                company,
-                yearsOfExperience
+            : {}),
+          ...(hasOccupation
+            ? {
+                occupation: {
+                  upsert: {
+                    where: {
+                      role,
+                      company,
+                      yearsOfExperience
+                    },
+                    create: {
+                      role,
+                      company,
+                      yearsOfExperience
+                    },
+                    update: {
+                      role,
+                      company,
+                      yearsOfExperience
+                    }
+                  }
+                }
               }
-            }
-          }
+            : {})
         }
       }
     },

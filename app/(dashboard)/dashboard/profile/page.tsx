@@ -44,12 +44,7 @@ export default async function SettingsProfilePage() {
           </div>
         </div>
       </div>
-      <ProfileForm user={user} />
-      {user.profile.userType === 'MENTOR' && (
-        <>
-          <CalendlyConnectionButton />
-        </>
-      )}
+      <ProfileForm user={user} calendlyConnectionButton={<CalendlyConnectionButton />} />
     </div>
   );
 }

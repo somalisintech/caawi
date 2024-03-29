@@ -1,5 +1,6 @@
 'use client';
 
+import { ReactElement, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -11,7 +12,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { locations } from '@/constants/locations';
 import { CalendlyUser, Gender, Location, Occupation, Profile, User } from '@prisma/client';
+import CalendlyLogo from '@/app/calendly-icon.png';
+import Image from 'next/image';
+import { roles } from '@/constants/roles';
+import { companies } from '@/constants/companies';
 
 interface Props {
   user: Partial<
@@ -23,9 +29,10 @@ interface Props {
       };
     }
   >;
+  calendlyConnectionButton: ReactElement;
 }
 
-export function ProfileForm({ user }: Props) {
+export function ProfileForm({ user, calendlyConnectionButton }: Props) {
   const { firstName, lastName, email, profile } = user;
 
   const form = useForm<ProfileFormFields>({
@@ -46,6 +53,12 @@ export function ProfileForm({ user }: Props) {
       yearsOfExperience: profile?.occupation?.yearsOfExperience ?? undefined
     }
   });
+
+  const country = form.watch('country', '');
+
+  useEffect(() => {
+    form.setValue('city', undefined);
+  }, [form, country]);
 
   async function onSubmit(data: ProfileFormFields) {
     const response = await fetch('/api/users', {
@@ -110,7 +123,7 @@ export function ProfileForm({ user }: Props) {
                           <SelectValue placeholder="Select a verified email to display" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="max-h-48 overflow-y-auto">
                         <SelectItem value={Gender.MALE}>Male</SelectItem>
                         <SelectItem value={Gender.FEMALE}>Female</SelectItem>
                       </SelectContent>
@@ -235,9 +248,12 @@ export function ProfileForm({ user }: Props) {
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value={'Engineer'}>Engineer</SelectItem>
-                        <SelectItem value={'Manager'}>Manager</SelectItem>
+                      <SelectContent className="max-h-48 overflow-y-auto">
+                        {roles.map((r) => (
+                          <SelectItem key={r} value={r}>
+                            {r}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -256,9 +272,12 @@ export function ProfileForm({ user }: Props) {
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value={'Google'}>Google</SelectItem>
-                        <SelectItem value={'Netflix'}>Netflix</SelectItem>
+                      <SelectContent className="max-h-48 overflow-y-auto">
+                        {companies.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -297,12 +316,17 @@ export function ProfileForm({ user }: Props) {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue className="line-clamp-1" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value={'United Kingdom'}>United Kingdom</SelectItem>
-                        <SelectItem value={'Somalia'}>Somalia</SelectItem>
+                      <SelectContent className="max-h-48 overflow-y-auto">
+                        {locations
+                          .map((c) => c.name)
+                          .map((n) => (
+                            <SelectItem key={n} value={n} className="line-clamp-1">
+                              {n}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -321,9 +345,12 @@ export function ProfileForm({ user }: Props) {
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value={'London'}>London</SelectItem>
-                        <SelectItem value={'Manchester'}>Manchester</SelectItem>
+                      <SelectContent className="max-h-48 overflow-y-auto">
+                        {(locations.find((l) => l.name === country)?.states || []).map((c) => (
+                          <SelectItem key={c.name} value={c.name} className="line-clamp-1">
+                            {c.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -333,6 +360,22 @@ export function ProfileForm({ user }: Props) {
             </div>
           </CardContent>
         </Card>
+
+        {profile?.userType === 'MENTOR' && (
+          <Card>
+            <CardHeader className="border-b-[1px]">
+              <CardTitle>Integrations</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="relative h-6 w-24">
+                  <Image src={CalendlyLogo} alt="Calendly logo" fill className="object-contain" />
+                </div>
+                {calendlyConnectionButton}
+              </div>
+            </CardContent>
+          </Card>
+        )}
         <Button type="submit">Update profile</Button>
       </form>
     </Form>

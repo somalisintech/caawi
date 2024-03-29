@@ -1,6 +1,6 @@
-import { calendlyEnvSchema } from '@/app/api/calendly/validators';
+import { env } from '@/config/env';
 
-const { CALENDLY_CLIENT_ID, CALENDLY_CLIENT_SECRET } = calendlyEnvSchema.parse(process.env);
+const { CALENDLY_CLIENT_ID, CALENDLY_CLIENT_SECRET } = env;
 
 export const revokeAccessToken = async (token: string) => {
   const encodedParams = new URLSearchParams();

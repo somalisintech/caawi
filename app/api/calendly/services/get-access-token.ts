@@ -1,6 +1,6 @@
-import { calendlyEnvSchema } from '@/app/api/calendly/validators';
+import { env } from '@/config/env';
 
-const { CALENDLY_CLIENT_ID: username, CALENDLY_CLIENT_SECRET: password } = calendlyEnvSchema.parse(process.env);
+const { CALENDLY_CLIENT_ID: username, CALENDLY_CLIENT_SECRET: password } = env;
 
 type Props = {
   grantType: string;

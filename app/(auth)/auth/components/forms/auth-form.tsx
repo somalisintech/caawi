@@ -26,7 +26,7 @@ export function AuthForm() {
     supabase.auth.signInWithOtp({
       email: data.email,
       options: {
-        emailRedirectTo: 'http://localhost:3000/dashboard' // TODO: Remove hardcoded url
+        emailRedirectTo: `${location.origin}/auth/callback`
       }
     });
   };

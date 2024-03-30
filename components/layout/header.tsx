@@ -11,18 +11,24 @@ import {
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { authOptions } from '@/app/api/auth/authOptions';
-import { getServerSession } from 'next-auth';
 import { ChevronDown } from 'lucide-react';
+import { createClient } from '@/utils/supabase/server';
 
 export async function Header() {
-  const session = await getServerSession(authOptions);
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
 
-  if (session) {
-    const { user } = session;
+  // TODO: Need to fetch the user profile here to get their avatar and name
 
-    const avatarImage = user.image ?? '';
-    const avatarFallback = user.name?.[0] ?? '-';
+  if (data.user) {
+    // const { user } = data;
+
+    // const avatarImage = user.image ?? '';
+    // const avatarFallback = user.name?.[0] ?? '-';
+
+    const avatarImage = '';
+    const avatarFallback = '';
+    const name = '';
 
     return (
       <header className="flex items-center justify-between p-5">
@@ -37,7 +43,7 @@ export async function Header() {
                     <AvatarImage src={avatarImage} alt="" />
                     <AvatarFallback className="text-sm">{avatarFallback}</AvatarFallback>
                   </Avatar>
-                  <div>{session.user.name}</div>
+                  <div>{name}</div>
                 </div>
                 <ChevronDown size={16} />
               </Button>

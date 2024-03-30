@@ -1,4 +1,4 @@
-import { env } from '@/config/env';
+import { env } from '@/config/env-server';
 import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
 

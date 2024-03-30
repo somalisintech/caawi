@@ -10,8 +10,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthFormFields, authFormSchema } from './auth-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
+import { createClient } from '@/utils/supabase/client';
 
 export function AuthForm() {
+  const supabase = createClient();
+
   const form = useForm<AuthFormFields>({
     defaultValues: {
       email: ''
@@ -20,14 +23,12 @@ export function AuthForm() {
   });
 
   const onSubmit: SubmitHandler<AuthFormFields> = async (data) => {
-    // TODO: Implement magic link auth
-
-    console.log({ data });
-
-    // signIn('email', {
-    //   redirect: false,
-    //   callbackUrl: '/dashboard'
-    // });
+    supabase.auth.signInWithOtp({
+      email: data.email,
+      options: {
+        emailRedirectTo: 'http://localhost:3000/dashboard' // TODO: Remove hardcoded url
+      }
+    });
   };
 
   return (

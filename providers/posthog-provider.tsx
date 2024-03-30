@@ -1,7 +1,7 @@
 'use client';
 
 import posthog from 'posthog-js';
-import { env } from '@/config/env';
+import { env } from '@/config/env-client';
 import { PropsWithChildren } from 'react';
 import { PostHogProvider } from 'posthog-js/react';
 

@@ -1,18 +1,17 @@
 import prisma from '@/lib/db';
+import { ProfileForm } from './components/forms';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { authOptions } from '@/app/api/auth/authOptions';
-import { Session, getServerSession } from 'next-auth';
-
-import { ProfileForm } from './components/forms';
 import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
+import { createClient } from '@/utils/supabase/server';
 
 export default async function SettingsProfilePage() {
-  const session = (await getServerSession(authOptions)) as Session;
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
 
   const user = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id
+      id: data.user!.id
     },
     select: {
       name: true,

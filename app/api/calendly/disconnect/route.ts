@@ -1,19 +1,19 @@
 import { AxiomRequest, withAxiom } from 'next-axiom';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/authOptions';
 import { NextResponse } from 'next/server';
 import { revokeAccessToken } from '@/app/api/calendly/services';
+import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
 export const GET = withAxiom(async ({ log, nextUrl, cookies }: AxiomRequest) => {
-  const session = await getServerSession(authOptions);
+  const supabase = createClient();
+  const { data: userData } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!userData.user) {
     return NextResponse.redirect('/api/auth/signin');
   }
 
   log.info('Disconnecting Calendly', {
-    userId: session.user.id
+    userId: userData.user.id
   });
 
   const calendly_access_token = cookies.get('calendly_access_token')?.value;
@@ -21,7 +21,7 @@ export const GET = withAxiom(async ({ log, nextUrl, cookies }: AxiomRequest) => 
 
   const user = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id
+      id: userData.user.id
     },
     select: {
       profile: {

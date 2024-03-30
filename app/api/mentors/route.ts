@@ -1,13 +1,13 @@
 import { AxiomRequest, withAxiom } from 'next-axiom';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/authOptions';
 import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
 export const GET = withAxiom(async ({ log }: AxiomRequest) => {
-  const session = await getServerSession(authOptions);
+  const supabase = createClient();
+  const { data: userData } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!userData.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 

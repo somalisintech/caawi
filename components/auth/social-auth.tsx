@@ -1,11 +1,33 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 import { FaGithub, FaGoogle, FaLinkedin } from 'react-icons/fa6';
 
-const socialLogins = [
+type Provider =
+  | 'apple'
+  | 'azure'
+  | 'bitbucket'
+  | 'discord'
+  | 'facebook'
+  | 'figma'
+  | 'github'
+  | 'gitlab'
+  | 'google'
+  | 'kakao'
+  | 'keycloak'
+  | 'linkedin'
+  | 'linkedin_oidc'
+  | 'notion'
+  | 'slack'
+  | 'spotify'
+  | 'twitch'
+  | 'twitter'
+  | 'workos'
+  | 'zoom'
+  | 'fly';
+
+const socialAuth = [
   {
     title: 'Continue with Google',
     icon: FaGoogle,
@@ -24,27 +46,29 @@ const socialLogins = [
 ];
 
 export function SocialAuth() {
-  const params = useSearchParams();
+  const supabase = createClient();
 
   return (
     <div className="grid grid-cols-1 gap-3">
-      {socialLogins.map((login) => (
+      {socialAuth.map((auth) => (
         <Button
-          key={login.provider}
+          key={auth.provider}
           className="relative gap-2 text-muted-foreground"
           variant="outline"
-          title={login.title}
-          onClick={() =>
-            signIn(login.provider, {
-              redirect: false,
-              callbackUrl: params.get('callbackUrl') || '/dashboard'
-            })
-          }
+          title={auth.title}
+          onClick={async () => {
+            await supabase.auth.signInWithOAuth({
+              provider: auth.provider as Provider,
+              options: {
+                redirectTo: `${location.origin}/auth/callback`
+              }
+            });
+          }}
         >
           <div className="absolute left-4">
-            <login.icon size={18} />
+            <auth.icon size={18} />
           </div>
-          <div>{login.title}</div>
+          <div>{auth.title}</div>
         </Button>
       ))}
     </div>

@@ -41,7 +41,7 @@ const socialAuth = [
   {
     title: 'Continue with LinkedIn',
     icon: FaLinkedin,
-    provider: 'linkedin'
+    provider: 'linkedin_oidc'
   }
 ];
 

@@ -1,14 +1,13 @@
 'use client';
 
 import posthog from 'posthog-js';
-import { env } from '@/config/env-client';
 import { PropsWithChildren } from 'react';
 import { PostHogProvider } from 'posthog-js/react';
 
-const { NEXT_PUBLIC_POSTHOG_HOST, NEXT_PUBLIC_POSTHOG_KEY } = env;
+const { NEXT_PUBLIC_POSTHOG_HOST, NEXT_PUBLIC_POSTHOG_KEY } = process.env;
 
 if (typeof window !== 'undefined') {
-  posthog.init(NEXT_PUBLIC_POSTHOG_KEY, {
+  posthog.init(NEXT_PUBLIC_POSTHOG_KEY!, {
     api_host: NEXT_PUBLIC_POSTHOG_HOST
   });
 }

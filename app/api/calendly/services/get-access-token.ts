@@ -1,6 +1,4 @@
-import { env } from '@/config/env-server';
-
-const { CALENDLY_CLIENT_ID: username, CALENDLY_CLIENT_SECRET: password } = env;
+const { CALENDLY_CLIENT_ID: username, CALENDLY_CLIENT_SECRET: password } = process.env;
 
 type Props = {
   grantType: string;

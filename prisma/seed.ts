@@ -10,11 +10,10 @@ async function main() {
 
   console.log('Start seeding 🌱');
 
-  const promises = Array.from({ length: 100 }, () => {
+  const promises = Array.from({ length: 10 }, () => {
     const gender = faker.person.sex();
     const firstName = faker.person.firstName(gender as Sex);
     const lastName = faker.person.lastName(gender as Sex);
-    const name = faker.person.fullName({ firstName, lastName });
     const email = faker.internet.email({
       firstName,
       lastName
@@ -22,7 +21,6 @@ async function main() {
 
     return prisma.user.create({
       data: {
-        name,
         firstName,
         lastName,
         email,

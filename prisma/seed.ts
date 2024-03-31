@@ -21,7 +21,6 @@ async function main() {
     const gender = faker.person.sex();
     const firstName = faker.person.firstName(gender as Sex);
     const lastName = faker.person.lastName(gender as Sex);
-    const name = faker.person.fullName({ firstName, lastName });
     const email = faker.internet.email({ firstName, lastName });
 
     const city = faker.location.city();
@@ -33,7 +32,6 @@ async function main() {
 
     return prisma.user.create({
       data: {
-        name,
         firstName,
         lastName,
         email,

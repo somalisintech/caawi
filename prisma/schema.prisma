@@ -18,7 +18,7 @@ model VerificationToken {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
+  id                 String  @id @default(dbgenerated("gen_random_uuid()"))
   userId             String
   type               String
   provider           String
@@ -38,7 +38,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -46,7 +46,7 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
+  id             String    @id @default(dbgenerated("gen_random_uuid()"))
   name           String?
   firstName      String?
   lastName       String?
@@ -63,7 +63,7 @@ model User {
 }
 
 model Profile {
-  id              String        @id @default(cuid())
+  id              String        @id @default(dbgenerated("gen_random_uuid()"))
   userType        UserType?
   bio             String?
   locationId      Int?

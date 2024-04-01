@@ -47,7 +47,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
 
   const user = await prisma.user.findUniqueOrThrow({
     where: {
-      id: 'clu5vxzug0000icj9h68jyvwb' // TODO: Supabase user ids don't work here, this is hardcoded from next-auth user
+      id: data.user.id
     },
     select: {
       name: true,

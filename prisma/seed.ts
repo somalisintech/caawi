@@ -8,6 +8,13 @@ async function main() {
     throw new Error('Seeding is only allowed in development environment');
   }
 
+  console.log('Clearing database... 🧹');
+
+  await prisma.user.deleteMany();
+  await prisma.profile.deleteMany();
+  await prisma.location.deleteMany();
+  await prisma.occupation.deleteMany();
+
   console.log('Start seeding 🌱');
 
   const promises = Array.from({ length: 100 }, async () => {
@@ -39,7 +46,7 @@ async function main() {
             location: {
               connectOrCreate: {
                 where: {
-                  city_country: { city, country }
+                  city_country: { city: city, country: country }
                 },
                 create: {
                   city,
@@ -50,7 +57,7 @@ async function main() {
             occupation: {
               connectOrCreate: {
                 where: {
-                  role_company_yearsOfExperience: { role, company, yearsOfExperience }
+                  role_company_yearsOfExperience: { role: role, yearsOfExperience: yearsOfExperience, company: company }
                 },
                 create: { role: role, yearsOfExperience: yearsOfExperience, company: company }
               }

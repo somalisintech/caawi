@@ -11,6 +11,14 @@ DROP INDEX "Location_country_key";
 -- DropIndex
 DROP INDEX "Occupation_company_key";
 
+-- AlterTable
+ALTER TABLE "Location" ALTER COLUMN "city" DROP NOT NULL,
+ALTER COLUMN "country" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Occupation" ALTER COLUMN "role" DROP NOT NULL,
+ALTER COLUMN "company" DROP NOT NULL;
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Location_city_country_key" ON "Location"("city", "country");
 

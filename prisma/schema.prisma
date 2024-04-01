@@ -81,8 +81,8 @@ model Profile {
 
 model Location {
   id      Int       @id @default(autoincrement())
-  city    String
-  country String
+  city    String?
+  country String?
   profile Profile[]
 
   @@unique([city, country])
@@ -90,9 +90,9 @@ model Location {
 
 model Occupation {
   id                Int       @id @default(autoincrement())
-  role              String
+  role              String?
   yearsOfExperience Int?
-  company           String
+  company           String?
   profile           Profile[]
 
   @@unique([role, company, yearsOfExperience])

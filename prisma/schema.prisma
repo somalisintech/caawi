@@ -82,16 +82,20 @@ model Profile {
 model Location {
   id      Int       @id @default(autoincrement())
   city    String
-  country String    @unique
+  country String
   profile Profile[]
+
+  @@unique([city, country])
 }
 
 model Occupation {
   id                Int       @id @default(autoincrement())
   role              String
   yearsOfExperience Int?
-  company           String    @unique
+  company           String
   profile           Profile[]
+
+  @@unique([role, company, yearsOfExperience])
 }
 
 model CalendlyUser {

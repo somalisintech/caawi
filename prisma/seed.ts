@@ -38,13 +38,20 @@ async function main() {
             gender: gender.toUpperCase() as Gender,
             location: {
               connectOrCreate: {
-                where: { country: country },
-                create: { city: city, country: country }
+                where: {
+                  city_country: { city, country }
+                },
+                create: {
+                  city,
+                  country
+                }
               }
             },
             occupation: {
               connectOrCreate: {
-                where: { company: company },
+                where: {
+                  role_company_yearsOfExperience: { role, company, yearsOfExperience }
+                },
                 create: { role: role, yearsOfExperience: yearsOfExperience, company: company }
               }
             }

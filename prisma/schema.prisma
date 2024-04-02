@@ -1,19 +1,12 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["views", "multiSchema"]
+  previewFeatures = ["views"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["public", "auth"]
-}
-
-model users {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-
-  @@schema("auth")
 }
 
 model VerificationToken {
@@ -22,7 +15,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-  @@schema("public")
 }
 
 model Account {
@@ -43,7 +35,6 @@ model Account {
   user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@schema("public")
 }
 
 model Session {
@@ -52,8 +43,6 @@ model Session {
   userId       String   @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
 }
 
 model User {
@@ -71,8 +60,6 @@ model User {
   accounts       Account[]
   sessions       Session[]
   profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
 }
 
 model Profile {
@@ -90,8 +77,6 @@ model Profile {
   location        Location?     @relation(fields: [locationId], references: [id])
   occupation      Occupation?   @relation(fields: [occupationId], references: [id])
   user            User?
-
-  @@schema("public")
 }
 
 model Location {
@@ -101,7 +86,6 @@ model Location {
   profile Profile[]
 
   @@unique([city, country])
-  @@schema("public")
 }
 
 model Occupation {
@@ -112,7 +96,6 @@ model Occupation {
   profile           Profile[]
 
   @@unique([role, company, yearsOfExperience])
-  @@schema("public")
 }
 
 model CalendlyUser {
@@ -128,8 +111,6 @@ model CalendlyUser {
   current_organization String?
   resource_type        String?
   profile              Profile?
-
-  @@schema("public")
 }
 
 view MentorProfile {
@@ -147,20 +128,14 @@ view MentorProfile {
   role                  String?
   yearsOfExperience     Int?
   company               String?
-
-  @@schema("public")
 }
 
 enum UserType {
   MENTOR
   MENTEE
-
-  @@schema("public")
 }
 
 enum Gender {
   MALE
   FEMALE
-
-  @@schema("public")
 }

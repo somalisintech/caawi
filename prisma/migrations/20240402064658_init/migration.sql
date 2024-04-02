@@ -1,11 +1,3 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "auth";
-
--- This is still overriding "auth"."users"
-CREATE TABLE IF NOT EXISTS "auth"."users" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid()
-);
-
 -- CreateEnum
 CREATE TYPE "public"."UserType" AS ENUM ('MENTOR', 'MENTEE');
 

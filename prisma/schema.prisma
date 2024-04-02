@@ -81,17 +81,21 @@ model Profile {
 
 model Location {
   id      Int       @id @default(autoincrement())
-  city    String
-  country String
+  city    String?
+  country String?
   profile Profile[]
+
+  @@unique([city, country])
 }
 
 model Occupation {
   id                Int       @id @default(autoincrement())
-  role              String
+  role              String?
   yearsOfExperience Int?
   company           String?
   profile           Profile[]
+
+  @@unique([role, company, yearsOfExperience])
 }
 
 model CalendlyUser {
@@ -99,7 +103,7 @@ model CalendlyUser {
   name                 String?
   slug                 String?
   email                String?
-  scheduling_url       String?
+  scheduling_url       String?   @unique
   timezone             String?
   avatar_url           String?
   created_at           DateTime?

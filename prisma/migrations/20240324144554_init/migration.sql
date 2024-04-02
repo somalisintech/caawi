@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "UserType" AS ENUM ('MENTOR', 'MENTEE');
 
+-- CreateEnum
+CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE');
+
 -- CreateTable
 CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
@@ -58,11 +61,15 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Profile" (
     "id" TEXT NOT NULL,
-    "userType" "UserType" NOT NULL DEFAULT 'MENTEE',
+    "userType" "UserType",
     "bio" TEXT,
     "locationId" INTEGER,
     "occupationId" INTEGER,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "gender" "Gender",
+    "sameGenderPref" BOOLEAN,
+    "isComplete" BOOLEAN NOT NULL DEFAULT false,
+    "calendlyUserUri" TEXT,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
 );
@@ -81,17 +88,26 @@ CREATE TABLE "Occupation" (
     "id" SERIAL NOT NULL,
     "role" TEXT NOT NULL,
     "yearsOfExperience" INTEGER,
-    "companyId" INTEGER,
+    "company" TEXT NOT NULL,
 
     CONSTRAINT "Occupation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Company" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+CREATE TABLE "CalendlyUser" (
+    "uri" TEXT NOT NULL,
+    "name" TEXT,
+    "slug" TEXT,
+    "email" TEXT,
+    "scheduling_url" TEXT,
+    "timezone" TEXT,
+    "avatar_url" TEXT,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
+    "current_organization" TEXT,
+    "resource_type" TEXT,
 
-    CONSTRAINT "Company_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "CalendlyUser_pkey" PRIMARY KEY ("uri")
 );
 
 -- CreateIndex
@@ -112,6 +128,18 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_profileId_key" ON "User"("profileId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Profile_calendlyUserUri_key" ON "Profile"("calendlyUserUri");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Location_country_key" ON "Location"("country");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Occupation_company_key" ON "Occupation"("company");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CalendlyUser_scheduling_url_key" ON "CalendlyUser"("scheduling_url");
+
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -122,10 +150,10 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "User" ADD CONSTRAINT "User_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_calendlyUserUri_fkey" FOREIGN KEY ("calendlyUserUri") REFERENCES "CalendlyUser"("uri") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_occupationId_fkey" FOREIGN KEY ("occupationId") REFERENCES "Occupation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Occupation" ADD CONSTRAINT "Occupation_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;

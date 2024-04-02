@@ -1,6 +1,6 @@
-import { $Enums, PrismaClient, UserType } from '@prisma/client';
+import { PrismaClient, UserType, Gender } from '@prisma/client';
 import { faker, Sex } from '@faker-js/faker';
-import Gender = $Enums.Gender;
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -8,17 +8,28 @@ async function main() {
     throw new Error('Seeding is only allowed in development environment');
   }
 
+  console.log('Clearing database... 🧹');
+
+  await prisma.user.deleteMany();
+  await prisma.profile.deleteMany();
+  await prisma.location.deleteMany();
+  await prisma.occupation.deleteMany();
+
   console.log('Start seeding 🌱');
 
-  const promises = Array.from({ length: 100 }, () => {
+  const promises = Array.from({ length: 100 }, async () => {
     const gender = faker.person.sex();
     const firstName = faker.person.firstName(gender as Sex);
     const lastName = faker.person.lastName(gender as Sex);
     const name = faker.person.fullName({ firstName, lastName });
-    const email = faker.internet.email({
-      firstName,
-      lastName
-    });
+    const email = faker.internet.email({ firstName, lastName });
+
+    const city = faker.location.city();
+    const country = faker.location.country();
+
+    const role = faker.person.jobTitle();
+    const yearsOfExperience = faker.number.int({ min: 1, max: 30 });
+    const company = faker.company.name();
 
     return prisma.user.create({
       data: {
@@ -33,16 +44,22 @@ async function main() {
             bio: faker.person.bio(),
             gender: gender.toUpperCase() as Gender,
             location: {
-              create: {
-                city: faker.location.city(),
-                country: faker.location.country()
+              connectOrCreate: {
+                where: {
+                  city_country: { city: city, country: country }
+                },
+                create: {
+                  city,
+                  country
+                }
               }
             },
             occupation: {
-              create: {
-                role: faker.person.jobTitle(),
-                yearsOfExperience: faker.number.int({ min: 1, max: 30 }),
-                company: faker.company.name()
+              connectOrCreate: {
+                where: {
+                  role_company_yearsOfExperience: { role: role, yearsOfExperience: yearsOfExperience, company: company }
+                },
+                create: { role: role, yearsOfExperience: yearsOfExperience, company: company }
               }
             }
           }

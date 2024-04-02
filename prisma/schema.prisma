@@ -17,7 +17,7 @@ model User {
   image          String?
   profileId      String    @unique @db.Uuid
   createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  updatedAt      DateTime  @default(now())
   profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
@@ -27,7 +27,7 @@ model Profile {
   bio             String?
   locationId      Int?
   occupationId    Int?
-  updatedAt       DateTime      @updatedAt
+  updatedAt       DateTime      @default(now())
   gender          Gender?
   sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
@@ -65,8 +65,8 @@ model CalendlyUser {
   scheduling_url       String?   @unique
   timezone             String?
   avatar_url           String?
-  created_at           DateTime?
-  updated_at           DateTime?
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @default(now())
   current_organization String?
   resource_type        String?
   profile              Profile?

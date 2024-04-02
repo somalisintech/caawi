@@ -11,7 +11,7 @@ export default async function SettingsProfilePage() {
 
   const user = await prisma.user.findUniqueOrThrow({
     where: {
-      id: data.user!.id
+      id: data.user?.id
     },
     select: {
       firstName: true,

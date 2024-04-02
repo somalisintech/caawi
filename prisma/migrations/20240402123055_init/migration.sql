@@ -37,8 +37,8 @@ CREATE TABLE "Profile" (
 -- CreateTable
 CREATE TABLE "Location" (
     "id" SERIAL NOT NULL,
-    "city" TEXT NOT NULL,
-    "country" TEXT NOT NULL,
+    "city" TEXT,
+    "country" TEXT,
 
     CONSTRAINT "Location_pkey" PRIMARY KEY ("id")
 );
@@ -46,7 +46,7 @@ CREATE TABLE "Location" (
 -- CreateTable
 CREATE TABLE "Occupation" (
     "id" SERIAL NOT NULL,
-    "role" TEXT NOT NULL,
+    "role" TEXT,
     "yearsOfExperience" INTEGER,
     "company" TEXT,
 
@@ -78,6 +78,15 @@ CREATE UNIQUE INDEX "User_profileId_key" ON "User"("profileId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Profile_calendlyUserUri_key" ON "Profile"("calendlyUserUri");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Location_city_country_key" ON "Location"("city", "country");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Occupation_role_company_yearsOfExperience_key" ON "Occupation"("role", "company", "yearsOfExperience");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CalendlyUser_scheduling_url_key" ON "CalendlyUser"("scheduling_url");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;

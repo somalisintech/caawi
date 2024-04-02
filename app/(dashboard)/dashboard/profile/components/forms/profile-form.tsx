@@ -46,9 +46,9 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       linkedinUrl: '',
       githubUrl: '',
       sameGenderPref: profile?.sameGenderPref ?? undefined,
-      country: profile?.location?.country,
-      city: profile?.location?.city,
-      role: profile?.occupation?.role,
+      country: profile?.location?.country ?? undefined,
+      city: profile?.location?.city ?? undefined,
+      role: profile?.occupation?.role ?? undefined,
       company: profile?.occupation?.company ?? undefined,
       yearsOfExperience: profile?.occupation?.yearsOfExperience ?? undefined
     }

@@ -1,12 +1,19 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["views"]
+  previewFeatures = ["views", "multiSchema"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  schemas   = ["public", "auth"]
+}
+
+model users {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@schema("auth")
 }
 
 model VerificationToken {
@@ -15,11 +22,12 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@schema("public")
 }
 
 model Account {
-  id                 String  @id @default(dbgenerated("gen_random_uuid()"))
-  userId             String
+  id                 String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String  @db.Uuid
   type               String
   provider           String
   providerAccountId  String
@@ -35,18 +43,21 @@ model Account {
   user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@schema("public")
 }
 
 model Session {
-  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
 }
 
 model User {
-  id             String    @id @default(dbgenerated("gen_random_uuid()"))
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name           String?
   firstName      String?
   lastName       String?
@@ -54,16 +65,18 @@ model User {
   emailVerified  DateTime?
   image          String?
   hashedPassword String?
-  profileId      String    @unique
+  profileId      String    @unique @db.Uuid
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   accounts       Account[]
   sessions       Session[]
   profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
 }
 
 model Profile {
-  id              String        @id @default(dbgenerated("gen_random_uuid()"))
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userType        UserType?
   bio             String?
   locationId      Int?
@@ -77,6 +90,8 @@ model Profile {
   location        Location?     @relation(fields: [locationId], references: [id])
   occupation      Occupation?   @relation(fields: [occupationId], references: [id])
   user            User?
+
+  @@schema("public")
 }
 
 model Location {
@@ -86,6 +101,7 @@ model Location {
   profile Profile[]
 
   @@unique([city, country])
+  @@schema("public")
 }
 
 model Occupation {
@@ -96,6 +112,7 @@ model Occupation {
   profile           Profile[]
 
   @@unique([role, company, yearsOfExperience])
+  @@schema("public")
 }
 
 model CalendlyUser {
@@ -111,6 +128,8 @@ model CalendlyUser {
   current_organization String?
   resource_type        String?
   profile              Profile?
+
+  @@schema("public")
 }
 
 view MentorProfile {
@@ -128,14 +147,20 @@ view MentorProfile {
   role                  String?
   yearsOfExperience     Int?
   company               String?
+
+  @@schema("public")
 }
 
 enum UserType {
   MENTOR
   MENTEE
+
+  @@schema("public")
 }
 
 enum Gender {
   MALE
   FEMALE
+
+  @@schema("public")
 }

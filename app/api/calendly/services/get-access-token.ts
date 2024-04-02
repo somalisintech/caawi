@@ -1,7 +1,3 @@
-import { calendlyEnvSchema } from '@/app/api/calendly/validators';
-
-const { CALENDLY_CLIENT_ID: username, CALENDLY_CLIENT_SECRET: password } = calendlyEnvSchema.parse(process.env);
-
 type Props = {
   grantType: string;
   code: string;
@@ -19,7 +15,7 @@ export const getAccessToken = async ({ grantType, code, redirectUri }: Props) =>
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + btoa(username + ':' + password)
+      Authorization: 'Basic ' + btoa(process.env.CALENDLY_CLIENT_ID + ':' + process.env.CALENDLY_CLIENT_SECRET)
     },
     body: encodedParams
   });

@@ -1,19 +1,19 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/authOptions';
 import { Button } from '@/components/ui/button';
-import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
+import prisma from '@/lib/db';
 
 export async function CalendlyConnectionButton() {
-  const session = await getServerSession(authOptions);
+  const supabase = createClient();
+  const { data: userData } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!userData.user) {
     return null;
   }
 
   const { profile } = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id
+      id: userData.user.id
     },
     select: {
       profile: {

@@ -11,18 +11,31 @@ import {
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { authOptions } from '@/app/api/auth/authOptions';
-import { getServerSession } from 'next-auth';
 import { ChevronDown } from 'lucide-react';
+import { createClient } from '@/utils/supabase/server';
+import prisma from '@/lib/db';
 
 export async function Header() {
-  const session = await getServerSession(authOptions);
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
 
-  if (session) {
-    const { user } = session;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: data.user?.id
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      image: true
+    }
+  });
 
+  if (user) {
     const avatarImage = user.image ?? '';
-    const avatarFallback = user.name?.[0] ?? '-';
+    const avatarFallback = user.firstName?.[0] ?? '-';
+
+    const name = [user.firstName, user.lastName].join(' ');
 
     return (
       <header className="flex items-center justify-between p-5">
@@ -37,7 +50,7 @@ export async function Header() {
                     <AvatarImage src={avatarImage} alt="" />
                     <AvatarFallback className="text-sm">{avatarFallback}</AvatarFallback>
                   </Avatar>
-                  <div>{session.user.name}</div>
+                  <div>{name}</div>
                 </div>
                 <ChevronDown size={16} />
               </Button>

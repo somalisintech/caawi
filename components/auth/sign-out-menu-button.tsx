@@ -1,16 +1,20 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
-export const SignOutMenuButton = () => (
-  <div
-    role="button"
-    onClick={() =>
-      signOut({
-        callbackUrl: '/'
-      })
-    }
-  >
-    Sign out
-  </div>
-);
+export const SignOutMenuButton = () => {
+  const router = useRouter();
+  const supabase = createClient();
+  return (
+    <div
+      role="button"
+      onClick={() => {
+        supabase.auth.signOut();
+        router.refresh();
+      }}
+    >
+      Sign out
+    </div>
+  );
+};

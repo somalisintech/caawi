@@ -5,8 +5,8 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarNav } from '@/components/layout/sidebar-nav';
 import { Header } from '@/components/layout/header';
 import { CompleteProfile } from '@/components/profile/complete-profile';
-import { Session, getServerSession } from 'next-auth';
-import { authOptions } from '../../api/auth/authOptions';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 import prisma from '@/lib/db';
 
 export const metadata: Metadata = {
@@ -38,14 +38,18 @@ const sidebarNavItems = [
 ];
 
 export default async function DashboardLayout({ children }: PropsWithChildren) {
-  const session = (await getServerSession(authOptions)) as Session;
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (!data.user) {
+    throw redirect('/auth');
+  }
 
   const user = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id
+      id: data.user.id
     },
     select: {
-      name: true,
       firstName: true,
       lastName: true,
       email: true,

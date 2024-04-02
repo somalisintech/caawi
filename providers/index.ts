@@ -1,2 +1,2 @@
-export * from './auth-provider';
+export * from './posthog-provider';
 export * from './theme-provider';

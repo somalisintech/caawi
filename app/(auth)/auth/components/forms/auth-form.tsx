@@ -26,7 +26,7 @@ export function AuthForm() {
     supabase.auth.signInWithOtp({
       email: data.email,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`
+        emailRedirectTo: `${location.origin}/api/auth/callback`
       }
     });
   };

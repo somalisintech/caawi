@@ -60,7 +60,7 @@ export function SocialAuth() {
             await supabase.auth.signInWithOAuth({
               provider: auth.provider as Provider,
               options: {
-                redirectTo: `${location.origin}/auth/callback`
+                redirectTo: `${location.origin}/api/auth/callback`
               }
             });
           }}

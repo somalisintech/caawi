@@ -9,66 +9,25 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  oauth_token        String?
-  oauth_token_secret String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
-  id             String    @id @default(cuid())
-  name           String?
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName      String?
   lastName       String?
   email          String?   @unique
-  emailVerified  DateTime?
   image          String?
-  hashedPassword String?
-  profileId      String    @unique
+  profileId      String    @unique @db.Uuid
   createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  accounts       Account[]
-  sessions       Session[]
+  updatedAt      DateTime  @default(now())
   profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Profile {
-  id              String        @id @default(cuid())
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userType        UserType?
   bio             String?
   locationId      Int?
   occupationId    Int?
-  updatedAt       DateTime      @updatedAt
+  updatedAt       DateTime      @default(now())
   gender          Gender?
   sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
@@ -106,8 +65,8 @@ model CalendlyUser {
   scheduling_url       String?   @unique
   timezone             String?
   avatar_url           String?
-  created_at           DateTime?
-  updated_at           DateTime?
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @default(now())
   current_organization String?
   resource_type        String?
   profile              Profile?

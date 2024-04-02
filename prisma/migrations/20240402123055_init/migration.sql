@@ -5,67 +5,27 @@ CREATE TYPE "UserType" AS ENUM ('MENTOR', 'MENTEE');
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE');
 
 -- CreateTable
-CREATE TABLE "VerificationToken" (
-    "identifier" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Account" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "provider" TEXT NOT NULL,
-    "providerAccountId" TEXT NOT NULL,
-    "refresh_token" TEXT,
-    "access_token" TEXT,
-    "oauth_token" TEXT,
-    "oauth_token_secret" TEXT,
-    "expires_at" INTEGER,
-    "token_type" TEXT,
-    "scope" TEXT,
-    "id_token" TEXT,
-    "session_state" TEXT,
-
-    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Session" (
-    "id" TEXT NOT NULL,
-    "sessionToken" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "name" TEXT,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "firstName" TEXT,
     "lastName" TEXT,
     "email" TEXT,
-    "emailVerified" TIMESTAMP(3),
     "image" TEXT,
-    "hashedPassword" TEXT,
-    "profileId" TEXT NOT NULL,
+    "profileId" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Profile" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "userType" "UserType",
     "bio" TEXT,
     "locationId" INTEGER,
     "occupationId" INTEGER,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "gender" "Gender",
     "sameGenderPref" BOOLEAN,
     "isComplete" BOOLEAN NOT NULL DEFAULT false,
@@ -77,8 +37,8 @@ CREATE TABLE "Profile" (
 -- CreateTable
 CREATE TABLE "Location" (
     "id" SERIAL NOT NULL,
-    "city" TEXT NOT NULL,
-    "country" TEXT NOT NULL,
+    "city" TEXT,
+    "country" TEXT,
 
     CONSTRAINT "Location_pkey" PRIMARY KEY ("id")
 );
@@ -86,9 +46,9 @@ CREATE TABLE "Location" (
 -- CreateTable
 CREATE TABLE "Occupation" (
     "id" SERIAL NOT NULL,
-    "role" TEXT NOT NULL,
+    "role" TEXT,
     "yearsOfExperience" INTEGER,
-    "company" TEXT NOT NULL,
+    "company" TEXT,
 
     CONSTRAINT "Occupation_pkey" PRIMARY KEY ("id")
 );
@@ -102,25 +62,13 @@ CREATE TABLE "CalendlyUser" (
     "scheduling_url" TEXT,
     "timezone" TEXT,
     "avatar_url" TEXT,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "current_organization" TEXT,
     "resource_type" TEXT,
 
     CONSTRAINT "CalendlyUser_pkey" PRIMARY KEY ("uri")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
@@ -132,19 +80,13 @@ CREATE UNIQUE INDEX "User_profileId_key" ON "User"("profileId");
 CREATE UNIQUE INDEX "Profile_calendlyUserUri_key" ON "Profile"("calendlyUserUri");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Location_country_key" ON "Location"("country");
+CREATE UNIQUE INDEX "Location_city_country_key" ON "Location"("city", "country");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Occupation_company_key" ON "Occupation"("company");
+CREATE UNIQUE INDEX "Occupation_role_company_yearsOfExperience_key" ON "Occupation"("role", "company", "yearsOfExperience");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CalendlyUser_scheduling_url_key" ON "CalendlyUser"("scheduling_url");
-
--- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;

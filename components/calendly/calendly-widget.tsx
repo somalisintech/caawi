@@ -1,19 +1,21 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
+import { User } from '@prisma/client';
 import { PopupButton } from 'react-calendly';
 
 type CalendlyWidgetProps = {
   scheduling_url: string | null;
+  user: Partial<User> | null;
 };
 
-export function CalendlyWidget({ scheduling_url }: CalendlyWidgetProps) {
-  const { data: session } = useSession();
-
-  if (!session || !scheduling_url) {
+export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
+  if (!scheduling_url || !user) {
     return null;
   }
+
+  const name = [user.firstName, user.lastName].join(' ');
+  const email = user.email || '';
 
   return (
     <Button asChild>
@@ -22,8 +24,8 @@ export function CalendlyWidget({ scheduling_url }: CalendlyWidgetProps) {
         text="Book a meeting"
         rootElement={document.body}
         prefill={{
-          name: session.user.name!,
-          email: session.user.email!
+          name,
+          email
         }}
       />
     </Button>

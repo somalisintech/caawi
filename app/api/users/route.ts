@@ -1,13 +1,13 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/authOptions';
 import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
 export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
-  const session = await getServerSession(authOptions);
+  const supabase = createClient();
+  const { data: userData } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!userData.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
@@ -17,12 +17,11 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
 
   const user = await prisma.user.update({
     where: {
-      id: session.user.id
+      id: userData.user.id
     },
     data: {
       firstName,
       lastName,
-      name: `${firstName} ${lastName}`,
       profile: {
         update: {
           bio,
@@ -41,7 +40,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
   });
 
   log.debug('User profile updated', {
-    userId: session.user.id
+    userId: userData.user.id
   });
 
   return NextResponse.json(user);

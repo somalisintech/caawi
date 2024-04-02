@@ -14,7 +14,6 @@ export default async function SettingsProfilePage() {
       id: data.user!.id
     },
     select: {
-      name: true,
       firstName: true,
       lastName: true,
       email: true,

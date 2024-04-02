@@ -50,7 +50,6 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
       id: data.user.id
     },
     select: {
-      name: true,
       firstName: true,
       lastName: true,
       email: true,

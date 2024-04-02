@@ -1,31 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Provider } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/client';
 import { FaGithub, FaGoogle, FaLinkedin } from 'react-icons/fa6';
-
-type Provider =
-  | 'apple'
-  | 'azure'
-  | 'bitbucket'
-  | 'discord'
-  | 'facebook'
-  | 'figma'
-  | 'github'
-  | 'gitlab'
-  | 'google'
-  | 'kakao'
-  | 'keycloak'
-  | 'linkedin'
-  | 'linkedin_oidc'
-  | 'notion'
-  | 'slack'
-  | 'spotify'
-  | 'twitch'
-  | 'twitter'
-  | 'workos'
-  | 'zoom'
-  | 'fly';
 
 const socialAuth = [
   {

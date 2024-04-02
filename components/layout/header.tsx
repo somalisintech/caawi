@@ -19,17 +19,19 @@ export async function Header() {
   const supabase = createClient();
   const { data } = await supabase.auth.getUser();
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: data.user?.id
-    },
-    select: {
-      firstName: true,
-      lastName: true,
-      email: true,
-      image: true
-    }
-  });
+  const user = data.user
+    ? await prisma.user.findUnique({
+        where: {
+          id: data.user?.id
+        },
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          image: true
+        }
+      })
+    : null;
 
   if (user) {
     const avatarImage = user.image ?? '';

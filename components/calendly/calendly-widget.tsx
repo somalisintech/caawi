@@ -1,20 +1,21 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { User } from '@prisma/client';
 import { PopupButton } from 'react-calendly';
-import { type User } from '@supabase/supabase-js';
-
-// TODO: We might need to pass profile here in order to access the users name
 
 type CalendlyWidgetProps = {
   scheduling_url: string | null;
-  user: User | null;
+  user: Partial<User> | null;
 };
 
 export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
   if (!scheduling_url || !user) {
     return null;
   }
+
+  const name = [user.firstName, user.lastName].join(' ');
+  const email = user.email || '';
 
   return (
     <Button asChild>
@@ -23,8 +24,8 @@ export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
         text="Book a meeting"
         rootElement={document.body}
         prefill={{
-          // name: user.name!,
-          email: user.email!
+          name,
+          email
         }}
       />
     </Button>

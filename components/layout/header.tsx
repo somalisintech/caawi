@@ -13,22 +13,29 @@ import {
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { ChevronDown } from 'lucide-react';
 import { createClient } from '@/utils/supabase/server';
+import prisma from '@/lib/db';
 
 export async function Header() {
   const supabase = createClient();
   const { data } = await supabase.auth.getUser();
 
-  // TODO: Need to fetch the user profile here to get their avatar and name
+  const user = await prisma.user.findUnique({
+    where: {
+      id: data.user?.id
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      image: true
+    }
+  });
 
-  if (data.user) {
-    // const { user } = data;
+  if (user) {
+    const avatarImage = user.image ?? '';
+    const avatarFallback = user.firstName?.[0] ?? '-';
 
-    // const avatarImage = user.image ?? '';
-    // const avatarFallback = user.name?.[0] ?? '-';
-
-    const avatarImage = '';
-    const avatarFallback = '';
-    const name = '';
+    const name = [user.firstName, user.lastName].join(' ');
 
     return (
       <header className="flex items-center justify-between p-5">

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 import { createClient } from '@/utils/supabase/server';
+import prisma from '@/lib/db';
 
 type Props = {
   mentor: MentorProfileType;
@@ -11,9 +12,19 @@ type Props = {
 
 export async function MentorProfile({ mentor }: Props) {
   const supabase = createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  const { data: userData } = await supabase.auth.getUser();
+
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userData.user?.id
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      image: true
+    }
+  });
 
   return (
     <Card className="flex flex-col">

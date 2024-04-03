@@ -12,25 +12,16 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { CalendlyUser, Gender, Location, Occupation, Profile, User } from '@prisma/client';
+import { Gender } from '@prisma/client';
 import { roles } from '@/constants/roles';
 import { companies } from '@/constants/companies';
 import { locations } from '@/constants/locations';
+import { UserWithProfile } from '@/types/user';
 import Image from 'next/image';
 
 interface Props {
   calendlyConnectionButton: ReactElement;
-  user: Partial<
-    User & {
-      profile:
-        | (Profile & {
-            location: Location | null;
-            occupation: Occupation | null;
-            calendlyUser: CalendlyUser | null;
-          })
-        | null;
-    }
-  >;
+  user: UserWithProfile;
 }
 
 export function ProfileForm({ user, calendlyConnectionButton }: Props) {

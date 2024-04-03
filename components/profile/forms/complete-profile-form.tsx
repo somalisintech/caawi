@@ -8,11 +8,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { CompleteProfileFormFields, completeProfileFormSchema } from './complete-profile-schema-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Gender, Profile, User, UserType } from '@prisma/client';
+import { Gender, UserType } from '@prisma/client';
 import { useForm } from 'react-hook-form';
+import { UserWithProfile } from '@/types/user';
 
 interface Props {
-  user: Partial<User & { profile: Partial<Profile> | null }>;
+  user: UserWithProfile;
   onComplete: CallableFunction;
 }
 

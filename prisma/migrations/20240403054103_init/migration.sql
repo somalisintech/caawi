@@ -11,7 +11,6 @@ CREATE TABLE "User" (
     "lastName" TEXT,
     "email" TEXT,
     "image" TEXT,
-    "profileId" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -22,6 +21,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Profile" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "userType" "UserType",
+    "userId" UUID NOT NULL,
     "bio" TEXT,
     "locationId" INTEGER,
     "occupationId" INTEGER,
@@ -56,6 +56,7 @@ CREATE TABLE "Occupation" (
 -- CreateTable
 CREATE TABLE "CalendlyUser" (
     "uri" TEXT NOT NULL,
+    "profileId" UUID NOT NULL,
     "name" TEXT,
     "slug" TEXT,
     "email" TEXT,
@@ -71,10 +72,13 @@ CREATE TABLE "CalendlyUser" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_profileId_key" ON "User"("profileId");
+CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Profile_calendlyUserUri_key" ON "Profile"("calendlyUserUri");
@@ -86,16 +90,19 @@ CREATE UNIQUE INDEX "Location_city_country_key" ON "Location"("city", "country")
 CREATE UNIQUE INDEX "Occupation_role_company_yearsOfExperience_key" ON "Occupation"("role", "company", "yearsOfExperience");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "CalendlyUser_profileId_key" ON "CalendlyUser"("profileId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "CalendlyUser_scheduling_url_key" ON "CalendlyUser"("scheduling_url");
-
--- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Profile" ADD CONSTRAINT "Profile_calendlyUserUri_fkey" FOREIGN KEY ("calendlyUserUri") REFERENCES "CalendlyUser"("uri") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_occupationId_fkey" FOREIGN KEY ("occupationId") REFERENCES "Occupation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CalendlyUser" ADD CONSTRAINT "CalendlyUser_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;

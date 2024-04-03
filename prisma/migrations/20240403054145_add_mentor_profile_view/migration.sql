@@ -15,7 +15,7 @@ SELECT
   o."yearsOfExperience",
   o.company
 FROM "Profile" p
-       JOIN "User" u ON u."profileId" = p.id
+       JOIN "User" u ON u."id" = p."userId"
        LEFT JOIN "Location" l ON p."locationId" = l.id
        LEFT JOIN "Occupation" o ON p."occupationId" = o.id
        LEFT JOIN "CalendlyUser" cu ON p."calendlyUserUri" = cu.uri

@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CompleteProfileForm } from './forms';
-import { Profile, User } from '@prisma/client';
+import { UserWithProfile } from '@/types/user';
 
 type Props = {
-  user: Partial<User & { profile: Partial<Profile> }>;
+  user: UserWithProfile;
 };
 
 export function CompleteProfile({ user }: Props) {

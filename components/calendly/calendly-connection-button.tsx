@@ -25,7 +25,7 @@ export async function CalendlyConnectionButton() {
     }
   });
 
-  if (profile.userType !== 'MENTOR') {
+  if (profile?.userType !== 'MENTOR') {
     return null;
   }
 

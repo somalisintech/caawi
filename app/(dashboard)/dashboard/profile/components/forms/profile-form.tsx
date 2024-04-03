@@ -12,24 +12,16 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { locations } from '@/constants/locations';
-import { CalendlyUser, Gender, Location, Occupation, Profile, User } from '@prisma/client';
-import CalendlyLogo from '@/app/calendly-icon.png';
-import Image from 'next/image';
+import { Gender } from '@prisma/client';
 import { roles } from '@/constants/roles';
 import { companies } from '@/constants/companies';
+import { locations } from '@/constants/locations';
+import { UserWithProfile } from '@/types/user';
+import Image from 'next/image';
 
 interface Props {
-  user: Partial<
-    User & {
-      profile: Profile & {
-        location: Location | null;
-        occupation: Occupation | null;
-        calendlyUser: CalendlyUser | null;
-      };
-    }
-  >;
   calendlyConnectionButton: ReactElement;
+  user: UserWithProfile;
 }
 
 export function ProfileForm({ user, calendlyConnectionButton }: Props) {
@@ -369,7 +361,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             <CardContent className="space-y-4 py-4">
               <div className="flex items-center justify-between">
                 <div className="relative h-6 w-24">
-                  <Image src={CalendlyLogo} alt="Calendly logo" fill className="object-contain" />
+                  <Image src="/calendly-icon.png" alt="Calendly logo" fill className="object-contain" />
                 </div>
                 {calendlyConnectionButton}
               </div>

@@ -1,20 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
-  return new PrismaClient().$extends({
-    query: {
-      user: {
-        async create({ args, query }) {
-          if (!args?.data?.profile) {
-            args.data.profile = {
-              create: {}
-            };
-          }
-          return query(args);
-        }
-      }
-    }
-  }) as PrismaClient;
+  return new PrismaClient() as PrismaClient;
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

@@ -10,20 +10,20 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName      String?
-  lastName       String?
-  email          String?   @unique
-  image          String?
-  profileId      String    @unique @db.Uuid
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @default(now())
-  profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  id        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName String?
+  lastName  String?
+  email     String?  @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  profile   Profile?
 }
 
 model Profile {
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userType        UserType?
+  userId          String        @db.Uuid @unique
   bio             String?
   locationId      Int?
   occupationId    Int?
@@ -32,10 +32,10 @@ model Profile {
   sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
   calendlyUserUri String?       @unique
-  calendlyUser    CalendlyUser? @relation(fields: [calendlyUserUri], references: [uri])
   location        Location?     @relation(fields: [locationId], references: [id])
   occupation      Occupation?   @relation(fields: [occupationId], references: [id])
-  user            User?
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendlyUser    CalendlyUser?
 }
 
 model Location {
@@ -58,18 +58,19 @@ model Occupation {
 }
 
 model CalendlyUser {
-  uri                  String    @id
+  uri                  String   @id
+  profileId            String   @db.Uuid @unique
   name                 String?
   slug                 String?
   email                String?
-  scheduling_url       String?   @unique
+  scheduling_url       String?  @unique
   timezone             String?
   avatar_url           String?
-  created_at           DateTime  @default(now())
-  updated_at           DateTime  @default(now())
+  created_at           DateTime @default(now())
+  updated_at           DateTime @default(now())
   current_organization String?
   resource_type        String?
-  profile              Profile?
+  profile              Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 view MentorProfile {

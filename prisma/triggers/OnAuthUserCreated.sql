@@ -5,15 +5,11 @@ SECURITY DEFINER
 SET search_path = public, auth
 AS $$
 DECLARE
-  p_id uuid;
+  u_id uuid;
   first_name text;
   last_name text;
   image_url text;
 BEGIN
-  INSERT INTO public."Profile"
-  DEFAULT VALUES
-  RETURNING "id" into p_id;
-
   IF NEW.raw_user_meta_data ? 'name' THEN
     first_name := split_part(NEW.raw_user_meta_data ->> 'name', ' ', 1);
     last_name := split_part(NEW.raw_user_meta_data ->> 'name', ' ', 2);
@@ -32,8 +28,13 @@ BEGIN
     END IF;
   END IF;
 
-  INSERT INTO public."User" ("id", "email", "firstName", "lastName", "image", "profileId")
-  VALUES (NEW.id, NEW.email, first_name, last_name, image_url, p_id);
+  INSERT INTO public."User" ("id", "email", "firstName", "lastName", "image")
+  VALUES (NEW.id, NEW.email, first_name, last_name, image_url)
+  RETURNING "id" into "u_id";
+
+  INSERT INTO public."Profile" ("userId")
+  VALUES (u_id);
+  
   RETURN NEW;
 END;
 $$;

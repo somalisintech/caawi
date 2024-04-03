@@ -38,7 +38,7 @@ export default async function SettingsProfilePage() {
             <p className="text-sm text-muted-foreground">This is how others will see you on the site.</p>
           </div>
           <div className="ml-auto self-baseline">
-            <Badge variant="outline">{user.profile.userType}</Badge>
+            <Badge variant="outline">{user.profile?.userType}</Badge>
           </div>
         </div>
       </div>

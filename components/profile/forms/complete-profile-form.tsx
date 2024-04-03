@@ -12,7 +12,7 @@ import { Gender, Profile, User, UserType } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 
 interface Props {
-  user: Partial<User & { profile: Partial<Profile> }>;
+  user: Partial<User & { profile: Partial<Profile> | null }>;
   onComplete: CallableFunction;
 }
 

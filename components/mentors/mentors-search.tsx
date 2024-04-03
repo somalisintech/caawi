@@ -22,6 +22,10 @@ export function MentorsSearch({ searchQuery }: Props) {
   }, [router, debouncedSearch]);
 
   return (
-    <Input placeholder="Search by name, role or company" value={search} onChange={(e) => setSearch(e.target.value)} />
+    <Input
+      placeholder="Search by name, role, company or country"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
   );
 }

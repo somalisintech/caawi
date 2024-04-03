@@ -1,7 +1,6 @@
 import prisma from '@/lib/db';
-import { ProfileForm } from './components/forms';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { ProfileForm } from './components/forms';
 import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
 import { createClient } from '@/utils/supabase/server';
 
@@ -20,7 +19,13 @@ export default async function SettingsProfilePage() {
       image: true,
       createdAt: true,
       updatedAt: true,
-      profile: true
+      profile: {
+        include: {
+          location: true,
+          occupation: true,
+          calendlyUser: true
+        }
+      }
     }
   });
 
@@ -37,14 +42,7 @@ export default async function SettingsProfilePage() {
           </div>
         </div>
       </div>
-      <Separator />
-      <ProfileForm user={user} />
-      {user.profile.userType === 'MENTOR' && (
-        <>
-          <Separator />
-          <CalendlyConnectionButton />
-        </>
-      )}
+      <ProfileForm user={user} calendlyConnectionButton={<CalendlyConnectionButton />} />
     </div>
   );
 }

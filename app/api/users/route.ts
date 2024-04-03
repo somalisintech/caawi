@@ -11,9 +11,25 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  const { userType, firstName, lastName, email, gender, bio } = await json();
+  const {
+    userType,
+    firstName,
+    lastName,
+    email,
+    gender,
+    bio,
+    sameGenderPref,
+    country,
+    city,
+    role,
+    company,
+    yearsOfExperience
+  } = await json();
 
   const isProfileComplete = !!(firstName && lastName && email && gender);
+
+  const hasLocation = !!country;
+  const hasOccupation = !!role;
 
   const user = await prisma.user.update({
     where: {
@@ -27,7 +43,51 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           bio,
           gender,
           userType,
-          isComplete: isProfileComplete
+          sameGenderPref,
+          isComplete: isProfileComplete,
+          ...(hasLocation
+            ? {
+                location: {
+                  upsert: {
+                    where: {
+                      country,
+                      city
+                    },
+                    create: {
+                      country,
+                      city
+                    },
+                    update: {
+                      country,
+                      city
+                    }
+                  }
+                }
+              }
+            : {}),
+          ...(hasOccupation
+            ? {
+                occupation: {
+                  upsert: {
+                    where: {
+                      role,
+                      company,
+                      yearsOfExperience
+                    },
+                    create: {
+                      role,
+                      company,
+                      yearsOfExperience
+                    },
+                    update: {
+                      role,
+                      company,
+                      yearsOfExperience
+                    }
+                  }
+                }
+              }
+            : {})
         }
       }
     },

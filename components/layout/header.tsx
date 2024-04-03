@@ -20,7 +20,7 @@ export async function Header() {
   const { data } = await supabase.auth.getUser();
 
   const user = data.user
-    ? await prisma.user.findUnique({
+    ? await prisma.user.findUniqueOrThrow({
         where: {
           id: data.user?.id
         },

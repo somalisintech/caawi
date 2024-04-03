@@ -33,15 +33,15 @@ export async function CalendlyConnectionButton() {
 
   if (scheduling_url) {
     return (
-      <Button className="ml-auto flex" size="lg" disabled={!scheduling_url} variant="destructive">
-        <Link href={'/api/calendly/disconnect'}>Disconnect Calendly</Link>
+      <Button disabled={!scheduling_url} variant="destructive">
+        <Link href={'/api/calendly/disconnect'}>Disconnect</Link>
       </Button>
     );
   }
 
   return (
-    <Button className="ml-auto flex" size="lg" disabled={!!scheduling_url}>
-      <Link href={'/api/calendly/connect'}>Connect Calendly</Link>
+    <Button disabled={!!scheduling_url} variant="secondary">
+      <Link href={'/api/calendly/connect'}>Connect</Link>
     </Button>
   );
 }

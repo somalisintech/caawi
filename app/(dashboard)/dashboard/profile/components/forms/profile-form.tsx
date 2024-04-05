@@ -12,7 +12,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Gender } from '@prisma/client';
+import { Gender, UserType } from '@prisma/client';
 import { roles } from '@/constants/roles';
 import { companies } from '@/constants/companies';
 import { locations } from '@/constants/locations';
@@ -35,8 +35,9 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       email: email || '',
       gender: profile?.gender as Gender,
       bio: profile?.bio || '',
-      linkedinUrl: '',
-      githubUrl: '',
+      linkedInUrl: profile?.linkedInUrl ?? undefined,
+      githubUrl: profile?.githubUrl ?? undefined,
+      buyMeCoffeeUrl: profile?.buyMeCoffeeUrl ?? undefined,
       sameGenderPref: profile?.sameGenderPref ?? undefined,
       country: profile?.location?.country ?? undefined,
       city: profile?.location?.city ?? undefined,
@@ -164,13 +165,39 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="linkedInUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LinkedIn</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="githubUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GitHub</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {profile?.userType === UserType.MENTOR && (
               <FormField
                 control={form.control}
-                name="linkedinUrl"
+                name="buyMeCoffeeUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>LinkedIn</FormLabel>
+                    <FormLabel>Buy me coffee</FormLabel>
                     <FormControl>
                       <Input {...field} type="text" />
                     </FormControl>
@@ -178,20 +205,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="githubUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>GitHub</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            )}
           </CardContent>
         </Card>
 

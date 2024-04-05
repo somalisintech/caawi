@@ -67,6 +67,22 @@ export async function MentorProfile({ mentor }: Props) {
             <div className="text-sm">{mentor.gender}</div>
           </div>
         </div>
+        <Separator />
+        {/* TODO: Make these links  */}
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          <div className="space-y-1">
+            <div className="text-sm uppercase text-muted-foreground">LinkedIn url</div>
+            <div className="text-sm">{mentor.linkedInUrl}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm uppercase text-muted-foreground">Github Url</div>
+            <div className="text-sm">{mentor.githubUrl}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm uppercase text-muted-foreground">Support mentor</div>
+            <div className="text-sm">{mentor.buyMeCoffeeUrl}</div>
+          </div>
+        </div>
       </CardContent>
       <CardFooter>
         <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />

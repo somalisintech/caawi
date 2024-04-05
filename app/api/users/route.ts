@@ -23,7 +23,10 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     city,
     role,
     company,
-    yearsOfExperience
+    yearsOfExperience,
+    linkedInUrl,
+    githubUrl,
+    buyMeCoffeeUrl
   } = await json();
 
   const isProfileComplete = !!(firstName && lastName && email && gender);
@@ -45,6 +48,9 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           userType,
           sameGenderPref,
           isComplete: isProfileComplete,
+          linkedInUrl,
+          githubUrl,
+          buyMeCoffeeUrl,
           ...(hasLocation
             ? {
                 location: {

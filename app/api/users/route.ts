@@ -48,7 +48,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           linkedInUrl,
           githubUrl,
           buyMeCoffeeUrl,
-          location: {
+          location: country && {
             connectOrCreate: {
               where: {
                 city_country: { city: city, country: country }
@@ -59,7 +59,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
               }
             }
           },
-          occupation: {
+          occupation: role && {
             connectOrCreate: {
               where: {
                 role_company_yearsOfExperience: {

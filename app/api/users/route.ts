@@ -31,9 +31,6 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
 
   const isProfileComplete = !!(firstName && lastName && email && gender);
 
-  const hasLocation = !!country;
-  const hasOccupation = !!role;
-
   const user = await prisma.user.update({
     where: {
       id: userData.user.id
@@ -51,49 +48,33 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           linkedInUrl,
           githubUrl,
           buyMeCoffeeUrl,
-          ...(hasLocation
-            ? {
-                location: {
-                  upsert: {
-                    where: {
-                      country,
-                      city
-                    },
-                    create: {
-                      country,
-                      city
-                    },
-                    update: {
-                      country,
-                      city
-                    }
-                  }
-                }
+          location: {
+            connectOrCreate: {
+              where: {
+                city_country: { city: city, country: country }
+              },
+              create: {
+                country,
+                city
               }
-            : {}),
-          ...(hasOccupation
-            ? {
-                occupation: {
-                  upsert: {
-                    where: {
-                      role,
-                      company,
-                      yearsOfExperience
-                    },
-                    create: {
-                      role,
-                      company,
-                      yearsOfExperience
-                    },
-                    update: {
-                      role,
-                      company,
-                      yearsOfExperience
-                    }
-                  }
+            }
+          },
+          occupation: {
+            connectOrCreate: {
+              where: {
+                role_company_yearsOfExperience: {
+                  role: role,
+                  company: company,
+                  yearsOfExperience: yearsOfExperience
                 }
+              },
+              create: {
+                role,
+                company,
+                yearsOfExperience
               }
-            : {})
+            }
+          }
         }
       }
     },

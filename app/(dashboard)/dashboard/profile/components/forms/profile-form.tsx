@@ -51,7 +51,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
 
   useEffect(() => {
     form.setValue('city', undefined);
-  }, [form, country]);
+  }, [country]);
 
   async function onSubmit(data: ProfileFormFields) {
     const response = await fetch('/api/users', {

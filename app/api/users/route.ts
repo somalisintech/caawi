@@ -45,6 +45,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           userType,
           sameGenderPref,
           isComplete: isProfileComplete,
+          yearsOfExperience,
           linkedInUrl,
           githubUrl,
           buyMeCoffeeUrl,
@@ -62,16 +63,14 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           occupation: role && {
             connectOrCreate: {
               where: {
-                role_company_yearsOfExperience: {
+                role_company: {
                   role: role,
-                  company: company,
-                  yearsOfExperience: yearsOfExperience
+                  company: company
                 }
               },
               create: {
                 role,
-                company,
-                yearsOfExperience
+                company
               }
             }
           }

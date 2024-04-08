@@ -21,24 +21,25 @@ model User {
 }
 
 model Profile {
-  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userType        UserType?
-  userId          String        @db.Uuid @unique
-  bio             String?
-  locationId      Int?
-  occupationId    Int?
-  updatedAt       DateTime      @default(now())
-  gender          Gender?
-  sameGenderPref  Boolean?
-  isComplete      Boolean       @default(false)
-  linkedInUrl     String?
-  githubUrl       String?
-  buyMeCoffeeUrl  String?
-  calendlyUserUri String?       @unique
-  location        Location?     @relation(fields: [locationId], references: [id])
-  occupation      Occupation?   @relation(fields: [occupationId], references: [id])
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  calendlyUser    CalendlyUser?
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userType          UserType?
+  userId            String        @db.Uuid @unique
+  bio               String?
+  locationId        Int?
+  occupationId      Int?
+  updatedAt         DateTime      @default(now())
+  gender            Gender?
+  sameGenderPref    Boolean?
+  isComplete        Boolean       @default(false)
+  linkedInUrl       String?
+  githubUrl         String?
+  buyMeCoffeeUrl    String?
+  yearsOfExperience Int?
+  calendlyUserUri   String?       @unique
+  location          Location?     @relation(fields: [locationId], references: [id])
+  occupation        Occupation?   @relation(fields: [occupationId], references: [id])
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendlyUser      CalendlyUser?
 }
 
 model Location {
@@ -53,11 +54,10 @@ model Location {
 model Occupation {
   id                Int       @id @default(autoincrement())
   role              String?
-  yearsOfExperience Int?
   company           String?
   profile           Profile[]
 
-  @@unique([role, company, yearsOfExperience])
+  @@unique([role, company])
 }
 
 model CalendlyUser {

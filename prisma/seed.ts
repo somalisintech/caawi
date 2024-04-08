@@ -41,6 +41,7 @@ async function main() {
             userType: faker.helpers.enumValue(UserType),
             bio: faker.person.bio(),
             gender: gender.toUpperCase() as Gender,
+            yearsOfExperience,
             location: {
               connectOrCreate: {
                 where: {
@@ -55,9 +56,9 @@ async function main() {
             occupation: {
               connectOrCreate: {
                 where: {
-                  role_company_yearsOfExperience: { role: role, yearsOfExperience: yearsOfExperience, company: company }
+                  role_company: { role: role, company: company }
                 },
-                create: { role: role, yearsOfExperience: yearsOfExperience, company: company }
+                create: { role: role, company: company }
               }
             }
           }

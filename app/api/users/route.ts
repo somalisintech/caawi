@@ -15,7 +15,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     userType,
     firstName,
     lastName,
-    email,
+    image,
     gender,
     bio,
     sameGenderPref,
@@ -29,8 +29,6 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     buyMeCoffeeUrl
   } = await json();
 
-  const isProfileComplete = !!(firstName && lastName && email && gender);
-
   const user = await prisma.user.update({
     where: {
       id: userData.user.id
@@ -38,13 +36,13 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     data: {
       firstName,
       lastName,
+      image,
       profile: {
         update: {
           bio,
           gender,
           userType,
           sameGenderPref,
-          isComplete: isProfileComplete,
           yearsOfExperience,
           linkedInUrl,
           githubUrl,

@@ -13,6 +13,7 @@ export default async function SettingsProfilePage() {
       id: data.user?.id
     },
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       email: true,

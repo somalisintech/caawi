@@ -30,7 +30,6 @@ model Profile {
   updatedAt         DateTime      @default(now())
   gender            Gender?
   sameGenderPref    Boolean?
-  isComplete        Boolean       @default(false)
   linkedInUrl       String?
   githubUrl         String?
   buyMeCoffeeUrl    String?

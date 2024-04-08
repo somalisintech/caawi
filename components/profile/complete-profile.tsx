@@ -13,7 +13,7 @@ export function CompleteProfile({ user }: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!user.profile?.isComplete) {
+    if (!user.firstName || !user.lastName || !user.email || !user.profile?.gender) {
       setOpen(true);
     }
   }, [user]);

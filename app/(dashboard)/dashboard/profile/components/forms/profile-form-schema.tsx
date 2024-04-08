@@ -8,6 +8,7 @@ export const profileFormSchema = z
     email: z.string().email({ message: 'Please enter a valid email address' }),
     gender: z.nativeEnum(Gender, { invalid_type_error: 'Required' }),
     bio: z.string(),
+    yearsOfExperience: z.coerce.number().min(0).max(100).optional(),
     linkedInUrl: z.string().url().or(z.literal('')).optional(),
     githubUrl: z.string().url().or(z.literal('')).optional(),
     buyMeCoffeeUrl: z.string().url().or(z.literal('')).optional(),
@@ -15,8 +16,7 @@ export const profileFormSchema = z
     country: z.string().optional(),
     city: z.string().optional(),
     role: z.string().optional(),
-    company: z.string().optional(),
-    yearsOfExperience: z.coerce.number().min(0).max(100).optional()
+    company: z.string().optional()
   })
   .superRefine((data, ctx) => {
     if (data.country && !data.city) {
@@ -30,13 +30,6 @@ export const profileFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['company'],
-        message: 'Required'
-      });
-    }
-    if (data.role && !data.yearsOfExperience) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['yearsOfExperience'],
         message: 'Required'
       });
     }

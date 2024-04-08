@@ -1,5 +1,3 @@
-DROP VIEW IF EXISTS "MentorProfile";
-
 CREATE VIEW "MentorProfile" AS
 SELECT
   p.id,
@@ -11,13 +9,13 @@ SELECT
   cu.scheduling_url as "calendlySchedulingUrl",
   p.gender,
   p."sameGenderPref",
+  p."yearsOfExperience",
   p."linkedInUrl",
   p."githubUrl",
   p."buyMeCoffeeUrl",
   l.city,
   l.country,
   o.role,
-  o."yearsOfExperience",
   o.company
 FROM "Profile" p
        JOIN "User" u ON u."id" = p."userId"

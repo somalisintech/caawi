@@ -35,6 +35,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       email: email || '',
       gender: profile?.gender as Gender,
       bio: profile?.bio || '',
+      yearsOfExperience: profile?.yearsOfExperience ?? undefined,
       linkedInUrl: profile?.linkedInUrl ?? undefined,
       githubUrl: profile?.githubUrl ?? undefined,
       buyMeCoffeeUrl: profile?.buyMeCoffeeUrl ?? undefined,
@@ -42,8 +43,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       country: profile?.location?.country ?? undefined,
       city: profile?.location?.city ?? undefined,
       role: profile?.occupation?.role ?? undefined,
-      company: profile?.occupation?.company ?? undefined,
-      yearsOfExperience: profile?.occupation?.yearsOfExperience ?? undefined
+      company: profile?.occupation?.company ?? undefined
     }
   });
 
@@ -167,6 +167,19 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             />
             <FormField
               control={form.control}
+              name="yearsOfExperience"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Years of Experience</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="number" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="linkedInUrl"
               render={({ field }) => (
                 <FormItem>
@@ -241,7 +254,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             <CardTitle>Occupation</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 py-4">
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="role"
@@ -286,19 +299,6 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="yearsOfExperience"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Years of Experience</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="number" />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -8,10 +8,10 @@ SELECT
   cu.scheduling_url as "calendlySchedulingUrl",
   p.gender,
   p."sameGenderPref",
+  p."yearsOfExperience",
   l.city,
   l.country,
   o.role ,
-  o."yearsOfExperience",
   o.company
 FROM "Profile" p
        JOIN "User" u ON u."id" = p."userId"

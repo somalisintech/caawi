@@ -8,12 +8,11 @@ type Props = {
 };
 
 export function ProfileFormImage({ user }: Props) {
-  const [localImage, setLocalImage] = useState(user.image);
+  const [localImage, setLocalImage] = useState(user.image || '');
 
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const avatarImage = localImage;
   const avatarFallback = user.firstName?.[0] ?? '-';
 
   const handleClick = () => {
@@ -60,7 +59,7 @@ export function ProfileFormImage({ user }: Props) {
       <input ref={fileInputRef} type="file" className="sr-only" onChange={handleChange} accept="image/*" />
       <div role="button" onClick={handleClick} className="flex items-center gap-2">
         <Avatar className="size-5">
-          <AvatarImage src={`${avatarImage}?date=${new Date().getTime()}`} />
+          <AvatarImage src={localImage} />
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
         <div>Edit</div>

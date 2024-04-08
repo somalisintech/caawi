@@ -47,11 +47,11 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
     }
   });
 
-  const country = form.watch('country', '');
+  const country = form.watch('country', profile?.location?.country ?? undefined);
 
   useEffect(() => {
     form.setValue('city', undefined);
-  }, [country]);
+  }, [form, country]);
 
   async function onSubmit(data: ProfileFormFields) {
     const response = await fetch('/api/users', {
@@ -352,8 +352,8 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="max-h-48 overflow-y-auto">
-                        {(locations.find((l) => l.name === country)?.states || []).map((c) => (
-                          <SelectItem key={c.name} value={c.name} className="line-clamp-1">
+                        {(locations.find((l) => l.name === country)?.states || []).map((c, idx) => (
+                          <SelectItem key={idx} value={c.name} className="line-clamp-1">
                             {c.name}
                           </SelectItem>
                         ))}

@@ -35,11 +35,9 @@ export const GET = withAxiom(async ({ log, nextUrl }: AxiomRequest) => {
       data: {
         profile: {
           update: {
+            calendlyUserUri: resource.uri,
             calendlyUser: {
-              upsert: {
-                create: resource,
-                update: resource
-              }
+              create: resource
             }
           }
         }

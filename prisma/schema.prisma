@@ -31,6 +31,9 @@ model Profile {
   gender          Gender?
   sameGenderPref  Boolean?
   isComplete      Boolean       @default(false)
+  linkedInUrl     String?
+  githubUrl       String?
+  buyMeCoffeeUrl  String?
   calendlyUserUri String?       @unique
   location        Location?     @relation(fields: [locationId], references: [id])
   occupation      Occupation?   @relation(fields: [occupationId], references: [id])
@@ -88,6 +91,9 @@ view MentorProfile {
   role                  String?
   yearsOfExperience     Int?
   company               String?
+  linkedInUrl           String?
+  githubUrl             String?
+  buyMeCoffeeUrl        String?
 }
 
 enum UserType {

@@ -1,3 +1,6 @@
+DROP VIEW IF EXISTS "MentorProfile";
+
+CREATE VIEW "MentorProfile" AS
 SELECT
   p.id,
   p."userType",
@@ -8,9 +11,12 @@ SELECT
   cu.scheduling_url as "calendlySchedulingUrl",
   p.gender,
   p."sameGenderPref",
+  p."linkedInUrl",
+  p."githubUrl",
+  p."buyMeCoffeeUrl",
   l.city,
   l.country,
-  o.role ,
+  o.role,
   o."yearsOfExperience",
   o.company
 FROM "Profile" p

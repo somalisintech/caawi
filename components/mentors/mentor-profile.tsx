@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
+import Link from 'next/link';
 
 type Props = {
   mentor: MentorProfileType;
@@ -66,6 +67,33 @@ export async function MentorProfile({ mentor }: Props) {
             <div className="text-sm uppercase text-muted-foreground">Gender</div>
             <div className="text-sm">{mentor.gender}</div>
           </div>
+        </div>
+        <Separator />
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {mentor.linkedInUrl && (
+            <div className="space-y-1">
+              <div className="text-sm uppercase text-muted-foreground">LinkedIn url</div>
+              <Link className="text-sm underline" href={mentor.linkedInUrl} target="_blank">
+                {mentor.linkedInUrl}
+              </Link>
+            </div>
+          )}
+          {mentor.githubUrl && (
+            <div className="space-y-1">
+              <div className="text-sm uppercase text-muted-foreground">Github Url</div>
+              <Link className="text-sm underline" href={mentor.githubUrl} target="_blank">
+                {mentor.githubUrl}
+              </Link>
+            </div>
+          )}
+          {mentor.buyMeCoffeeUrl && (
+            <div className="space-y-1">
+              <div className="text-sm uppercase text-muted-foreground">Support mentor</div>
+              <Link className="text-sm underline" href={mentor.buyMeCoffeeUrl} target="_blank">
+                {mentor.buyMeCoffeeUrl}
+              </Link>
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter>

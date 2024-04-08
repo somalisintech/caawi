@@ -23,13 +23,13 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     city,
     role,
     company,
-    yearsOfExperience
+    yearsOfExperience,
+    linkedInUrl,
+    githubUrl,
+    buyMeCoffeeUrl
   } = await json();
 
   const isProfileComplete = !!(firstName && lastName && email && gender);
-
-  const hasLocation = !!country;
-  const hasOccupation = !!role;
 
   const user = await prisma.user.update({
     where: {
@@ -45,49 +45,36 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
           userType,
           sameGenderPref,
           isComplete: isProfileComplete,
-          ...(hasLocation
-            ? {
-                location: {
-                  upsert: {
-                    where: {
-                      country,
-                      city
-                    },
-                    create: {
-                      country,
-                      city
-                    },
-                    update: {
-                      country,
-                      city
-                    }
-                  }
-                }
+          linkedInUrl,
+          githubUrl,
+          buyMeCoffeeUrl,
+          location: country && {
+            connectOrCreate: {
+              where: {
+                city_country: { city: city, country: country }
+              },
+              create: {
+                country,
+                city
               }
-            : {}),
-          ...(hasOccupation
-            ? {
-                occupation: {
-                  upsert: {
-                    where: {
-                      role,
-                      company,
-                      yearsOfExperience
-                    },
-                    create: {
-                      role,
-                      company,
-                      yearsOfExperience
-                    },
-                    update: {
-                      role,
-                      company,
-                      yearsOfExperience
-                    }
-                  }
+            }
+          },
+          occupation: role && {
+            connectOrCreate: {
+              where: {
+                role_company_yearsOfExperience: {
+                  role: role,
+                  company: company,
+                  yearsOfExperience: yearsOfExperience
                 }
+              },
+              create: {
+                role,
+                company,
+                yearsOfExperience
               }
-            : {})
+            }
+          }
         }
       }
     },

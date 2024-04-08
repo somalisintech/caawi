@@ -33,14 +33,14 @@ export async function CalendlyConnectionButton() {
 
   if (scheduling_url) {
     return (
-      <Button disabled={!scheduling_url} variant="destructive">
+      <Button disabled={!scheduling_url} variant="destructive" type="button">
         <Link href={'/api/calendly/disconnect'}>Disconnect</Link>
       </Button>
     );
   }
 
   return (
-    <Button disabled={!!scheduling_url} variant="secondary">
+    <Button disabled={!!scheduling_url} variant="secondary" type="button">
       <Link href={'/api/calendly/connect'}>Connect</Link>
     </Button>
   );

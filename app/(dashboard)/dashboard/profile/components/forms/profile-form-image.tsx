@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { toast } from '@/components/ui/use-toast';
 import { UserWithProfile } from '@/types/user';
 import { createClient } from '@/utils/supabase/client';
 import { ChangeEvent, useRef, useState } from 'react';
@@ -49,7 +50,8 @@ export function ProfileFormImage({ user }: Props) {
           setLocalImage(imageUrl);
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
+        toast({ title: 'Failed to upload image', variant: 'destructive' });
       }
     }
   };

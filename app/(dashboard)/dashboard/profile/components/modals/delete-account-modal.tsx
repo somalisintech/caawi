@@ -2,6 +2,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { toast } from '@/components/ui/use-toast';
 
 export function DeleteAccountModal() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export function DeleteAccountModal() {
       router.refresh();
     } catch (err) {
       console.log(err);
+      toast({ title: 'Failed to delete user', variant: 'destructive' });
     }
   };
 

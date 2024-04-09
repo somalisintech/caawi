@@ -3,6 +3,23 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
+export const DELETE = withAxiom(async ({ log }: AxiomRequest) => {
+  const supabase = createClient();
+  const { data: userData } = await supabase.auth.getUser();
+
+  if (!userData.user) {
+    return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
+  }
+
+  await prisma.user.delete({ where: { id: userData.user.id } });
+
+  log.debug('User deleted', {
+    userId: userData.user.id
+  });
+
+  return NextResponse.json(userData);
+});
+
 export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
   const supabase = createClient();
   const { data: userData } = await supabase.auth.getUser();

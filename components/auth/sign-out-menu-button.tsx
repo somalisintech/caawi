@@ -9,8 +9,8 @@ export const SignOutMenuButton = () => {
   return (
     <div
       role="button"
-      onClick={() => {
-        supabase.auth.signOut();
+      onClick={async () => {
+        await supabase.auth.signOut();
         router.refresh();
       }}
     >

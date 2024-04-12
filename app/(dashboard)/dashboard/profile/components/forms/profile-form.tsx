@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
+import { ProfileFormImage } from './profile-form-image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Gender, UserType } from '@prisma/client';
@@ -74,7 +75,10 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
           <CardHeader className="border-b-[1px]">
-            <CardTitle>Basic profile</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              <div>Basic profile</div>
+              <ProfileFormImage user={user} />
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 py-4">
             <div className="grid grid-cols-1 gap-2 md:grid-cols-3">

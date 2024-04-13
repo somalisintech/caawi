@@ -11,7 +11,7 @@ export const SignOutMenuButton = () => {
       role="button"
       onClick={async () => {
         await supabase.auth.signOut();
-        router.refresh();
+        router.push('/auth');
       }}
     >
       Sign out

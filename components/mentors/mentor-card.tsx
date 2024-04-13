@@ -1,7 +1,7 @@
 import { MentorProfile } from '@prisma/client';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 type Props = {
@@ -10,31 +10,35 @@ type Props = {
 
 export async function MentorCard({ mentor }: Props) {
   return (
-    <Card className="flex flex-col">
-      <CardHeader>
-        <CardTitle className="space-y-4">
+    <div className="flex flex-col gap-4 p-6">
+      <div className="flex justify-between">
+        <div className="flex items-center gap-2">
           <Avatar>
             <AvatarImage src={mentor.image || ''} />
             <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
           </Avatar>
-          <div>
-            {mentor.firstName} {mentor.lastName}
+          <div className="flex flex-col">
+            <div className="font-semibold">
+              {mentor.firstName} {mentor.lastName}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {mentor.role} @ {mentor.company}
+            </div>
           </div>
-        </CardTitle>
-        <CardDescription>
-          {mentor.role} @ {mentor.company}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1">
+        </div>
+        <div>
+          <Button asChild size="icon" variant="secondary" className="rounded-full">
+            <Link href={`/dashboard/mentors/${mentor.id}`}>
+              <ArrowUpRight size={16} />
+            </Link>
+          </Button>
+        </div>
+      </div>
+      <div className="flex-1">
         <div className="bg-muted-background">
           <p>{mentor.bio || '-'}</p>
         </div>
-      </CardContent>
-      <CardFooter>
-        <Button asChild>
-          <Link href={`/dashboard/mentors/${mentor.id}`}>View profile</Link>
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

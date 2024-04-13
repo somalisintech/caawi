@@ -40,7 +40,7 @@ export async function Header() {
     const name = [user.firstName, user.lastName].join(' ');
 
     return (
-      <header className="flex items-center justify-between p-5">
+      <header className="flex items-center justify-between py-5">
         <CaawiLogo />
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -59,10 +59,10 @@ export async function Header() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" asChild>
-                <Link href="/dashboard">Profile</Link>
+                <Link href="/dashboard">Dashboard</Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer" asChild>
-                <Link href="/dashboard/account">Account</Link>
+                <Link href="/dashboard/profile">Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>

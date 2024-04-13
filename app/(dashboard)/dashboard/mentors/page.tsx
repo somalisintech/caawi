@@ -1,5 +1,6 @@
 import { MentorsList } from '@/components/mentors/mentors-list';
 import { MentorsSearch } from '@/components/mentors/mentors-search';
+import { Card } from '@/components/ui/card';
 import prisma from '@/lib/db';
 
 export default async function MentorsListPage({ searchParams }: { searchParams: { search?: string } }) {
@@ -49,11 +50,12 @@ export default async function MentorsListPage({ searchParams }: { searchParams: 
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-medium">Search</h3>
-          <p className="text-sm text-muted-foreground">Search for mentors</p>
-        </div>
-        <MentorsSearch searchQuery={search} />
+        <Card className="sticky top-8 z-10 bg-background p-6 shadow-md">
+          <div className="mb-2 h-fit">
+            <h3 className="text-lg font-medium">Search</h3>
+          </div>
+          <MentorsSearch searchQuery={search} />
+        </Card>
         <MentorsList mentors={mentors} />
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { MentorProfile } from '@prisma/client';
 import { MentorCard } from './mentor-card';
+import { Card } from '@/components/ui/card';
 
 type Props = {
   mentors: MentorProfile[];
@@ -7,10 +8,10 @@ type Props = {
 
 export function MentorsList({ mentors }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+    <Card className="grid grid-cols-1 divide-y-2">
       {mentors.map((mentor) => (
         <MentorCard key={mentor.id} mentor={mentor} />
       ))}
-    </div>
+    </Card>
   );
 }

@@ -6,7 +6,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AuthForm } from './components/forms';
 
-export default function Auth() {
+type Props = {
+  searchParams: {
+    redirectUrl?: string;
+  };
+};
+
+export default function Auth({ searchParams }: Props) {
+  const { redirectUrl } = searchParams;
+
   return (
     <div className="flex flex-col">
       <CaawiLogo className="size-18 mb-14" width={74} height={74} />
@@ -15,7 +23,7 @@ export default function Auth() {
           <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">Welcome back 👋🏾</h2>
           <div className="space-y-6">
             <Suspense>
-              <AuthForm />
+              <AuthForm redirectUrl={redirectUrl} />
             </Suspense>
             <div className="flex items-center gap-4">
               <Separator className="flex-1" />
@@ -23,7 +31,7 @@ export default function Auth() {
               <Separator className="flex-1" />
             </div>
             <Suspense>
-              <SocialAuth />
+              <SocialAuth redirectUrl={redirectUrl} />
             </Suspense>
           </div>
         </CardContent>

@@ -23,7 +23,11 @@ const socialAuth = [
   }
 ];
 
-export function SocialAuth() {
+type Props = {
+  redirectUrl?: string;
+};
+
+export function SocialAuth({ redirectUrl = `${location.origin}/dashboard` }: Props) {
   const supabase = createClient();
 
   return (
@@ -38,7 +42,7 @@ export function SocialAuth() {
             await supabase.auth.signInWithOAuth({
               provider: auth.provider as Provider,
               options: {
-                redirectTo: `${location.origin}/api/auth/callback`
+                redirectTo: `${location.origin}/api/auth/callback?redirectUrl=${redirectUrl}`
               }
             });
           }}

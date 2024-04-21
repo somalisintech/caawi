@@ -57,19 +57,19 @@ export function ProfileSummary({ user }: Props) {
             {!!socials.length && (
               <div className="mt-4 flex gap-2">
                 {user.profile?.linkedInUrl && (
-                  <Button size="sm" variant="outline" className="gap-1">
+                  <Button size="sm" variant="outline" className="gap-1 rounded-full">
                     <FaLinkedin />
                     LinkedIn
                   </Button>
                 )}
                 {user.profile?.githubUrl && (
-                  <Button size="sm" variant="outline" className="gap-1">
+                  <Button size="sm" variant="outline" className="gap-1 rounded-full">
                     <FaGithub />
                     GitHub
                   </Button>
                 )}
                 {user.profile?.buyMeCoffeeUrl && (
-                  <Button size="sm" variant="outline" className="gap-1">
+                  <Button size="sm" variant="outline" className="gap-1 rounded-full">
                     <SiBuymeacoffee />
                     Buy Me Coffee
                   </Button>

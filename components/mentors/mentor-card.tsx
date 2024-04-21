@@ -1,7 +1,8 @@
 import { MentorProfile } from '@prisma/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
+import { getUrl } from '@/utils/url';
 import Link from 'next/link';
 
 type Props = {
@@ -9,6 +10,14 @@ type Props = {
 };
 
 export async function MentorCard({ mentor }: Props) {
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
+
+  const authenticated = !!data.user;
+  const redirectPath = authenticated
+    ? `/dashboard/mentors/${mentor.id}`
+    : `/auth?redirectUrl=${getUrl()}/dashboard/mentors/${mentor.id}`;
+
   return (
     <div className="flex flex-col gap-4 p-6">
       <div className="flex justify-between">
@@ -27,10 +36,8 @@ export async function MentorCard({ mentor }: Props) {
           </div>
         </div>
         <div>
-          <Button asChild size="icon" variant="secondary" className="rounded-full">
-            <Link href={`/dashboard/mentors/${mentor.id}`}>
-              <ArrowUpRight size={16} />
-            </Link>
+          <Button asChild variant="outline" size="sm" className="rounded-full">
+            <Link href={redirectPath}>View profile</Link>
           </Button>
         </div>
       </div>

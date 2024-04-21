@@ -4,13 +4,14 @@ import { NextResponse } from 'next/server';
 
 export const GET = withAxiom(async ({ url }: AxiomRequest) => {
   const requestUrl = new URL(url);
-  const code = requestUrl.searchParams.get('code');
   const origin = requestUrl.origin;
+  const code = requestUrl.searchParams.get('code');
+  const redirectUrl = requestUrl.searchParams.get('redirectUrl') || `${origin}/dashboard`;
 
   if (code) {
     const supabase = createClient();
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(`${origin}/dashboard`);
+  return NextResponse.redirect(redirectUrl);
 });

@@ -6,6 +6,7 @@ import { Building, MapPin, PencilIcon } from 'lucide-react';
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SiBuymeacoffee } from 'react-icons/si';
 import { UserWithProfile } from '@/types/user';
+import Link from 'next/link';
 
 type Props = {
   user: UserWithProfile;
@@ -33,20 +34,24 @@ export function ProfileSummary({ user }: Props) {
             <CardDescription>{user.email}</CardDescription>
           </div>
           <div className="flex flex-1 justify-end">
-            <Button size="icon" variant="secondary" className="rounded-full">
-              <PencilIcon size={16} />
+            <Button size="icon" variant="secondary" className="rounded-full" asChild>
+              <Link href="/dashboard/profile">
+                <PencilIcon size={16} />
+              </Link>
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm">{user.profile?.bio}</p>
-        </CardContent>
+        {user.profile?.bio && (
+          <CardContent>
+            <p className="text-sm">{user.profile?.bio}</p>
+          </CardContent>
+        )}
         <Separator />
         <CardFooter className="pt-4">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin size={16} />
-              <p>{location}</p>
+              <p>{location || 'Earth'}</p>
             </div>
             {!!role.length && (
               <div className="flex items-center gap-1 text-sm text-muted-foreground">

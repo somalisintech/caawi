@@ -8,6 +8,7 @@ import { IconType } from 'react-icons/lib';
 import { useState } from 'react';
 import { toast } from '../ui/use-toast';
 import { Loader2 } from 'lucide-react';
+import { getUrl } from '@/utils/url';
 
 type Auth = {
   title: string;
@@ -37,7 +38,7 @@ type Props = {
   redirectUrl?: string;
 };
 
-export function SocialAuth({ redirectUrl = `${location.origin}/dashboard` }: Props) {
+export function SocialAuth({ redirectUrl = `${getUrl()}/dashboard` }: Props) {
   const [loading, setLoading] = useState<Provider | null>();
   const supabase = createClient();
 
@@ -47,7 +48,7 @@ export function SocialAuth({ redirectUrl = `${location.origin}/dashboard` }: Pro
       await supabase.auth.signInWithOAuth({
         provider: auth.provider as Provider,
         options: {
-          redirectTo: `${location.origin}/api/auth/callback?redirectUrl=${redirectUrl}`
+          redirectTo: `${getUrl()}/api/auth/callback?redirectUrl=${redirectUrl}`
         }
       });
     } catch (err) {

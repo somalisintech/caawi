@@ -61,13 +61,18 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
                     <FormControl>
                       <RadioGroupItem value={UserType.MENTEE} />
                     </FormControl>
-                    <FormLabel className="font-normal">Mentee</FormLabel>
+                    <FormLabel className="font-normal">
+                      Mentee{' '}
+                      <span className="text-muted-foreground">- Receive mentorship from experienced professionals</span>
+                    </FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
                       <RadioGroupItem value={UserType.MENTOR} />
                     </FormControl>
-                    <FormLabel className="font-normal">Mentor</FormLabel>
+                    <FormLabel className="font-normal">
+                      Mentor <span className="text-muted-foreground">- Offer mentorship to passionate individuals</span>
+                    </FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>

@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
+import { DeleteAccountModal } from '../modals/delete-account-modal';
 import { ProfileFormImage } from './profile-form-image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -391,10 +392,13 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             </CardContent>
           </Card>
         )}
-        <Button type="submit" className="gap-2">
-          {form.formState.isSubmitting && <Loader2 className="animate-spin" size={16} />}
-          Update profile
-        </Button>
+        <div className="flex justify-between">
+          <Button type="submit" className="gap-2">
+            {form.formState.isSubmitting && <Loader2 className="animate-spin" size={16} />}
+            Update profile
+          </Button>
+          <DeleteAccountModal />
+        </div>
       </form>
     </Form>
   );

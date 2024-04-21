@@ -6,6 +6,7 @@ import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 import Link from 'next/link';
+import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
 
 type Props = {
   mentor: MentorProfileType;
@@ -30,14 +31,17 @@ export async function MentorProfile({ mentor }: Props) {
   return (
     <Card className="flex flex-col">
       <CardHeader>
-        <CardTitle className="space-y-4">
-          <Avatar>
-            <AvatarImage src={mentor.image || ''} />
-            <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
-          </Avatar>
-          <div>
-            {mentor.firstName} {mentor.lastName}
+        <CardTitle className="flex justify-between">
+          <div className="space-y-4">
+            <Avatar>
+              <AvatarImage src={mentor.image || ''} />
+              <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
+            </Avatar>
+            <div>
+              {mentor.firstName} {mentor.lastName}
+            </div>
           </div>
+          <ShareProfileButton userId={mentor.id} />
         </CardTitle>
         <CardDescription>
           {mentor.role} @ {mentor.company}

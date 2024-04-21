@@ -1,7 +1,7 @@
 import { MentorProfile } from '@prisma/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
 import Link from 'next/link';
 

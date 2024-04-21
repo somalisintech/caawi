@@ -19,6 +19,7 @@ import { companies } from '@/constants/companies';
 import { locations } from '@/constants/locations';
 import { UserWithProfile } from '@/types/user';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface Props {
@@ -390,7 +391,10 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             </CardContent>
           </Card>
         )}
-        <Button type="submit">Update profile</Button>
+        <Button type="submit" className="gap-2">
+          {form.formState.isSubmitting && <Loader2 className="animate-spin" size={16} />}
+          Update profile
+        </Button>
       </form>
     </Form>
   );

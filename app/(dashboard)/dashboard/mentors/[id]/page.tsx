@@ -13,7 +13,7 @@ export default async function Mentor({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-6">
       <Button asChild variant="secondary">
-        <Link className="gap-2" href="/dashboard/mentors">
+        <Link className="gap-2" href="/dashboard">
           Go back
         </Link>
       </Button>

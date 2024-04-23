@@ -23,6 +23,7 @@ export function MentorsSearch({ searchQuery }: Props) {
 
   return (
     <Input
+      className="bg-muted"
       placeholder="Search by name, role, company or country"
       value={search}
       onChange={(e) => setSearch(e.target.value)}

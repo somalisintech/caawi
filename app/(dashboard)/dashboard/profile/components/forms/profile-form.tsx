@@ -19,6 +19,8 @@ import { roles } from '@/constants/roles';
 import { companies } from '@/constants/companies';
 import { locations } from '@/constants/locations';
 import { UserWithProfile } from '@/types/user';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface Props {
@@ -27,6 +29,7 @@ interface Props {
 }
 
 export function ProfileForm({ user, calendlyConnectionButton }: Props) {
+  const router = useRouter();
   const { firstName, lastName, email, profile } = user;
 
   const form = useForm<ProfileFormFields>({
@@ -69,11 +72,13 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
     toast({
       title: 'Updated'
     });
+
+    router.refresh();
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Card>
           <CardHeader className="border-b-[1px]">
             <CardTitle className="flex items-center justify-between">
@@ -388,7 +393,10 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
           </Card>
         )}
         <div className="flex justify-between">
-          <Button type="submit">Update profile</Button>
+          <Button type="submit" className="gap-2">
+            {form.formState.isSubmitting && <Loader2 className="animate-spin" size={16} />}
+            Update profile
+          </Button>
           <DeleteAccountModal />
         </div>
       </form>

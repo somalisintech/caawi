@@ -3,12 +3,14 @@ import { toast } from '@/components/ui/use-toast';
 import { UserWithProfile } from '@/types/user';
 import { createClient } from '@/utils/supabase/client';
 import { ChangeEvent, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 type Props = {
   user: UserWithProfile;
 };
 
 export function ProfileFormImage({ user }: Props) {
+  const [loading, setLoading] = useState(false);
   const [localImage, setLocalImage] = useState(user.image || '');
 
   const supabase = createClient();
@@ -25,6 +27,7 @@ export function ProfileFormImage({ user }: Props) {
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       try {
+        setLoading(true);
         const image = event.target.files[0];
 
         const { data, error } = await supabase.storage.from('avatar').upload(`${user.id}/avatar.png`, image, {
@@ -50,11 +53,17 @@ export function ProfileFormImage({ user }: Props) {
           setLocalImage(imageUrl);
         }
       } catch (err) {
-        console.error(err);
+        console.error({ error: err });
         toast({ title: 'Failed to upload image', variant: 'destructive' });
+      } finally {
+        setLoading(false);
       }
     }
   };
+
+  if (loading) {
+    return <Loader2 className="animate-spin" size={18} />;
+  }
 
   return (
     <div className="relative">

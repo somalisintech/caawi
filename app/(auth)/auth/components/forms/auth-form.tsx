@@ -11,8 +11,13 @@ import { AuthFormFields, authFormSchema } from './auth-form-schema';
 
 import { FaSpinner } from 'react-icons/fa6';
 import { createClient } from '@/utils/supabase/client';
+import { getUrl } from '@/utils/url';
 
-export function AuthForm() {
+type Props = {
+  redirectUrl?: string;
+};
+
+export function AuthForm({ redirectUrl = `${getUrl()}/dashboard` }: Props) {
   const supabase = createClient();
 
   const form = useForm<AuthFormFields>({
@@ -26,7 +31,7 @@ export function AuthForm() {
     supabase.auth.signInWithOtp({
       email: data.email,
       options: {
-        emailRedirectTo: `${location.origin}/api/auth/callback`
+        emailRedirectTo: `${getUrl()}/api/auth/callback?redirectUrl=${redirectUrl}`
       }
     });
   };

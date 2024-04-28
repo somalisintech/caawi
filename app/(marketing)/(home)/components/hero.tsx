@@ -1,7 +1,7 @@
-import { MentorCard } from '@/components/mentors/mentor-card';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { redirect } from 'next/navigation';
+import { MentorScrollCard } from '@/components/mentors/mentor-scroll-card';
 import prisma from '@/lib/db';
 
 export async function Hero() {
@@ -43,14 +43,14 @@ export async function Hero() {
           <div className="flex animate-mentors-scroll flex-col">
             {mentors.map((mentor) => (
               <Card key={mentor.id} className="mb-4">
-                <MentorCard mentor={mentor} />
+                <MentorScrollCard mentor={mentor} />
               </Card>
             ))}
           </div>
           <div className="flex animate-mentors-scroll flex-col">
             {mentors.map((mentor) => (
               <Card key={mentor.id} className="mb-4">
-                <MentorCard mentor={mentor} />
+                <MentorScrollCard mentor={mentor} />
               </Card>
             ))}
           </div>

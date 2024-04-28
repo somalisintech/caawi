@@ -28,7 +28,7 @@ export async function Hero() {
             <input
               name="search"
               placeholder="Search by skill, company or role"
-              className="w-full border-none focus:ring-0 md:w-[320px]"
+              className="w-full border-none bg-transparent focus:ring-0 md:w-[320px]"
             />
             <Button type="submit" size="lg" className="px-4">
               Find mentors
@@ -37,8 +37,8 @@ export async function Hero() {
         </div>
 
         <div className="relative h-[400px] w-full justify-self-end overflow-hidden lg:h-[600px] lg:w-[480px]">
-          <div className="absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-white to-transparent"></div>
-          <div className="absolute inset-x-0 bottom-0 z-10 h-8 bg-gradient-to-t from-white to-transparent"></div>
+          <div className="absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-background to-transparent"></div>
+          <div className="absolute inset-x-0 bottom-0 z-10 h-8 bg-gradient-to-t from-background to-transparent"></div>
 
           <div className="flex animate-mentors-scroll flex-col">
             {mentors.map((mentor) => (

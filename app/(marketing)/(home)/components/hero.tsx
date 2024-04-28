@@ -22,7 +22,7 @@ export async function Hero() {
           </h1>
           <p className="text-muted-foreground">
             Join Caawi, the innovative digital mentorship platform that connects mentors and mentees within the Somali
-            tech community. Experience professional growth and personal development through meaningful connections.
+            community. Experience professional growth and personal development through meaningful connections.
           </p>
           <form action={searchMentor} className="flex w-fit items-center gap-2 rounded-lg border-2 p-2">
             <input

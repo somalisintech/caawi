@@ -1,10 +1,17 @@
 import { MentorCard } from '@/components/mentors/mentor-card';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { redirect } from 'next/navigation';
 import prisma from '@/lib/db';
 
 export async function Hero() {
   const mentors = await prisma.mentorProfile.findMany({ take: 10 });
+
+  async function searchMentor(formData: FormData) {
+    'use server';
+    const search = formData.get('search');
+    redirect(`/mentors?search=${search}`);
+  }
 
   return (
     <div className="container">
@@ -17,7 +24,16 @@ export async function Hero() {
             Join Caawi, the innovative digital mentorship platform that connects mentors and mentees within the Somali
             tech community. Experience professional growth and personal development through meaningful connections.
           </p>
-          <Input placeholder="Search" className="max-w-[420px]" />
+          <form action={searchMentor} className="flex w-fit items-center gap-2 rounded-lg border-2 p-2">
+            <input
+              name="search"
+              placeholder="Search by skill, company or role"
+              className="w-full border-none focus:ring-0 md:w-[320px]"
+            />
+            <Button type="submit" size="lg" className="px-4">
+              Find mentors
+            </Button>
+          </form>
         </div>
 
         <div className="relative h-[400px] w-full justify-self-end overflow-hidden lg:h-[600px] lg:w-[480px]">

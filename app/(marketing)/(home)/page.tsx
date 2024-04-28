@@ -7,9 +7,7 @@ import { CallToAction } from './components/call-to-action';
 export default function Home() {
   return (
     <>
-      {/* <div className="bg-primary"> */}
       <Hero />
-      {/* </div> */}
       <Companies />
       <Features />
       <Paths />

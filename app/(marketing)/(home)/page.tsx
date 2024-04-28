@@ -3,7 +3,6 @@ import { Companies } from './components/companies';
 import { Preview } from './components/preview';
 import { Features } from './components/features';
 import { Paths } from './components/paths';
-import { Mentors } from './components/mentors';
 import { CallToAction } from './components/call-to-action';
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
       <Preview />
       <Features />
       <Paths />
-      <Mentors />
       <CallToAction />
     </>
   );

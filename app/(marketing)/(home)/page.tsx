@@ -1,6 +1,5 @@
 import { Hero } from './components/hero';
 import { Companies } from './components/companies';
-import { Preview } from './components/preview';
 import { Features } from './components/features';
 import { Paths } from './components/paths';
 import { CallToAction } from './components/call-to-action';
@@ -8,9 +7,10 @@ import { CallToAction } from './components/call-to-action';
 export default function Home() {
   return (
     <>
+      {/* <div className="bg-primary"> */}
       <Hero />
+      {/* </div> */}
       <Companies />
-      <Preview />
       <Features />
       <Paths />
       <CallToAction />

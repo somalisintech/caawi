@@ -8,7 +8,7 @@ export async function Hero() {
 
   return (
     <div className="container">
-      <div className="grid grid-cols-2 items-center">
+      <div className="grid grid-cols-1 items-center lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <h1 className="text-5xl font-bold">
             Empowering the Somali Community through <span className="text-primary">Mentorship.</span>
@@ -20,7 +20,7 @@ export async function Hero() {
           <Input placeholder="Search" className="max-w-[420px]" />
         </div>
 
-        <div className="relative h-[600px] w-[480px] justify-self-end overflow-hidden">
+        <div className="relative h-[400px] w-full justify-self-end overflow-hidden lg:h-[600px] lg:w-[480px]">
           <div className="absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-white to-transparent"></div>
           <div className="absolute inset-x-0 bottom-0 z-10 h-8 bg-gradient-to-t from-white to-transparent"></div>
 

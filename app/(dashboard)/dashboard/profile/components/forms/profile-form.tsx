@@ -15,9 +15,6 @@ import { ProfileFormImage } from './profile-form-image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Gender, UserType } from '@prisma/client';
-import { roles } from '@/constants/roles';
-import { companies } from '@/constants/companies';
-import { locations } from '@/constants/locations';
 import { UserWithProfile } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -271,20 +268,9 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-48 overflow-y-auto">
-                        {roles.map((r) => (
-                          <SelectItem key={r} value={r}>
-                            {r}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -295,20 +281,9 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Company</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-48 overflow-y-auto">
-                        {companies.map((c) => (
-                          <SelectItem key={c} value={c}>
-                            {c}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -329,22 +304,9 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Country</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue className="line-clamp-1" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-48 overflow-y-auto">
-                        {locations
-                          .map((c) => c.name)
-                          .map((n) => (
-                            <SelectItem key={n} value={n} className="line-clamp-1">
-                              {n}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -355,20 +317,9 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>City</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-48 overflow-y-auto">
-                        {(locations.find((l) => l.name === country)?.states || []).map((c, idx) => (
-                          <SelectItem key={idx} value={c.name} className="line-clamp-1">
-                            {c.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

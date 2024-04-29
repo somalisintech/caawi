@@ -4,6 +4,7 @@ import { PropsWithChildren } from 'react';
 import { Header } from '@/components/layout/header';
 import { ProfileSummary } from '@/components/layout/profile-summary';
 import { CompleteProfile } from '@/components/profile/complete-profile';
+import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
@@ -55,8 +56,9 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
       </div>
       <div className="container pb-8">
         <div className="flex gap-8">
-          <div className="flex-1" role="main">
-            {children}
+          <div className="flex flex-1 flex-col gap-4">
+            <DashboardMenu />
+            <div role="main">{children}</div>
           </div>
           <ProfileSummary user={user} />
         </div>

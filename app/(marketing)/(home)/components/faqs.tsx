@@ -5,7 +5,7 @@ export function Faqs() {
     <div>
       <hr />
       <div className="py-16">
-        <div className="container flex gap-16">
+        <div className="container flex flex-col gap-8 md:flex-row md:gap-16">
           <h2 className="text-4xl font-medium">Frequently asked question</h2>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">

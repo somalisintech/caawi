@@ -15,7 +15,7 @@ export async function Hero() {
 
   return (
     <div className="container">
-      <div className="grid grid-cols-1 items-center lg:grid-cols-2">
+      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <h1 className="text-5xl font-bold">
             Empowering the Somali Community through <span className="text-primary">Mentorship.</span>
@@ -24,13 +24,13 @@ export async function Hero() {
             Join Caawi, the innovative digital mentorship platform that connects mentors and mentees within the Somali
             community. Experience professional growth and personal development through meaningful connections.
           </p>
-          <form action={searchMentor} className="flex w-fit items-center gap-2 rounded-lg border-2 p-2">
+          <form action={searchMentor} className="flex w-full items-center gap-2 rounded-lg border-2 p-2 lg:w-fit">
             <input
               name="search"
               placeholder="Search by skill, company or role"
-              className="w-full border-none bg-transparent placeholder:text-muted-foreground focus:ring-0 md:w-[320px]"
+              className="w-full border-none bg-transparent placeholder:text-muted-foreground focus:ring-0 lg:w-[320px]"
             />
-            <Button type="submit" size="lg" className="px-4">
+            <Button type="submit" size="lg" className="text-nowrap px-4">
               Find mentors
             </Button>
           </form>

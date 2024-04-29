@@ -84,7 +84,7 @@ export async function Header() {
           <Link href="/auth">Sign in</Link>
         </Button>
         <Button asChild>
-          <Link href="/auth">Join</Link>
+          <Link href="/auth">Join Caawi</Link>
         </Button>
       </div>
     </header>

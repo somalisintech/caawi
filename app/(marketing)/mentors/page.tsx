@@ -1,5 +1,4 @@
 import { MentorsList } from '@/components/mentors/mentors-list';
-import { MentorsSearch } from '@/components/mentors/mentors-search';
 import prisma from '@/lib/db';
 
 export default async function PublicMentorsListPage({ searchParams }: { searchParams: { search?: string } }) {
@@ -41,15 +40,8 @@ export default async function PublicMentorsListPage({ searchParams }: { searchPa
   });
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-medium">Search</h3>
-          <p className="text-sm text-muted-foreground">Search for mentors</p>
-        </div>
-        <MentorsSearch searchQuery={search} />
-        <MentorsList mentors={mentors} />
-      </div>
+    <div className="pb-8">
+      <MentorsList mentors={mentors} />
     </div>
   );
 }

@@ -9,7 +9,7 @@ type Props = {
   searchQuery?: string;
 };
 
-export function MentorsSearch({ searchQuery }: Props) {
+export function MentorsSearch({ searchQuery = '' }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState(searchQuery);
   const debouncedSearch = useDebounce(search, 500);

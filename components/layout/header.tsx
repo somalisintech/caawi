@@ -76,7 +76,7 @@ export async function Header() {
   }
 
   return (
-    <header className="flex items-center justify-between p-5">
+    <header className="flex items-center justify-between py-5">
       <CaawiLogo />
       <div className="flex items-center space-x-2">
         <ThemeToggle />
@@ -84,7 +84,7 @@ export async function Header() {
           <Link href="/auth">Sign in</Link>
         </Button>
         <Button asChild>
-          <Link href="/auth">Join</Link>
+          <Link href="/auth">Join Caawi</Link>
         </Button>
       </div>
     </header>

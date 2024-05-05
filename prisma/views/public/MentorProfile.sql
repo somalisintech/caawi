@@ -9,6 +9,9 @@ SELECT
   p.gender,
   p."sameGenderPref",
   p."yearsOfExperience",
+  p."linkedInUrl",
+  p."githubUrl",
+  p."buyMeCoffeeUrl",
   l.city,
   l.country,
   o.role,
@@ -22,4 +25,4 @@ FROM "Profile" p
        LEFT JOIN "_ProfileSkills" ps ON p.id = ps."A"
        LEFT JOIN "Skill" s ON ps."B" = s.id
 WHERE p."userType" = 'MENTOR'
-GROUP BY p.id, u."firstName", u."lastName", p.bio, u.image, cu.scheduling_url, p.gender, p."sameGenderPref", p."yearsOfExperience", l.city, l.country, o.role, o.company;
+GROUP BY p.id, u."firstName", u."lastName", p.bio, u.image, cu.scheduling_url, p.gender, p."sameGenderPref", p."yearsOfExperience", p."linkedInUrl", p."githubUrl", p."buyMeCoffeeUrl", l.city, l.country, o.role, o.company;

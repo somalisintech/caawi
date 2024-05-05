@@ -23,7 +23,7 @@ model User {
 model Profile {
   id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userType          UserType?
-  userId            String        @db.Uuid @unique
+  userId            String        @unique @db.Uuid
   bio               String?
   locationId        Int?
   occupationId      Int?
@@ -39,6 +39,7 @@ model Profile {
   occupation        Occupation?   @relation(fields: [occupationId], references: [id])
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendlyUser      CalendlyUser?
+  skills            Skill[]       @relation("ProfileSkills")
 }
 
 model Location {
@@ -51,17 +52,17 @@ model Location {
 }
 
 model Occupation {
-  id                Int       @id @default(autoincrement())
-  role              String?
-  company           String?
-  profile           Profile[]
+  id      Int       @id @default(autoincrement())
+  role    String?
+  company String?
+  profile Profile[]
 
   @@unique([role, company])
 }
 
 model CalendlyUser {
   uri                  String   @id
-  profileId            String   @db.Uuid @unique
+  profileId            String   @unique @db.Uuid
   name                 String?
   slug                 String?
   email                String?
@@ -73,6 +74,12 @@ model CalendlyUser {
   current_organization String?
   resource_type        String?
   profile              Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  profiles Profile[] @relation("ProfileSkills")
 }
 
 view MentorProfile {

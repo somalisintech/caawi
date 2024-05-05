@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS "MentorProfile";
+CREATE VIEW "MentorProfile" AS
 SELECT
   p.id,
   p."userType",

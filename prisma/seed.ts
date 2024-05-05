@@ -16,6 +16,7 @@ async function main() {
   await prisma.occupation.deleteMany();
 
   console.log('Start seeding 🌱');
+  const skills = ['JavaScript', 'React', 'Node.js']; // Add more skills as needed
 
   const promises = Array.from({ length: 100 }, async () => {
     const gender = faker.person.sex();
@@ -29,6 +30,22 @@ async function main() {
     const role = faker.person.jobTitle();
     const yearsOfExperience = faker.number.int({ min: 1, max: 30 });
     const company = faker.company.name();
+
+    const userSkills = await Promise.all(
+      skills.map(async (skill) => {
+        const foundSkill = await prisma.skill.findUnique({
+          where: { name: skill }
+        });
+
+        if (!foundSkill) {
+          return prisma.skill.create({
+            data: { name: skill }
+          });
+        }
+
+        return foundSkill;
+      })
+    );
 
     return prisma.user.create({
       data: {
@@ -60,6 +77,12 @@ async function main() {
                 },
                 create: { role: role, company: company }
               }
+            },
+            skills: {
+              connectOrCreate: userSkills.map((skill) => ({
+                where: { name: skill.name },
+                create: { name: skill.name }
+              }))
             }
           }
         }

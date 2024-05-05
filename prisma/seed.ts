@@ -4,8 +4,9 @@ import { faker, Sex } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
-  if (process.env.NODE_ENV !== 'development') {
-    throw new Error('Seeding is only allowed in development environment');
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Seeding is not allowed in production environment');
+    process.exit(1);
   }
 
   console.log('Clearing database... 🧹');

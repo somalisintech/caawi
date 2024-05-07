@@ -4,8 +4,9 @@ import { faker, Sex } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
-  if (process.env.NODE_ENV !== 'development') {
-    throw new Error('Seeding is only allowed in development environment');
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Seeding is not allowed in production environment');
+    process.exit(1);
   }
 
   console.log('Clearing database... 🧹');
@@ -16,6 +17,17 @@ async function main() {
   await prisma.occupation.deleteMany();
 
   console.log('Start seeding 🌱');
+
+  const skills = ['JavaScript', 'React', 'Node.js']; // Add more skills as needed
+  const userSkills = await Promise.all(
+    skills.map(async (skill) => {
+      return prisma.skill.upsert({
+        where: { name: skill },
+        update: {},
+        create: { name: skill }
+      });
+    })
+  );
 
   const promises = Array.from({ length: 100 }, async () => {
     const gender = faker.person.sex();
@@ -60,6 +72,12 @@ async function main() {
                 },
                 create: { role: role, company: company }
               }
+            },
+            skills: {
+              connectOrCreate: userSkills.map((skill) => ({
+                where: { name: skill.name },
+                create: { name: skill.name }
+              }))
             }
           }
         }

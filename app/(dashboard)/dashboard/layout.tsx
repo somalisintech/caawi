@@ -60,7 +60,9 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
             <DashboardMenu />
             <div role="main">{children}</div>
           </div>
-          <ProfileSummary user={user} />
+          <div className="hidden lg:block">
+            <ProfileSummary user={user} />
+          </div>
         </div>
       </div>
     </div>

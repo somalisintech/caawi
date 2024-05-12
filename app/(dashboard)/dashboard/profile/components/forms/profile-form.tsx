@@ -77,7 +77,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Card>
-          <CardHeader className="border-b-[1px]">
+          <CardHeader className="border-b-DEFAULT">
             <CardTitle className="flex items-center justify-between">
               <div>Basic profile</div>
               <ProfileFormImage user={user} />
@@ -231,7 +231,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
 
         {profile?.userType === 'MENTOR' && (
           <Card>
-            <CardHeader className="border-b-[1px]">
+            <CardHeader className="border-b-DEFAULT">
               <CardTitle>Preferences</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 py-4">
@@ -257,7 +257,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
         )}
 
         <Card>
-          <CardHeader className="border-b-[1px]">
+          <CardHeader className="border-b-DEFAULT">
             <CardTitle>Occupation</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 py-4">
@@ -293,7 +293,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
         </Card>
 
         <Card>
-          <CardHeader className="border-b-[1px]">
+          <CardHeader className="border-b-DEFAULT">
             <CardTitle>Location</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 py-4">
@@ -330,7 +330,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
 
         {profile?.userType === 'MENTOR' && (
           <Card>
-            <CardHeader className="border-b-[1px]">
+            <CardHeader className="border-b-DEFAULT">
               <CardTitle>Integrations</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 py-4">

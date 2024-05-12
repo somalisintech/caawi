@@ -27,14 +27,13 @@ export function AuthForm({ redirectUrl = `${getUrl()}/dashboard` }: Props) {
     resolver: zodResolver(authFormSchema)
   });
 
-  const onSubmit: SubmitHandler<AuthFormFields> = async (data) => {
+  const onSubmit: SubmitHandler<AuthFormFields> = async (data) =>
     supabase.auth.signInWithOtp({
       email: data.email,
       options: {
         emailRedirectTo: `${getUrl()}/api/auth/callback?redirectUrl=${redirectUrl}`
       }
     });
-  };
 
   return (
     <Form {...form}>

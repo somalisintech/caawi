@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Gender, UserType } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import { UserWithProfile } from '@/types/user';
+import { Loader2 } from 'lucide-react';
 
 interface Props {
   user: UserWithProfile;
@@ -174,7 +175,10 @@ export function CompleteProfileForm({ user, onComplete }: Props) {
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit">Complete profile</Button>
+          <Button type="submit" className="gap-2">
+            {form.formState.isSubmitting && <Loader2 className="animate-spin" size={16} />}
+            Complete profile
+          </Button>
         </div>
       </form>
     </Form>

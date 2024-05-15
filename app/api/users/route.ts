@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
-export const DELETE = withAxiom(async ({ log }: AxiomRequest) => {
+export const DELETE = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
   const { data: userData } = await supabase.auth.getUser();
 
@@ -13,14 +13,14 @@ export const DELETE = withAxiom(async ({ log }: AxiomRequest) => {
 
   await prisma.user.delete({ where: { id: userData.user.id } });
 
-  log.debug('User deleted', {
+  req.log.debug('User deleted', {
     userId: userData.user.id
   });
 
   return NextResponse.json(userData);
 });
 
-export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
+export const POST = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
   const { data: userData } = await supabase.auth.getUser();
 
@@ -44,7 +44,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     linkedInUrl,
     githubUrl,
     buyMeCoffeeUrl
-  } = await json();
+  } = await req.json();
 
   const user = await prisma.user.update({
     where: {
@@ -100,7 +100,7 @@ export const POST = withAxiom(async ({ json, log }: AxiomRequest) => {
     }
   });
 
-  log.debug('User profile updated', {
+  req.log.debug('User profile updated', {
     userId: userData.user.id
   });
 

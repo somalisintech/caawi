@@ -4,7 +4,7 @@ import { getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
-export const GET = withAxiom(async ({ log, nextUrl }: AxiomRequest) => {
+export const GET = withAxiom(async (req: AxiomRequest) => {
   try {
     const supabase = createClient();
     const { data: userData } = await supabase.auth.getUser();
@@ -13,16 +13,16 @@ export const GET = withAxiom(async ({ log, nextUrl }: AxiomRequest) => {
       return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
     }
 
-    log.info('Fetching access token');
+    req.log.info('Fetching access token');
 
     const data = await getAccessToken({
       grantType: 'authorization_code',
-      code: nextUrl.searchParams.get('code')!,
-      redirectUri: nextUrl.origin + '/api/calendly/callback'
+      code: req.nextUrl.searchParams.get('code')!,
+      redirectUri: req.nextUrl.origin + '/api/calendly/callback'
     });
 
     if (!data.access_token) {
-      log.info('Access token not found');
+      req.log.info('Access token not found');
       return NextResponse.json({ message: 'Access token not found' }, { status: 401, statusText: 'Unauthorised' });
     }
 
@@ -44,16 +44,16 @@ export const GET = withAxiom(async ({ log, nextUrl }: AxiomRequest) => {
       }
     });
 
-    log.info('Updated user profile with Calendly user data', resource);
+    req.log.info('Updated user profile with Calendly user data', resource);
 
-    const response = NextResponse.redirect(nextUrl.origin + '/dashboard/profile');
+    const response = NextResponse.redirect(req.nextUrl.origin + '/dashboard/profile');
     response.cookies.set('calendly_access_token', data.access_token);
     response.cookies.set('calendly_refresh_token', data.refresh_token);
     response.cookies.set('calendly_organization', data.organization);
 
     return response;
   } catch (error) {
-    log.error('Error fetching access token', { error });
+    req.log.error('Error fetching access token', { error });
     return NextResponse.json(
       { message: 'Error fetching access token' },
       { status: 500, statusText: 'Internal Server Error' }

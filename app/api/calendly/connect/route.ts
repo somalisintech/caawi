@@ -1,8 +1,8 @@
 import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
 
-export const GET = withAxiom(async ({ url }: AxiomRequest) => {
-  const { origin } = new URL(url);
+export const GET = withAxiom(async (req: AxiomRequest) => {
+  const { origin } = new URL(req.url);
   const calendlyUrl = new URL('https://auth.calendly.com/oauth/authorize');
 
   calendlyUrl.searchParams.set('client_id', process.env.CALENDLY_CLIENT_ID!);

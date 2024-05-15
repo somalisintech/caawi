@@ -4,7 +4,7 @@ import { revokeAccessToken } from '@/app/api/calendly/services';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
-export const GET = withAxiom(async ({ log, nextUrl, cookies }: AxiomRequest) => {
+export const GET = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
   const { data: userData } = await supabase.auth.getUser();
 
@@ -12,11 +12,11 @@ export const GET = withAxiom(async ({ log, nextUrl, cookies }: AxiomRequest) => 
     return NextResponse.redirect('/api/auth/signin');
   }
 
-  log.info('Disconnecting Calendly', {
+  req.log.info('Disconnecting Calendly', {
     userId: userData.user.id
   });
 
-  const calendly_access_token = cookies.get('calendly_access_token')?.value;
+  const calendly_access_token = req.cookies.get('calendly_access_token')?.value;
   calendly_access_token && (await revokeAccessToken(calendly_access_token));
 
   const user = await prisma.user.findUniqueOrThrow({
@@ -32,7 +32,7 @@ export const GET = withAxiom(async ({ log, nextUrl, cookies }: AxiomRequest) => 
     }
   });
 
-  const response = NextResponse.redirect(nextUrl.origin + '/dashboard/profile');
+  const response = NextResponse.redirect(req.nextUrl.origin + '/dashboard/profile');
   response.cookies.delete('calendly_access_token');
   response.cookies.delete('calendly_refresh_token');
   response.cookies.delete('calendly_organization');

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
-export const GET = withAxiom(async ({ log }: AxiomRequest) => {
+export const GET = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
   const { data: userData } = await supabase.auth.getUser();
 
@@ -13,7 +13,7 @@ export const GET = withAxiom(async ({ log }: AxiomRequest) => {
 
   const mentors = await prisma.mentorProfile.findMany();
 
-  log.debug('Mentor Profiles fetched', {
+  req.log.debug('Mentor Profiles fetched', {
     mentors
   });
 

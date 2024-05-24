@@ -1,5 +1,5 @@
 import { MentorProfile } from '@prisma/client';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
@@ -36,11 +36,12 @@ export async function MentorScrollCard({ mentor }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div>{mentor.bio}</div>
+      {/* <div className="flex gap-2">
         <Badge variant="secondary">HTML</Badge>
         <Badge variant="secondary">CSS</Badge>
         <Badge variant="secondary">JavaScript</Badge>
-      </div>
+      </div> */}
     </Link>
   );
 }

@@ -77,9 +77,11 @@ model CalendlyUser {
 }
 
 model Skill {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  profiles Profile[] @relation("ProfileSkills")
+  id              Int            @id @default(autoincrement())
+  name            String         @unique
+  profiles        Profile[]      @relation("ProfileSkills")
+  MentorProfile   MentorProfile? @relation(fields: [mentorProfileId], references: [id])
+  mentorProfileId String?
 }
 
 view MentorProfile {
@@ -100,6 +102,7 @@ view MentorProfile {
   linkedInUrl           String?
   githubUrl             String?
   buyMeCoffeeUrl        String?
+  skills                Skill[]
 }
 
 enum UserType {

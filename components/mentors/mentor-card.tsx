@@ -37,7 +37,7 @@ export async function MentorCard({ mentor }: Props) {
         </div>
         <div>
           <Button asChild variant="outline" size="sm" className="rounded-full">
-            <Link href={redirectPath}>View profile</Link>
+            <Link href={redirectPath}>View</Link>
           </Button>
         </div>
       </div>

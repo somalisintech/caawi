@@ -41,7 +41,10 @@ export async function Header() {
 
     return (
       <header className="flex items-center justify-between py-5">
-        <CaawiLogo />
+        <div className="flex items-center gap-3">
+          <CaawiLogo />
+          <div className="text-lg font-medium">Caawi</div>
+        </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <DropdownMenu>

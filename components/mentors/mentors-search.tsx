@@ -18,7 +18,6 @@ export function MentorsSearch({ searchQuery = '' }: Props) {
     if (debouncedSearch) {
       return router.push(`?search=${debouncedSearch}`);
     }
-    return router.push('?');
   }, [router, debouncedSearch]);
 
   return (

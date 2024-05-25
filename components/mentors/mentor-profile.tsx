@@ -76,7 +76,7 @@ export async function MentorProfile({ mentor }: Props) {
           </div>
         </div>
         <Separator />
-        <div className="lex-wrap flex gap-4">
+        <div className="flex flex-wrap gap-4">
           {mentor.linkedInUrl && (
             <Link className="text-sm underline" href={mentor.linkedInUrl} target="_blank">
               <Button size="sm" variant="outline" className="gap-1 rounded-full">

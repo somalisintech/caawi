@@ -28,11 +28,11 @@ import { Separator } from '@/components/ui/separator';
 const legalLink = [
   {
     label: 'Privacy Policy',
-    href: '/'
+    href: 'https://somalisintech.notion.site/Caawi-Privacy-Policy-ace5f3932a714b91b9c069dad66db3d4'
   },
   {
     label: 'Terms and Conditions',
-    href: '/'
+    href: 'https://somalisintech.notion.site/Caawi-Terms-and-Conditions-97562ad4687641b0a8269aa7d8b5ccc7'
   }
 ];
 

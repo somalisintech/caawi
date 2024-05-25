@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -48,12 +48,6 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       company: profile?.occupation?.company ?? undefined
     }
   });
-
-  const country = form.watch('country', profile?.location?.country ?? undefined);
-
-  useEffect(() => {
-    form.setValue('city', undefined);
-  }, [form, country]);
 
   async function onSubmit(data: ProfileFormFields) {
     const response = await fetch('/api/users', {

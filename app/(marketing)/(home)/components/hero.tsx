@@ -16,7 +16,7 @@ export async function Hero() {
   return (
     <div className="container">
       <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 py-8">
           <h1 className="text-5xl font-bold">
             Empowering the Somali Community through <span className="text-primary">Mentorship.</span>
           </h1>

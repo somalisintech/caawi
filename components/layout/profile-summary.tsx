@@ -62,22 +62,28 @@ export function ProfileSummary({ user }: Props) {
             {!!socials.length && (
               <div className="mt-4 flex gap-2">
                 {user.profile?.linkedInUrl && (
-                  <Button size="sm" variant="outline" className="gap-1 rounded-full">
-                    <FaLinkedin />
-                    LinkedIn
-                  </Button>
+                  <Link className="text-sm underline" href={user.profile?.linkedInUrl} target="_blank">
+                    <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                      <FaLinkedin />
+                      LinkedIn
+                    </Button>
+                  </Link>
                 )}
                 {user.profile?.githubUrl && (
-                  <Button size="sm" variant="outline" className="gap-1 rounded-full">
-                    <FaGithub />
-                    GitHub
-                  </Button>
+                  <Link className="text-sm underline" href={user.profile?.githubUrl} target="_blank">
+                    <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                      <FaGithub />
+                      GitHub
+                    </Button>
+                  </Link>
                 )}
                 {user.profile?.buyMeCoffeeUrl && (
-                  <Button size="sm" variant="outline" className="gap-1 rounded-full">
-                    <SiBuymeacoffee />
-                    Buy Me Coffee
-                  </Button>
+                  <Link className="text-sm underline" href={user.profile?.buyMeCoffeeUrl} target="_blank">
+                    <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                      <SiBuymeacoffee />
+                      Buy Me Coffee
+                    </Button>
+                  </Link>
                 )}
               </div>
             )}

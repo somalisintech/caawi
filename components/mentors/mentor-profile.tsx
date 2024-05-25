@@ -7,6 +7,9 @@ import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 import Link from 'next/link';
 import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
+import { FaGithub, FaLinkedin } from 'react-icons/fa6';
+import { SiBuymeacoffee } from 'react-icons/si';
+import { Button } from '@/components/ui/button';
 
 type Props = {
   mentor: MentorProfileType;
@@ -73,30 +76,30 @@ export async function MentorProfile({ mentor }: Props) {
           </div>
         </div>
         <Separator />
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        <div className="lex-wrap flex gap-4">
           {mentor.linkedInUrl && (
-            <div className="space-y-1">
-              <div className="text-sm uppercase text-muted-foreground">LinkedIn url</div>
-              <Link className="text-sm underline" href={mentor.linkedInUrl} target="_blank">
-                {mentor.linkedInUrl}
-              </Link>
-            </div>
+            <Link className="text-sm underline" href={mentor.linkedInUrl} target="_blank">
+              <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                <FaLinkedin />
+                LinkedIn
+              </Button>
+            </Link>
           )}
           {mentor.githubUrl && (
-            <div className="space-y-1">
-              <div className="text-sm uppercase text-muted-foreground">Github Url</div>
-              <Link className="text-sm underline" href={mentor.githubUrl} target="_blank">
-                {mentor.githubUrl}
-              </Link>
-            </div>
+            <Link className="text-sm underline" href={mentor.githubUrl} target="_blank">
+              <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                <FaGithub />
+                GitHub
+              </Button>
+            </Link>
           )}
           {mentor.buyMeCoffeeUrl && (
-            <div className="space-y-1">
-              <div className="text-sm uppercase text-muted-foreground">Support mentor</div>
-              <Link className="text-sm underline" href={mentor.buyMeCoffeeUrl} target="_blank">
-                {mentor.buyMeCoffeeUrl}
-              </Link>
-            </div>
+            <Link className="text-sm underline" href={mentor.buyMeCoffeeUrl} target="_blank">
+              <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                <SiBuymeacoffee />
+                Buy me a coffee
+              </Button>
+            </Link>
           )}
         </div>
       </CardContent>

@@ -45,7 +45,12 @@ export function Footer() {
           <div className="text-sm text-muted-foreground">© {new Date().getFullYear()} Caawi. All rights reserved.</div>
           <div className="flex gap-5">
             {legalLink.map((link) => (
-              <Link key={link.label} href={link.href} className="text-sm text-muted-foreground underline">
+              <Link
+                key={link.label}
+                href={link.href}
+                target={'_blank'}
+                className="text-sm text-muted-foreground underline"
+              >
                 {link.label}
               </Link>
             ))}

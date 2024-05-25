@@ -35,7 +35,24 @@ export default function Auth({ searchParams }: Props) {
           </div>
         </CardContent>
       </Card>
-      <p className="text-center text-sm leading-6 text-muted-foreground">© Caawi {new Date().getFullYear()}</p>
+      <p className="mx-auto max-w-[240px] text-center text-xs text-muted-foreground">
+        By continuing to Caawi, you agree to our{' '}
+        <a
+          className="underline"
+          href="https://somalisintech.notion.site/Caawi-Terms-and-Conditions-97562ad4687641b0a8269aa7d8b5ccc7"
+          target="_blank"
+        >
+          Terms and Conditions
+        </a>{' '}
+        and{' '}
+        <a
+          className="underline"
+          href="https://somalisintech.notion.site/Caawi-Privacy-Policy-ace5f3932a714b91b9c069dad66db3d4"
+          target="_blank"
+        >
+          Privacy Policy
+        </a>
+      </p>
     </div>
   );
 }

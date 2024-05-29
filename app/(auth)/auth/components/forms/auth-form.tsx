@@ -2,6 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
@@ -28,12 +29,20 @@ export function AuthForm({ redirectUrl = `${getUrl()}/dashboard` }: Props) {
   });
 
   const onSubmit: SubmitHandler<AuthFormFields> = async (data) => {
-    supabase.auth.signInWithOtp({
-      email: data.email,
-      options: {
-        emailRedirectTo: `${getUrl()}/api/auth/callback?redirectUrl=${redirectUrl}`
-      }
-    });
+    try {
+      await supabase.auth.signInWithOtp({
+        email: data.email,
+        options: {
+          emailRedirectTo: `${getUrl()}/api/auth/callback?redirectUrl=${redirectUrl}`
+        }
+      });
+      form.reset({});
+      toast({
+        title: 'Check your email for a sign in link'
+      });
+    } catch {
+      form.setError('root', { message: 'Something went wrong' });
+    }
   };
 
   return (
@@ -53,7 +62,7 @@ export function AuthForm({ redirectUrl = `${getUrl()}/dashboard` }: Props) {
             <FormItem>
               <FormLabel>Email address</FormLabel>
               <FormControl>
-                <Input {...field} type="email" autoComplete="email" />
+                <Input {...field} autoComplete="email" />
               </FormControl>
               <FormMessage />
             </FormItem>

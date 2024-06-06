@@ -19,7 +19,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
   const calendly_access_token = req.cookies.get('calendly_access_token')?.value;
   calendly_access_token && (await revokeAccessToken(calendly_access_token));
 
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: userData.user.id
     },
@@ -37,7 +37,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
   response.cookies.delete('calendly_refresh_token');
   response.cookies.delete('calendly_organization');
 
-  if (!user.profile?.calendlyUser) {
+  if (!user?.profile?.calendlyUser) {
     return response;
   }
 

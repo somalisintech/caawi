@@ -19,7 +19,7 @@ export async function MentorProfile({ mentor }: Props) {
   const supabase = createClient();
   const { data: userData } = await supabase.auth.getUser();
 
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: userData.user?.id
     },

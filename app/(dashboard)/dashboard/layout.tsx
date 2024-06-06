@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     throw redirect('/auth');
   }
 
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: data.user.id
     },
@@ -47,6 +47,10 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
       }
     }
   });
+
+  if (!user) {
+    redirect('/auth');
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">

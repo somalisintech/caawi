@@ -1,9 +1,8 @@
-import { AxiomRequest, withAxiom } from 'next-axiom';
 import { createClient } from '@/utils/supabase/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const GET = withAxiom(async (req: AxiomRequest) => {
-  const requestUrl = new URL(req.url);
+export const GET = async ({ url }: NextRequest) => {
+  const requestUrl = new URL(url);
   const origin = requestUrl.origin;
   const code = requestUrl.searchParams.get('code');
   const redirectUrl = requestUrl.searchParams.get('redirectUrl') || `${origin}/dashboard`;
@@ -14,4 +13,4 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
   }
 
   return NextResponse.redirect(redirectUrl);
-});
+};

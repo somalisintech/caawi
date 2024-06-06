@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 import prisma from '@/lib/db';
+import { log } from 'next-axiom';
 
 export async function CalendlyConnectionButton() {
   const supabase = createClient();
@@ -11,7 +12,7 @@ export async function CalendlyConnectionButton() {
     return null;
   }
 
-  const { profile } = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: userData.user.id
     },
@@ -24,6 +25,15 @@ export async function CalendlyConnectionButton() {
       }
     }
   });
+
+  if (!user) {
+    log.warn('User not found', {
+      user: userData.user
+    });
+    return null;
+  }
+
+  const { profile } = user;
 
   if (profile?.userType !== 'MENTOR') {
     return null;

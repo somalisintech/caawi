@@ -2,12 +2,13 @@ import prisma from '@/lib/db';
 import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
 import { createClient } from '@/utils/supabase/server';
 import { ProfileForm } from './components/forms';
+import { redirect } from 'next/navigation';
 
 export default async function SettingsProfilePage() {
   const supabase = createClient();
   const { data } = await supabase.auth.getUser();
 
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: data.user?.id
     },
@@ -28,6 +29,10 @@ export default async function SettingsProfilePage() {
       }
     }
   });
+
+  if (!user) {
+    redirect('/auth');
+  }
 
   return <ProfileForm user={user} calendlyConnectionButton={<CalendlyConnectionButton />} />;
 }

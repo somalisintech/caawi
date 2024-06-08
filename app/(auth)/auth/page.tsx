@@ -4,15 +4,16 @@ import { SocialAuth } from '@/components/auth/social-auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AuthForm } from './components/forms';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
-type Props = {
-  searchParams: {
-    redirectUrl?: string;
-  };
-};
+export default async function Auth() {
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
 
-export default function Auth({ searchParams }: Props) {
-  const { redirectUrl } = searchParams;
+  if (data.user) {
+    redirect('/dashboard');
+  }
 
   return (
     <div className="flex flex-col">
@@ -22,7 +23,7 @@ export default function Auth({ searchParams }: Props) {
           <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">Continue to Caawi</h2>
           <div className="space-y-6">
             <Suspense>
-              <AuthForm redirectUrl={redirectUrl} />
+              <AuthForm />
             </Suspense>
             <div className="flex items-center gap-4">
               <Separator className="flex-1" />
@@ -30,7 +31,7 @@ export default function Auth({ searchParams }: Props) {
               <Separator className="flex-1" />
             </div>
             <Suspense>
-              <SocialAuth redirectUrl={redirectUrl} />
+              <SocialAuth />
             </Suspense>
           </div>
         </CardContent>

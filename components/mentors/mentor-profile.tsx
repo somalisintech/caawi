@@ -10,6 +10,7 @@ import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/componen
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SiBuymeacoffee } from 'react-icons/si';
 import { Button } from '@/components/ui/button';
+import { redirect } from 'next/navigation';
 
 type Props = {
   mentor: MentorProfileType;
@@ -17,11 +18,15 @@ type Props = {
 
 export async function MentorProfile({ mentor }: Props) {
   const supabase = createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+
+  if (!data.user || error) {
+    redirect('/auth');
+  }
 
   const user = await prisma.user.findUnique({
     where: {
-      id: userData.user?.id
+      email: data.user.email
     },
     select: {
       firstName: true,

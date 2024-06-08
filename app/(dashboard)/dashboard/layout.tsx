@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: data.user.id
+      email: data.user.email
     },
     select: {
       firstName: true,
@@ -43,8 +43,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
           githubUrl: true,
           buyMeCoffeeUrl: true,
           occupation: true,
-          location: true,
-          skills: true
+          location: true
         }
       }
     }

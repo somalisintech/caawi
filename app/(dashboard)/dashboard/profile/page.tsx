@@ -3,14 +3,20 @@ import { CalendlyConnectionButton } from '@/components/calendly/calendly-connect
 import { createClient } from '@/utils/supabase/server';
 import { ProfileForm } from './components/forms';
 import { redirect } from 'next/navigation';
+import { log } from 'next-axiom';
 
 export default async function SettingsProfilePage() {
   const supabase = createClient();
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    log.warn('Error fetching user', { error });
+    redirect('/auth');
+  }
 
   const user = await prisma.user.findUnique({
     where: {
-      id: data.user?.id
+      email: data.user.email
     },
     select: {
       id: true,

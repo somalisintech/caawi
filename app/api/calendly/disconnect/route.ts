@@ -6,14 +6,14 @@ import prisma from '@/lib/db';
 
 export const GET = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
 
-  if (!userData.user) {
-    return NextResponse.redirect('/api/auth/signin');
+  if (!data.user || error) {
+    return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
   req.log.info('Disconnecting Calendly', {
-    userId: userData.user.id
+    userId: data.user.id
   });
 
   const calendly_access_token = req.cookies.get('calendly_access_token')?.value;
@@ -21,7 +21,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: userData.user.id
+      email: data.user.email
     },
     select: {
       profile: {

@@ -5,26 +5,26 @@ import prisma from '@/lib/db';
 
 export const DELETE = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
 
-  if (!userData.user) {
+  if (!data.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  await prisma.user.delete({ where: { id: userData.user.id } });
+  await prisma.user.delete({ where: { email: data.user.email } });
 
   req.log.debug('User deleted', {
-    userId: userData.user.id
+    userId: data.user.id
   });
 
-  return NextResponse.json(userData);
+  return NextResponse.json(data);
 });
 
 export const POST = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
 
-  if (!userData.user) {
+  if (!data.user || error) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
@@ -48,7 +48,7 @@ export const POST = withAxiom(async (req: AxiomRequest) => {
 
   const user = await prisma.user.update({
     where: {
-      id: userData.user.id
+      email: data.user.email
     },
     data: {
       firstName,
@@ -101,7 +101,7 @@ export const POST = withAxiom(async (req: AxiomRequest) => {
   });
 
   req.log.debug('User profile updated', {
-    userId: userData.user.id
+    userId: data.user.id
   });
 
   return NextResponse.json(user);

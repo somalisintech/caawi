@@ -5,9 +5,9 @@ import prisma from '@/lib/db';
 
 export const GET = withAxiom(async (req: AxiomRequest) => {
   const supabase = createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
 
-  if (!userData.user) {
+  if (!data.user || error) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 

@@ -6,15 +6,15 @@ import { log } from 'next-axiom';
 
 export async function CalendlyConnectionButton() {
   const supabase = createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
 
-  if (!userData.user) {
+  if (!data.user || error) {
     return null;
   }
 
   const user = await prisma.user.findUnique({
     where: {
-      id: userData.user.id
+      email: data.user.email
     },
     select: {
       profile: {
@@ -28,7 +28,7 @@ export async function CalendlyConnectionButton() {
 
   if (!user) {
     log.warn('User not found', {
-      user: userData.user
+      user: data.user
     });
     return null;
   }

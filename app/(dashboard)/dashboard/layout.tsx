@@ -7,6 +7,7 @@ import { CompleteProfile } from '@/components/profile/complete-profile';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
+import { log } from 'next-axiom';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -18,12 +19,12 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   const { data } = await supabase.auth.getUser();
 
   if (!data.user) {
-    throw redirect('/auth');
+    redirect('/auth');
   }
 
   const user = await prisma.user.findUnique({
     where: {
-      id: data.user.id
+      email: data.user.email
     },
     select: {
       firstName: true,
@@ -49,6 +50,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   });
 
   if (!user) {
+    log.warn('User not found', { data });
     redirect('/auth');
   }
 

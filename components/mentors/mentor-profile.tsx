@@ -115,10 +115,7 @@ export async function MentorProfile({ mentor }: Props) {
           )}
         </div>
       </CardContent>
-      <CardFooter>
-        {canBook && <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />}
-        {!canBook && <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />}
-      </CardFooter>
+      <CardFooter>{canBook && <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />}</CardFooter>
     </Card>
   );
 }

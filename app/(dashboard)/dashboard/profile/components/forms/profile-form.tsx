@@ -70,6 +70,22 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {profile?.userType === 'MENTOR' && (
+          <Card>
+            <CardHeader className="border-b-DEFAULT">
+              <CardTitle>Integrations</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="relative h-6 w-24">
+                  <Image src="/calendly-icon.png" alt="Calendly logo" fill className="object-contain" />
+                </div>
+                {calendlyConnectionButton}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader className="border-b-DEFAULT">
             <CardTitle className="flex items-center justify-between">
@@ -322,21 +338,6 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
           </CardContent>
         </Card>
 
-        {profile?.userType === 'MENTOR' && (
-          <Card>
-            <CardHeader className="border-b-DEFAULT">
-              <CardTitle>Integrations</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 py-4">
-              <div className="flex items-center justify-between">
-                <div className="relative h-6 w-24">
-                  <Image src="/calendly-icon.png" alt="Calendly logo" fill className="object-contain" />
-                </div>
-                {calendlyConnectionButton}
-              </div>
-            </CardContent>
-          </Card>
-        )}
         <div className="flex justify-between">
           <Button type="submit" className="gap-2">
             {form.formState.isSubmitting && <Loader2 className="animate-spin" size={16} />}

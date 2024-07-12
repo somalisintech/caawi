@@ -32,9 +32,16 @@ export async function MentorProfile({ mentor }: Props) {
       firstName: true,
       lastName: true,
       email: true,
-      image: true
+      image: true,
+      profile: {
+        select: {
+          gender: true
+        }
+      }
     }
   });
+
+  const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
 
   return (
     <Card className="flex flex-col">
@@ -109,7 +116,10 @@ export async function MentorProfile({ mentor }: Props) {
         </div>
       </CardContent>
       <CardFooter>
-        <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />
+        {canBook && <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />}
+        {!canBook && (
+          <p className="text-sm text-muted-foreground">*This mentor only accepts bookings with the same gender</p>
+        )}
       </CardFooter>
     </Card>
   );

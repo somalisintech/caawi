@@ -35,7 +35,8 @@ export async function MentorProfile({ mentor }: Props) {
       image: true,
       profile: {
         select: {
-          gender: true
+          gender: true,
+          bio: true
         }
       }
     }

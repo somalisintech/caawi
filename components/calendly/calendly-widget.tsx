@@ -1,21 +1,23 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { User } from '@prisma/client';
+import { Profile, User } from '@prisma/client';
 import { PopupButton } from 'react-calendly';
 
 type CalendlyWidgetProps = {
   scheduling_url: string | null;
   user: Partial<User> | null;
+  profile?: Partial<Profile> | null;
 };
 
-export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
+export function CalendlyWidget({ scheduling_url, user, profile }: CalendlyWidgetProps) {
   if (!scheduling_url || !user) {
     return null;
   }
 
   const name = [user.firstName, user.lastName].join(' ');
   const email = user.email || '';
+  const bio = profile?.bio || '';
 
   return (
     <Button asChild>
@@ -25,7 +27,10 @@ export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
         rootElement={document.body}
         prefill={{
           name,
-          email
+          email,
+          customAnswers: {
+            a1: `Bio: ${bio}`
+          }
         }}
       />
     </Button>

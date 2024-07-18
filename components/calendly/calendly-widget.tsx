@@ -6,17 +6,18 @@ import { PopupButton } from 'react-calendly';
 
 type CalendlyWidgetProps = {
   scheduling_url: string | null;
-  user: Partial<User & { profile: Partial<Profile> }> | null;
+  user: Partial<User> | null;
+  profile?: Partial<Profile> | null;
 };
 
-export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
+export function CalendlyWidget({ scheduling_url, user, profile }: CalendlyWidgetProps) {
   if (!scheduling_url || !user) {
     return null;
   }
 
   const name = [user.firstName, user.lastName].join(' ');
   const email = user.email || '';
-  const bio = user?.profile?.bio || '';
+  const bio = profile?.bio || '';
 
   return (
     <Button asChild>
@@ -28,7 +29,7 @@ export function CalendlyWidget({ scheduling_url, user }: CalendlyWidgetProps) {
           name,
           email,
           customAnswers: {
-            a1: bio
+            a1: `Bio: ${bio}`
           }
         }}
       />

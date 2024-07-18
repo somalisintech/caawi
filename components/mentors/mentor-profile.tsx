@@ -117,7 +117,9 @@ export async function MentorProfile({ mentor }: Props) {
         </div>
       </CardContent>
       <CardFooter>
-        {canBook && <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} />}
+        {canBook && (
+          <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} profile={user?.profile} />
+        )}
         {!canBook && (
           <p className="text-sm text-muted-foreground">*This mentor only accepts bookings with the same gender</p>
         )}

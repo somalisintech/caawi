@@ -44,7 +44,9 @@ export async function CalendlyConnectionButton() {
   if (scheduling_url) {
     return (
       <Button disabled={!scheduling_url} variant="outline" type="button">
-        <Link href={'/api/calendly/disconnect'}>Disconnect</Link>
+        <Link prefetch={false} href={'/api/calendly/disconnect'}>
+          Disconnect
+        </Link>
       </Button>
     );
   }

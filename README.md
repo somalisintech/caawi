@@ -27,28 +27,48 @@ secure user connections.
 - Docker (if setting up a local PostgreSQL database)
 - Doppler CLI (for managing environment variables)
 
+### Setting Up Doppler
+
+We use Doppler to manage secrets in Caawi. Before proceeding, you'll need to install the Doppler CLI. Follow the
+guidance in their [official documentation](https://docs.doppler.com/docs/install-cli) to set it up.
+
+Once installed, run:
+
+```bash
+doppler setup
+```
+
+This will set your environment to the development configuration, which usually connects to a remote database.
+
 ### Running the Application Locally
 
-After executing `doppler setup`, your environment is set to the development configuration, which usually connects to a
-remote database. To run the application with a local database:
+1. **Database Setup**:
+   We recommend using a local database for development. Update your `DATABASE_URL` in Doppler to point to your local
+   database:
+   ```
+   DATABASE_URL=postgres://postgres:password@localhost:5432/postgres
+   ```
 
-1. **Adjust `DATABASE_URL` for Local Development**: Manually change the `DATABASE_URL` in your Doppler configuration to
-   point to your local database (e.g., `postgres://postgres:password@localhost:5432/postgres`).
+2. **Start Local Database**:
+   Ensure Docker is installed, then run:
+   ```bash
+   docker-compose up
+   ```
 
-2. **Local Database Configuration** (Optional): If you prefer using a local database and have updated
-   your `DATABASE_URL` accordingly, use Docker to start your PostgreSQL database. Ensure Docker is installed, then
-   run `docker-compose up`.
-
-3. **Database Migrations**: Before applying migrations, confirm they are intended for your local setup to avoid
-   affecting production data.
+3. **Database Migrations**:
+   Apply migrations to set up your database schema:
    ```bash
    pnpm migrate
    ```
-4. **Database Seeding**: To seed the database with initial data:
+
+4. **Database Seeding**:
+   Populate your database with initial data:
    ```bash
    pnpm seed
    ```
-5. **Start the Application**: Finally, launch the application:
+
+5. **Start the Application**:
+   Launch the development server:
    ```bash
    pnpm dev
    ```
@@ -85,8 +105,30 @@ CAAWI-123
 
 ## Contributing
 
-We welcome contributions! For guidelines on how to get involved, please consult our contributing guide.
+We welcome contributions from developers of all experience levels! Before starting, please read
+our [CONTRIBUTING.md](CONTRIBUTING.md) guide for detailed information on how to get involved, submit issues, and make
+pull requests.
+
+For new contributors, we recommend starting with our [BEFORE_YOUR_FIRST_ISSUE.md](BEFORE_YOUR_FIRST_ISSUE.md) guide,
+which provides step-by-step instructions for setting up your local environment and making your first contribution.
+
+## Code of Conduct
+
+We are committed to providing a welcoming and inclusive environment for all contributors. Please read
+our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) to understand our community standards and expectations.
+
+## Roadmap
+
+Curious about the future of Caawi? Check out our [ROADMAP.md](ROADMAP.md) to see our planned features and long-term
+vision for the project.
 
 ## Support
 
 For support, reach out to us at team@somalisintech.com or visit our [website](https://somalisintech.com).
+
+
+This updated README incorporates the suggestions by:
+1. Adding a section on setting up Doppler with a link to official documentation.
+2. Simplifying the local setup instructions and removing optional steps.
+3. Adding references to new documentation files like BEFORE_YOUR_FIRST_ISSUE.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, and ROADMAP.md.
+4. Expanding the Contributing section to be more welcoming to new contributors.

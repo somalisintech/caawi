@@ -4,12 +4,17 @@ import { type CookieOptions, createServerClient } from '@supabase/ssr';
 import { log } from 'next-axiom';
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get('next') ?? '/dashboard/profile';
+  try {
+    const { searchParams, origin } = new URL(request.url);
+    const code = searchParams.get('code');
+    // if "next" is in param, use it as the redirect URL
+    const next = searchParams.get('next') ?? '/dashboard/profile';
 
-  if (code) {
+    if (!code) {
+      log.error('No code provided in OAuth callback');
+      return NextResponse.redirect(`${origin}/auth/error?error=no_code`);
+    }
+
     const cookieStore = cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,13 +33,24 @@ export async function GET(request: Request) {
         }
       }
     );
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
-    }
-    log.error('Error exchanging code for session', { code, error });
-  }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/error`);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      log.error('Error exchanging code for session', { code, error: error.message, details: error });
+      if (error.message.includes('validation_failed')) {
+        return NextResponse.redirect(`${origin}/auth/error?error=validation_failed`);
+      }
+      return NextResponse.redirect(`${origin}/auth/error?error=exchange_failed`);
+    }
+
+    if (!data.session) {
+      log.error('No session data returned after code exchange');
+      return NextResponse.redirect(`${origin}/auth/error?error=no_session`);
+    }
+
+    return NextResponse.redirect(`${origin}${next}`);
+  } catch (error) {
+    log.error('Unexpected error in OAuth callback', { error });
+    return NextResponse.redirect(`${origin}/auth/error?error=unexpected`);
+  }
 }

@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
 import { log } from 'next-axiom';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams, origin } = new URL(request.url);
@@ -50,7 +52,7 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${origin}${next}`);
   } catch (error) {
-    log.error('Unexpected error in OAuth callback', { error });
+    log.error('Unexpected error in OAuth callback', { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.redirect(`${origin}/auth/error?error=unexpected`);
   }
 }

@@ -2,8 +2,9 @@
 
 import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function AuthCodeErrorPage() {
+function AuthCodeErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
 
@@ -25,6 +26,9 @@ export default function AuthCodeErrorPage() {
     case 'unexpected':
       errorMessage = 'An unexpected error occurred. Please try again later.';
       break;
+    default:
+      errorMessage = 'An unexpected error occurred. Please try again.';
+      break;
   }
 
   return (
@@ -33,5 +37,13 @@ export default function AuthCodeErrorPage() {
       <h1 className="text-4xl font-semibold">Error</h1>
       <p className="text-center text-lg text-muted-foreground">{errorMessage}</p>
     </div>
+  );
+}
+
+export default function AuthCodeErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthCodeErrorContent />
+    </Suspense>
   );
 }

@@ -6,8 +6,9 @@ import { log } from 'next-axiom';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  const requestUrl = new URL(request.url);
   try {
-    const { searchParams, origin } = new URL(request.url);
+    const { searchParams, origin } = requestUrl;
     const code = searchParams.get('code');
     // if "next" is in param, use it as the redirect URL
     const next = searchParams.get('next') ?? '/dashboard/profile';
@@ -53,6 +54,6 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}${next}`);
   } catch (error) {
     log.error('Unexpected error in OAuth callback', { error: error instanceof Error ? error.message : String(error) });
-    return NextResponse.redirect(`${origin}/auth/error?error=unexpected`);
+    return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=unexpected`);
   }
 }

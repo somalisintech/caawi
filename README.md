@@ -10,7 +10,7 @@ worldwide.
 ## Features
 
 - **Personalised Mentorship**: Matches mentors and mentees based on professional and personal development goals.
-- **Cultural Resonance**: Tailored for the Somali tech community, ensuring relevance and understanding.
+- **Cultural Resonance**: Tailored for the Somali community, ensuring relevance and understanding.
 - **Global Network**: Offers access to a diverse, worldwide network of professionals and peers.
 
 ## Technology Stack

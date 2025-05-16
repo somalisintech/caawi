@@ -17,6 +17,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
     }
 
+    // Validate that the receiver exists
+    const receiverUser = await prisma.user.findUnique({ where: { id: receiverId } });
+    if (!receiverUser) {
+      return NextResponse.json({ error: 'Receiver user not found' }, { status: 400 });
+    }
+
     const message = await prisma.message.create({
       data: {
         senderId: user.id,

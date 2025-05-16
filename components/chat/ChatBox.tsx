@@ -39,13 +39,16 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
   return (
     <Accordion type="single" collapsible className="w-full max-w-md fixed bottom-4 right-4 z-50">
       <AccordionItem value="chat">
-        <AccordionTrigger className="bg-primary text-primary-foreground rounded-t px-4 py-2">
-          <span role="img" aria-label="Chat">💬</span> Chat
+        <AccordionTrigger className="rounded-t bg-primary px-4 py-2 text-primary-foreground">
+          <span role="img" aria-label="Chat">
+            💬
+          </span>{' '}
+          Chat
         </AccordionTrigger>
-        <AccordionContent className="bg-background border-b border-x border-muted rounded-b-lg shadow-lg min-h-[350px] flex flex-col">
-          <div className="flex-1 overflow-y-auto px-2 py-2 space-y-2">
+        <AccordionContent className="min-h-[350px] flex flex-col rounded-b-lg border-x border-b border-muted bg-background shadow-lg">
+          <div className="flex-1 space-y-2 overflow-y-auto p-2">
             {messages.length === 0 && (
-              <div className="text-muted-foreground text-sm text-center mt-6">No messages yet.</div>
+              <div className="mt-6 text-center text-sm text-muted-foreground">No messages yet.</div>
             )}
             {messages.map((msg) => (
               <div
@@ -53,14 +56,14 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
                 className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`px-3 py-2 rounded-lg max-w-xs text-sm ${
+                  className={`max-w-xs rounded-lg px-3 py-2 text-sm ${
                     msg.sender_id === senderId
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {msg.content}
-                  <div className="text-xs mt-1 opacity-60 text-right">
+                  <div className="mt-1 text-right text-xs opacity-60">
                     {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -68,7 +71,7 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
             ))}
             <div ref={messagesEndRef} />
           </div>
-          <form onSubmit={handleFormSubmit} className="p-2 border-t flex gap-2">
+          <form onSubmit={handleFormSubmit} className="border-t flex gap-2 p-2">
             <Input
               placeholder="Type your message…"
               value={newMessage}

@@ -60,7 +60,7 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
           table: 'messages',
           filter: `or(and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId}))`
         },
-        (payload: any) => {
+        (payload: { new: Message }) => {
           setMessages((msgs) => [...msgs, payload.new]);
         }
       )

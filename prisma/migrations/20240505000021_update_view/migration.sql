@@ -2,6 +2,7 @@ DROP VIEW IF EXISTS "MentorProfile";
 CREATE VIEW "MentorProfile" AS
 SELECT
   p.id,
+  p."userId" as "userId",
   p."userType",
   u."firstName",
   u."lastName",
@@ -27,4 +28,4 @@ FROM "Profile" p
        LEFT JOIN "_ProfileSkills" ps ON p.id = ps."A"
        LEFT JOIN "Skill" s ON ps."B" = s.id
 WHERE p."userType" = 'MENTOR'
-GROUP BY p.id, u."firstName", u."lastName", p.bio, u.image, cu.scheduling_url, p.gender, p."sameGenderPref", p."yearsOfExperience", p."linkedInUrl", p."githubUrl", p."buyMeCoffeeUrl", l.city, l.country, o.role, o.company;
+GROUP BY p.id, p."userId", u."firstName", u."lastName", p.bio, u.image, cu.scheduling_url, p.gender, p."sameGenderPref", p."yearsOfExperience", p."linkedInUrl", p."githubUrl", p."buyMeCoffeeUrl", l.city, l.country, o.role, o.company;

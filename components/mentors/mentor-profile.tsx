@@ -13,8 +13,9 @@ import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
 import { ChatBox } from '@/components/chat/ChatBox';
 
+type MentorProfileWithUserId = MentorProfileType & { userId: string };
 type Props = {
-  mentor: MentorProfileType;
+  mentor: MentorProfileWithUserId;
 };
 
 export async function MentorProfile({ mentor }: Props) {

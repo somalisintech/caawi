@@ -37,7 +37,7 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
   };
 
   return (
-    <Accordion type="single" collapsible className="w-full max-w-md fixed bottom-4 right-4 z-50">
+    <Accordion type="single" collapsible className="fixed bottom-4 right-4 z-50 w-full max-w-md">
       <AccordionItem value="chat">
         <AccordionTrigger className="rounded-t bg-primary px-4 py-2 text-primary-foreground">
           <span role="img" aria-label="Chat">
@@ -45,7 +45,7 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
           </span>{' '}
           Chat
         </AccordionTrigger>
-        <AccordionContent className="min-h-[350px] flex flex-col rounded-b-lg border-x border-b border-muted bg-background shadow-lg">
+        <AccordionContent className="flex min-h-[350px] flex-col rounded-b-lg border-x border-b border-muted bg-background shadow-lg">
           <div className="flex-1 space-y-2 overflow-y-auto p-2">
             {messages.length === 0 && (
               <div className="mt-6 text-center text-sm text-muted-foreground">No messages yet.</div>
@@ -54,9 +54,7 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
               <div key={msg.id} className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-xs rounded-lg px-3 py-2 text-sm ${
-                    msg.sender_id === senderId
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+                    msg.sender_id === senderId ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {msg.content}

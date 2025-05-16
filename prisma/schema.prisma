@@ -10,14 +10,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName String?
-  lastName  String?
-  email     String?  @unique
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  profile   Profile?
+  id                String     @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName         String?
+  lastName          String?
+  email             String?    @unique
+  image             String?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @default(now())
+  profile           Profile?
+  sentMessages      Message[]  @relation("SentMessages")
+  receivedMessages  Message[]  @relation("ReceivedMessages")
 }
 
 model Profile {

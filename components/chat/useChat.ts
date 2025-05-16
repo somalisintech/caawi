@@ -15,7 +15,7 @@ interface UseChatProps {
   receiverId: string;
 }
 
-export function useChat({ senderId, receiverId }: UseChatProps) {
+export function useChat({ receiverId }: UseChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,7 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       fetch(`/api/chat/messages?receiverId=${receiverId}`)
-        .then(res => res.ok ? res.json() : [])
+        .then((res) => (res.ok ? res.json() : []))
         .then((msgs: Message[]) => setMessages(msgs))
         .catch(() => {});
     }, 3000);
@@ -70,7 +70,7 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
       setNewMessage('');
       // Refresh after send
       fetch(`/api/chat/messages?receiverId=${receiverId}`)
-        .then(res => res.ok ? res.json() : [])
+        .then((res) => (res.ok ? res.json() : []))
         .then((msgs: Message[]) => setMessages(msgs))
         .catch(() => {});
     }

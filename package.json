@@ -20,7 +20,8 @@
     "migrate": "doppler run -- prisma migrate dev",
     "studio": "doppler run -- prisma studio",
     "generate": "doppler run -- prisma generate",
-    "seed": "doppler run -- ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+    "seed": "doppler run -- ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "supabase:migrate": "supabase db push"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.5.0",

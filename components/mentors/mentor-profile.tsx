@@ -11,6 +11,8 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SiBuymeacoffee } from 'react-icons/si';
 import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { getOrCreateConversation } from '@/lib/conversation';
 
 type Props = {
   mentor: MentorProfileType;
@@ -43,6 +45,12 @@ export async function MentorProfile({ mentor }: Props) {
   });
 
   const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
+
+  // Get or create conversation between current user and mentor
+  let conversationId: string | null = null;
+  if (user && mentor.id) {
+    conversationId = await getOrCreateConversation(user.email!, mentor.id);
+  }
 
   return (
     <Card className="flex flex-col">
@@ -115,6 +123,13 @@ export async function MentorProfile({ mentor }: Props) {
             </Link>
           )}
         </div>
+        {/* Chat Section */}
+        {user && conversationId && (
+          <div className="mt-8">
+            <h3 className="mb-2 text-lg font-semibold">Chat with this mentor</h3>
+            <ChatPanel conversationId={conversationId} currentUserId={user.email!} />
+          </div>
+        )}
       </CardContent>
       <CardFooter>
         {canBook && (

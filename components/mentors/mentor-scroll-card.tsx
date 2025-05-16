@@ -1,7 +1,5 @@
 import { MentorProfile } from '@prisma/client';
-
-// Make sure MentorProfile has userId field, TS type for clarity
-type MentorProfileWithUserId = MentorProfile & { userId: string };
+import type { MentorProfileWithUserId } from './mentor-card';
 // import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { createClient } from '@/utils/supabase/server';

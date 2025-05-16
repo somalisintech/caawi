@@ -1,7 +1,5 @@
 import { MentorProfile } from '@prisma/client';
-
-// Make sure MentorProfile has userId field, TS type for clarity
-type MentorProfileWithUserId = MentorProfile & { userId: string };
+import type { MentorProfileWithUserId } from './mentor-card';
 import { MentorsSearch } from './mentors-search';
 import { MentorCard } from './mentor-card';
 import { Card } from '@/components/ui/card';

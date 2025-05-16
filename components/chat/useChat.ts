@@ -1,14 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
 
 type Message = {
   id: string;
-  sender_id: string;
-  receiver_id: string;
+  senderId: string;
+  receiverId: string;
   content: string;
-  created_at: string;
+  createdAt: string;
 };
 
 interface UseChatProps {
@@ -21,22 +20,18 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const supabase = createClient();
-
   // Fetch message history for this chat
   useEffect(() => {
     let isMounted = true;
     const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .or(
-          `and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`
-        )
-        .order('created_at', { ascending: true });
-
-      if (!error && isMounted && data) {
-        setMessages(data);
+      try {
+        const res = await fetch(`/api/chat/messages?receiverId=${receiverId}`);
+        if (res.ok) {
+          const msgs: Message[] = await res.json();
+          if (isMounted) setMessages(msgs);
+        }
+      } catch (err) {
+        // Optionally handle error
       }
     };
 
@@ -45,32 +40,18 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
     return () => {
       isMounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [senderId, receiverId]);
+  }, [receiverId]);
 
-  // Subscribe to new messages in real time
+  // Poll for new messages every 3 seconds (or use SWR for better experience)
   useEffect(() => {
-    const channel = supabase
-      .channel('realtime:messages')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `or(and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId}))`
-        },
-        (payload: { new: Message }) => {
-          setMessages((msgs) => [...msgs, payload.new]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [senderId, receiverId]);
+    const interval = setInterval(() => {
+      fetch(`/api/chat/messages?receiverId=${receiverId}`)
+        .then(res => res.ok ? res.json() : [])
+        .then((msgs: Message[]) => setMessages(msgs))
+        .catch(() => {});
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [receiverId]);
 
   // Send a new message
   const sendMessage = useCallback(async () => {
@@ -78,19 +59,22 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
     if (!content) return;
 
     setLoading(true);
-    const { error } = await supabase.from('messages').insert([
-      {
-        sender_id: senderId,
-        receiver_id: receiverId,
-        content
-      }
-    ]);
+    const res = await fetch('/api/chat/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ receiverId, content })
+    });
     setLoading(false);
 
-    if (!error) {
+    if (res.ok) {
       setNewMessage('');
+      // Refresh after send
+      fetch(`/api/chat/messages?receiverId=${receiverId}`)
+        .then(res => res.ok ? res.json() : [])
+        .then((msgs: Message[]) => setMessages(msgs))
+        .catch(() => {});
     }
-  }, [newMessage, receiverId, senderId, supabase]);
+  }, [newMessage, receiverId]);
 
   return {
     messages,

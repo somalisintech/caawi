@@ -51,10 +51,7 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
               <div className="mt-6 text-center text-sm text-muted-foreground">No messages yet.</div>
             )}
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={msg.id} className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-xs rounded-lg px-3 py-2 text-sm ${
                     msg.sender_id === senderId
@@ -71,7 +68,7 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
             ))}
             <div ref={messagesEndRef} />
           </div>
-          <form onSubmit={handleFormSubmit} className="border-t flex gap-2 p-2">
+          <form onSubmit={handleFormSubmit} className="flex gap-2 border-t p-2">
             <Input
               placeholder="Type your message…"
               value={newMessage}

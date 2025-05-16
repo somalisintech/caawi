@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const receiverId = searchParams.get('receiverId');
   const supabase = createClient();
 
-  const { data, error } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
   const user = data?.user;
 
   if (!user?.id || !receiverId) {

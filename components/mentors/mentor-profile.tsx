@@ -44,6 +44,22 @@ export async function MentorProfile({ mentor }: Props) {
     }
   });
 
+  // Fetch the mentor with userId exposed (if not already included)
+  // If mentor.userId is not already available, fetch it explicitly:
+  let mentorWithUserId = mentor as MentorProfileType & { userId?: string };
+  if (!('userId' in mentor)) {
+    // Get userId from the Profile table using mentor's email, or from a join if available
+    const mentorProfile = await prisma.profile.findUnique({
+      where: {
+        id: mentor.id
+      },
+      select: {
+        userId: true
+      }
+    });
+    mentorWithUserId = { ...mentor, userId: mentorProfile?.userId };
+  }
+
   const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
 
   return (
@@ -129,6 +145,7 @@ export async function MentorProfile({ mentor }: Props) {
         </CardFooter>
       </Card>
       {/* Real-time Chat for this mentor/mentee pair */}
+      {user?.id && mentorWithUserId.userId && <ChatBox senderId={user.id} receiverId={mentorWithUserId.userId} />}
       {user?.id && mentor.id && <ChatBox senderId={user.id} receiverId={mentor.id} />}
     </>
   );

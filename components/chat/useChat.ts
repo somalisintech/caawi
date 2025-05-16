@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState, useCallback } from 'react';
+import { createClient } from '@/utils/supabase/client';
 
 type Message = {
   id: string;
@@ -18,7 +18,7 @@ interface UseChatProps {
 
 export function useChat({ senderId, receiverId }: UseChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const supabase = createClient();
@@ -28,10 +28,12 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
     let isMounted = true;
     const fetchMessages = async () => {
       const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .or(`and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`)
-        .order("created_at", { ascending: true });
+        .from('messages')
+        .select('*')
+        .or(
+          `and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`
+        )
+        .order('created_at', { ascending: true });
 
       if (!error && isMounted && data) {
         setMessages(data);
@@ -49,13 +51,13 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
   // Subscribe to new messages in real time
   useEffect(() => {
     const channel = supabase
-      .channel("realtime:messages")
+      .channel('realtime:messages')
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
           filter: `or(and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId}))`
         },
         (payload: any) => {
@@ -76,17 +78,17 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
     if (!content) return;
 
     setLoading(true);
-    const { error } = await supabase.from("messages").insert([
+    const { error } = await supabase.from('messages').insert([
       {
         sender_id: senderId,
         receiver_id: receiverId,
-        content,
-      },
+        content
+      }
     ]);
     setLoading(false);
 
     if (!error) {
-      setNewMessage("");
+      setNewMessage('');
     }
   }, [newMessage, receiverId, senderId, supabase]);
 
@@ -95,6 +97,6 @@ export function useChat({ senderId, receiverId }: UseChatProps) {
     newMessage,
     setNewMessage,
     sendMessage,
-    loading,
+    loading
   };
 }

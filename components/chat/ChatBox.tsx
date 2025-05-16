@@ -1,30 +1,24 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useChat } from "./useChat";
+import * as React from 'react';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useChat } from './useChat';
 
 interface ChatBoxProps {
-  senderId: string;    // Current user (mentor or mentee)
-  receiverId: string;  // Person you're chatting with
+  senderId: string; // Current user (mentor or mentee)
+  receiverId: string; // Person you're chatting with
 }
 
 export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
-  const {
-    messages,
-    newMessage,
-    setNewMessage,
-    sendMessage,
-    loading,
-  } = useChat({ senderId, receiverId });
+  const { messages, newMessage, setNewMessage, sendMessage, loading } = useChat({ senderId, receiverId });
 
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages arrive
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
@@ -41,18 +35,18 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex ${msg.sender_id === senderId ? "justify-end" : "justify-start"}`}
+                className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`px-3 py-2 rounded-lg max-w-xs text-sm ${
                     msg.sender_id === senderId
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {msg.content}
                   <div className="text-xs mt-1 opacity-60 text-right">
-                    {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               </div>
@@ -71,8 +65,8 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={loading}
-              onKeyDown={e => {
-                if (e.key === "Enter" && !e.shiftKey) {
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   sendMessage();
                 }

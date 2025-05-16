@@ -51,15 +51,15 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
               <div className="mt-6 text-center text-sm text-muted-foreground">No messages yet.</div>
             )}
             {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'}`}>
+              <div key={msg.id} className={`flex ${msg.senderId === senderId ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-xs rounded-lg px-3 py-2 text-sm ${
-                    msg.sender_id === senderId ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                    msg.senderId === senderId ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {msg.content}
                   <div className="mt-1 text-right text-xs opacity-60">
-                    {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               </div>

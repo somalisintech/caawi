@@ -12,7 +12,14 @@ interface ChatBoxProps {
 }
 
 export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
-  const { messages, newMessage, setNewMessage, sendMessage, loading } = useChat({ senderId, receiverId });
+  const {
+    messages,
+    newMessage,
+    setNewMessage,
+    sendMessage,
+    loading,
+    error,
+  } = useChat({ senderId, receiverId });
 
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
@@ -47,7 +54,10 @@ export function ChatBox({ senderId, receiverId }: ChatBoxProps) {
         </AccordionTrigger>
         <AccordionContent className="flex min-h-[350px] flex-col rounded-b-lg border-x border-b border-muted bg-background shadow-lg">
           <div className="flex-1 space-y-2 overflow-y-auto p-2">
-            {messages.length === 0 && (
+            {error && (
+              <div className="mb-2 rounded bg-red-100 px-2 py-1 text-center text-xs text-red-600">{error}</div>
+            )}
+            {messages.length === 0 && !error && (
               <div className="mt-6 text-center text-sm text-muted-foreground">No messages yet.</div>
             )}
             {messages.map((msg) => (

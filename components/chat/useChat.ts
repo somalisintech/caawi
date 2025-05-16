@@ -19,19 +19,24 @@ export function useChat({ receiverId }: UseChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch message history for this chat
   useEffect(() => {
     let isMounted = true;
     const fetchMessages = async () => {
       try {
+        setError(null);
         const res = await fetch(`/api/chat/messages?receiverId=${receiverId}`);
         if (res.ok) {
           const msgs: Message[] = await res.json();
           if (isMounted) setMessages(msgs);
+        } else {
+          const errData = await res.json();
+          if (isMounted) setError(errData.error || 'Failed to fetch messages');
         }
       } catch (err) {
-        // Optionally handle error
+        if (isMounted) setError('Failed to fetch messages');
       }
     };
 
@@ -59,20 +64,29 @@ export function useChat({ receiverId }: UseChatProps) {
     if (!content) return;
 
     setLoading(true);
-    const res = await fetch('/api/chat/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ receiverId, content })
-    });
-    setLoading(false);
+    setError(null);
+    try {
+      const res = await fetch('/api/chat/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ receiverId, content })
+      });
+      setLoading(false);
 
-    if (res.ok) {
-      setNewMessage('');
-      // Refresh after send
-      fetch(`/api/chat/messages?receiverId=${receiverId}`)
-        .then((res) => (res.ok ? res.json() : []))
-        .then((msgs: Message[]) => setMessages(msgs))
-        .catch(() => {});
+      if (res.ok) {
+        setNewMessage('');
+        // Refresh after send
+        fetch(`/api/chat/messages?receiverId=${receiverId}`)
+          .then((res) => (res.ok ? res.json() : []))
+          .then((msgs: Message[]) => setMessages(msgs))
+          .catch(() => {});
+      } else {
+        const errData = await res.json();
+        setError(errData.error || 'Failed to send message');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError('Failed to send message');
     }
   }, [newMessage, receiverId]);
 
@@ -81,6 +95,7 @@ export function useChat({ receiverId }: UseChatProps) {
     newMessage,
     setNewMessage,
     sendMessage,
-    loading
+    loading,
+    error
   };
 }

@@ -1,5 +1,5 @@
 'use client';
-import { ChatPanel } from '@/components/chat/ChatPanel';
+import { MentorMenteeChat } from '@/components/chat/MentorMenteeChat';
 
 interface MentorChatSectionProps {
   conversationId: string;
@@ -10,7 +10,7 @@ export function MentorChatSection({ conversationId, currentUserId }: MentorChatS
   return (
     <div className="mt-8">
       <h3 className="mb-2 text-lg font-semibold">Chat with this mentor</h3>
-      <ChatPanel conversationId={conversationId} currentUserId={currentUserId} />
+      <MentorMenteeChat conversationId={conversationId} currentUserId={currentUserId} showSidebar={false} />
     </div>
   );
 }

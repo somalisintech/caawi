@@ -84,7 +84,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
       },
       include: {
         participants: {
-          include: { user: true }
+          include: { user: { include: { profile: true } } }
         },
         messages: {
           orderBy: { createdAt: 'desc' },

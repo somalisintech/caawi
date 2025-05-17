@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useState, useCallback, useEffect, useRef, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SendIcon, ArrowDown, MessageSquare, Search, Info } from 'lucide-react';
+import { SendIcon, ArrowDown, MessageSquare, Search, Info, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/utils/supabase/client';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 
 // Types
 interface Message {
@@ -19,6 +20,7 @@ interface Message {
   senderId: string;
   createdAt: string;
   read: boolean;
+  readAt?: string;
 }
 
 interface Conversation {
@@ -361,6 +363,8 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
   const [messagesError, setMessagesError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [showBio, setShowBio] = useState(false);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Get current user id if not provided
   useEffect(() => {
@@ -422,6 +426,41 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
     };
   }, [showSidebar]);
 
+  // Typing indicator logic
+  useEffect(() => {
+    const supabase = createClient();
+    const activeId = conversationId || activeConversationId;
+    if (!activeId || !currentUserId) return;
+    const channel = supabase.channel(`typing-${activeId}`);
+    channel
+      .on('broadcast', { event: 'typing' }, (payload) => {
+        // Only show if the event is from the other participant
+        if (payload.payload.userId && payload.payload.userId !== currentUserId) {
+          setIsOtherTyping(true);
+          if (typingTimeout.current) clearTimeout(typingTimeout.current);
+          typingTimeout.current = setTimeout(() => setIsOtherTyping(false), 3000);
+        }
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+      if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    };
+  }, [conversationId, activeConversationId, currentUserId]);
+
+  // Broadcast typing event when user types
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    const supabase = createClient();
+    const activeId = conversationId || activeConversationId;
+    if (!activeId || !currentUserId) return;
+    supabase.channel(`typing-${activeId}`).send({
+      type: 'broadcast',
+      event: 'typing',
+      payload: { userId: currentUserId }
+    });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !(conversationId || activeConversationId)) return;
@@ -470,8 +509,40 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Determine if we're in embedded (single-conversation) mode
+  const isEmbedded = !!conversationId && !showSidebar;
+
+  // Real-time updates: subscribe to new messages for the active conversation
+  const activeId = conversationId || activeConversationId;
+  useRealtimeMessages(activeId || '', (newMessage: unknown) => {
+    if (!activeId || !newMessage) return;
+    const msg = newMessage as Message;
+    setMessages((prev) => {
+      // Prevent duplicate messages
+      if (prev.some((m) => m.id === msg.id)) return prev;
+      return [...prev, msg];
+    });
+  });
+
+  // Mark unread messages as read when viewing a conversation
+  useEffect(() => {
+    if (!currentUserId || !messages.length) return;
+    const unread = messages.filter((m) => !m.readAt && m.senderId !== currentUserId);
+    unread.forEach((msg) => {
+      fetch(`/api/chat/message/${msg.id}`, { method: 'PATCH' });
+    });
+  }, [messages, currentUserId]);
+
   return (
-    <div className="flex h-screen w-full bg-background text-foreground">
+    <div
+      className={cn(
+        'bg-background text-foreground',
+        isEmbedded
+          ? 'rounded-lg border shadow-md max-w-xl mx-auto my-4 h-[32rem] flex flex-col' // Embedded mode styles
+          : 'flex h-screen w-full'
+      )}
+      style={isEmbedded ? { minHeight: 400, maxHeight: 600 } : {}}
+    >
       {/* Sidebar (hide if single-conversation mode) */}
       <AnimatePresence>
         {showSidebar && !conversationId && sidebarOpen && (
@@ -553,28 +624,40 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
         )}
       </AnimatePresence>
       {/* Main Chat Area */}
-      <div className="flex h-full flex-1 flex-col">
+      <div className={cn('flex flex-1 flex-col', isEmbedded && 'h-full')}>
         {/* Error banners */}
         {conversationsError && (
-          <div className="flex items-center justify-between bg-red-100 px-4 py-2 text-sm text-red-700">
+          <div className="flex items-center justify-between bg-red-100 px-4 py-2 text-sm text-red-700" role="alert">
             <span>{conversationsError}</span>
-            <button onClick={() => setConversationsError(null)} className="ml-2">
+            <button
+              onClick={() => setConversationsError(null)}
+              className="ml-2 rounded focus:outline-none focus:ring-2 focus:ring-ring"
+              aria-label="Close error banner"
+            >
               ✕
             </button>
           </div>
         )}
         {messagesError && (
-          <div className="flex items-center justify-between bg-red-100 px-4 py-2 text-sm text-red-700">
+          <div className="flex items-center justify-between bg-red-100 px-4 py-2 text-sm text-red-700" role="alert">
             <span>{messagesError}</span>
-            <button onClick={() => setMessagesError(null)} className="ml-2">
+            <button
+              onClick={() => setMessagesError(null)}
+              className="ml-2 rounded focus:outline-none focus:ring-2 focus:ring-ring"
+              aria-label="Close error banner"
+            >
               ✕
             </button>
           </div>
         )}
         {sendError && (
-          <div className="flex items-center justify-between bg-red-100 px-4 py-2 text-sm text-red-700">
+          <div className="flex items-center justify-between bg-red-100 px-4 py-2 text-sm text-red-700" role="alert">
             <span>{sendError}</span>
-            <button onClick={() => setSendError(null)} className="ml-2">
+            <button
+              onClick={() => setSendError(null)}
+              className="ml-2 rounded focus:outline-none focus:ring-2 focus:ring-ring"
+              aria-label="Close error banner"
+            >
               ✕
             </button>
           </div>
@@ -583,7 +666,7 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
         <div className="flex items-center justify-between border-b border-border p-4">
           <div className="flex items-center gap-3">
             {isMobile && !sidebarOpen && (
-              <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+              <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Show conversations sidebar">
                 <MessageSquare className="size-5" />
               </Button>
             )}
@@ -603,7 +686,7 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
           <div className="flex items-center gap-2">
             <Popover open={showBio} onOpenChange={setShowBio}>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Show user bio">
+                <Button variant="ghost" size="icon" aria-label="Show user bio info" tabIndex={0}>
                   <Info className="size-5" />
                 </Button>
               </PopoverTrigger>
@@ -616,28 +699,51 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
         </div>
         {/* Messages */}
         <div className="flex-1 overflow-hidden">
-          <ChatMessageList smooth>
+          <ChatMessageList smooth role="log" aria-live="polite" aria-label="Chat messages" tabIndex={0}>
             {loadingMessages ? (
               <div className="text-center text-gray-400">Loading messages...</div>
             ) : messages.length === 0 ? (
               <div className="text-center text-gray-400">No messages yet.</div>
+            ) : isOtherTyping ? (
+              <div className="mb-2 text-center italic text-muted-foreground">
+                {otherUser?.firstName || otherUser?.email || 'User'} is typing...
+              </div>
             ) : (
-              messages.map((message) => {
-                const isCurrentUser = message.senderId === currentUserId;
-                const senderUser = currentConversation ? getSenderUser(currentConversation, message.senderId) : null;
-                return (
-                  <ChatBubble key={message.id} variant={isCurrentUser ? 'sent' : 'received'}>
-                    <ChatBubbleAvatar
-                      className="size-8 shrink-0"
-                      src={senderUser?.image || undefined}
-                      fallback={senderUser?.firstName?.charAt(0) || senderUser?.email?.charAt(0) || 'U'}
-                    />
-                    <ChatBubbleMessage variant={isCurrentUser ? 'sent' : 'received'} timestamp={message.createdAt}>
-                      {message.content}
-                    </ChatBubbleMessage>
-                  </ChatBubble>
-                );
-              })
+              <AnimatePresence initial={false}>
+                {messages.map((message) => {
+                  const isCurrentUser = message.senderId === currentUserId;
+                  const senderUser = currentConversation ? getSenderUser(currentConversation, message.senderId) : null;
+                  return (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 16 }}
+                      transition={{ duration: 0.18 }}
+                    >
+                      <ChatBubble variant={isCurrentUser ? 'sent' : 'received'}>
+                        <ChatBubbleAvatar
+                          className="size-8 shrink-0"
+                          src={senderUser?.image || undefined}
+                          fallback={senderUser?.firstName?.charAt(0) || senderUser?.email?.charAt(0) || 'U'}
+                        />
+                        <ChatBubbleMessage variant={isCurrentUser ? 'sent' : 'received'} timestamp={message.createdAt}>
+                          {message.content}
+                          {isCurrentUser && message.readAt && (
+                            <span
+                              className="ml-2 inline-flex items-center align-middle text-xs text-muted-foreground"
+                              title="Seen"
+                            >
+                              <Check className="mr-0.5 inline-block size-4" />
+                              Seen
+                            </span>
+                          )}
+                        </ChatBubbleMessage>
+                      </ChatBubble>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             )}
           </ChatMessageList>
         </div>
@@ -646,16 +752,26 @@ function MentorMenteeChat({ conversationId, currentUserId: propUserId, showSideb
           <form
             onSubmit={handleSubmit}
             className="relative rounded-lg border bg-background p-1 focus-within:ring-1 focus-within:ring-ring"
+            aria-label="Send message form"
           >
             <ChatInput
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
               placeholder="Type your message..."
               className="min-h-12 resize-none rounded-lg border-0 bg-background p-3 shadow-none focus-visible:ring-0"
               disabled={isLoading}
+              aria-label="Message input"
+              tabIndex={0}
             />
             <div className="flex items-center justify-end p-3 pt-0">
-              <Button type="submit" size="sm" className="ml-auto gap-1.5" disabled={isLoading || !input.trim()}>
+              <Button
+                type="submit"
+                size="sm"
+                className="ml-auto gap-1.5 focus:outline-none focus:ring-2 focus:ring-ring"
+                disabled={isLoading || !input.trim()}
+                aria-label="Send message"
+                tabIndex={0}
+              >
                 Send Message
                 <SendIcon className="size-3.5" />
               </Button>

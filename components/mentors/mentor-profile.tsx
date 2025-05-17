@@ -11,7 +11,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SiBuymeacoffee } from 'react-icons/si';
 import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
-import { ChatPanel } from '@/components/chat/ChatPanel';
+import { MentorChatSection } from '@/components/mentors/mentor-chat-section';
 import { getOrCreateConversation } from '@/lib/conversation';
 
 type Props = {
@@ -31,6 +31,7 @@ export async function MentorProfile({ mentor }: Props) {
       email: data.user.email
     },
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       email: true,
@@ -46,10 +47,16 @@ export async function MentorProfile({ mentor }: Props) {
 
   const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
 
+  // Fetch the mentor's userId (User UUID) from the Profile table
+  const mentorProfile = await prisma.profile.findUnique({
+    where: { id: mentor.id },
+    select: { userId: true }
+  });
+
   // Get or create conversation between current user and mentor
   let conversationId: string | null = null;
-  if (user && mentor.id) {
-    conversationId = await getOrCreateConversation(user.email!, mentor.id);
+  if (user && mentorProfile?.userId) {
+    conversationId = await getOrCreateConversation(user.id, mentorProfile.userId);
   }
 
   return (
@@ -124,12 +131,7 @@ export async function MentorProfile({ mentor }: Props) {
           )}
         </div>
         {/* Chat Section */}
-        {user && conversationId && (
-          <div className="mt-8">
-            <h3 className="mb-2 text-lg font-semibold">Chat with this mentor</h3>
-            <ChatPanel conversationId={conversationId} currentUserId={user.email!} />
-          </div>
-        )}
+        {user && conversationId && <MentorChatSection conversationId={conversationId} currentUserId={user.id} />}
       </CardContent>
       <CardFooter>
         {canBook && (

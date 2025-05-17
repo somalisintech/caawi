@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { cn } from '@/lib/utils';
@@ -31,11 +33,11 @@ export function ChatPanel({ conversationId, currentUserId }: ChatPanelProps) {
     async function fetchMessages() {
       setLoading(true);
       try {
-        // TODO: Replace with your actual API endpoint
-        const res = await fetch(`/api/chat/conversations/${conversationId}/messages`);
+        // Use the correct API path (no 's' in 'conversation')
+        const res = await fetch(`/api/chat/conversation/${conversationId}/messages`);
         if (res.ok) {
           const data = await res.json();
-          setMessages(data.messages);
+          setMessages(data);
         }
       } finally {
         setLoading(false);
@@ -53,15 +55,16 @@ export function ChatPanel({ conversationId, currentUserId }: ChatPanelProps) {
     if (!input.trim()) return;
     setLoading(true);
     try {
-      // TODO: Replace with your actual API endpoint
-      const res = await fetch(`/api/chat/conversations/${conversationId}/messages`, {
+      const res = await fetch(`/api/chat/conversation/${conversationId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: input })
       });
       if (res.ok) {
+        const newMessage = await res.json();
         setInput('');
-        // Message will be added via realtime subscription
+        setMessages((prev) => [...prev, newMessage]);
+        // Message will also be added via realtime subscription, but this ensures instant feedback
       }
     } finally {
       setLoading(false);

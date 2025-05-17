@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'ionic.io'
       }
+    ],
+    domains: [
+      'lh3.googleusercontent.com'
+      // add other allowed domains here if needed
     ]
   }
 };

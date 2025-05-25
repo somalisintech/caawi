@@ -36,7 +36,7 @@ export async function Header() {
     );
   }
 
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       email: data.user.email
     },
@@ -48,10 +48,10 @@ export async function Header() {
     }
   });
 
-  const avatarImage = user.image ?? '';
-  const avatarFallback = user.firstName?.[0] ?? '-';
+  const avatarImage = user?.image ?? '';
+  const avatarFallback = user?.firstName?.at(0) ?? '-';
 
-  const name = [user.firstName, user.lastName].join(' ');
+  const name = [user?.firstName, user?.lastName].join(' ');
 
   return (
     <header className="flex items-center justify-between py-5">

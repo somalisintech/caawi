@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { ThemeProvider, CSPostHogProvider } from '@/providers';
+import { ThemeProvider, PostHogProvider } from '@/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html className="h-full" lang="en" suppressHydrationWarning>
       <body className={`h-full ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="light">
-          <CSPostHogProvider>{children}</CSPostHogProvider>
+          <PostHogProvider>{children}</PostHogProvider>
           <Analytics />
           <SpeedInsights />
           <AxiomWebVitals />

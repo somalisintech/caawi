@@ -25,6 +25,11 @@ export function DashboardMenu() {
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Profile</NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Link href="/dashboard/admin/resources" passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Manage Resources</NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </Card>

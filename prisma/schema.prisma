@@ -84,6 +84,36 @@ model Skill {
   mentorProfileId String?
 }
 
+model ResourceCategory {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  resources   Resource[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Tag {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  resources Resource[] @relation("ResourceTags")
+  createdAt DateTime   @default(now())
+}
+
+model Resource {
+  id            Int              @id @default(autoincrement())
+  title         String
+  description   String?
+  url           String
+  resourceType  ResourceType
+  categoryId    Int
+  category      ResourceCategory @relation(fields: [categoryId], references: [id])
+  tags          Tag[]            @relation("ResourceTags")
+  addedByUserId String?          @db.Uuid
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
 view MentorProfile {
   id                    String    @unique
   userType              UserType?
@@ -113,4 +143,11 @@ enum UserType {
 enum Gender {
   MALE
   FEMALE
+}
+
+enum ResourceType {
+  ARTICLE
+  VIDEO
+  COURSE
+  TOOL
 }

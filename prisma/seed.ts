@@ -1,4 +1,4 @@
-import { PrismaClient, UserType, Gender } from '@prisma/client';
+import { PrismaClient, UserType, Gender, ResourceType } from '@prisma/client'; // Added ResourceType
 import { faker, Sex } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
@@ -11,10 +11,16 @@ async function main() {
 
   console.log('Clearing database... 🧹');
 
-  await prisma.user.deleteMany();
-  await prisma.profile.deleteMany();
+  // Clear Resource Hub tables first to avoid foreign key issues if users/profiles are deleted before resources
+  await prisma.resource.deleteMany();
+  await prisma.tag.deleteMany();
+  await prisma.resourceCategory.deleteMany();
+
+  await prisma.user.deleteMany(); // This will also delete Profile due to cascading or relation settings
+  await prisma.profile.deleteMany(); // May be redundant if User deletion cascades, but explicit is fine
   await prisma.location.deleteMany();
   await prisma.occupation.deleteMany();
+  await prisma.skill.deleteMany(); // Added to clear skills for cleaner re-seeding if needed
 
   console.log('Start seeding 🌱');
 
@@ -86,6 +92,105 @@ async function main() {
   });
 
   await Promise.all(promises);
+
+  // --- BEGIN RESOURCE HUB SEEDING ---
+
+  console.log('Seeding resource categories...');
+  const categoriesData = [
+    { name: 'Software Development', description: 'Resources for software engineers and developers.' },
+    { name: 'Data Science & AI', description: 'Learn about data analysis, machine learning, and AI.' },
+    { name: 'Career Development', description: 'Tips for resume building, interviews, and career growth.' },
+    { name: 'UX/UI Design', description: 'Resources for designers.' },
+    { name: 'Cybersecurity', description: 'Learn about protecting systems and data.' },
+  ];
+  const createdCategories = await Promise.all(
+    categoriesData.map(async (cat) => {
+      return prisma.resourceCategory.upsert({
+        where: { name: cat.name },
+        update: { description: cat.description },
+        create: cat,
+      });
+    })
+  );
+  console.log('Resource categories seeded.');
+
+  console.log('Seeding tags...');
+  const tagsData = [
+    { name: 'JavaScript' }, { name: 'React' }, { name: 'Python' }, { name: 'Node.js' },
+    { name: 'Career Advice' }, { name: 'Portfolio' }, { name: 'BeginnerFriendly' },
+    { name: 'Machine Learning' }, { name: 'Web Development' }, { name: 'Security Best Practices' }
+  ];
+  const createdTags = await Promise.all(
+    tagsData.map(async (tag) => {
+      return prisma.tag.upsert({
+        where: { name: tag.name },
+        update: {}, // No specific fields to update if it exists, just ensure it's there
+        create: tag,
+      });
+    })
+  );
+  console.log('Tags seeded.');
+
+  console.log('Seeding sample resources...');
+  const resourcesData = [
+    {
+      title: 'Official React Documentation',
+      url: 'https://react.dev/',
+      description: 'The official documentation for React, a JavaScript library for building user interfaces.',
+      resourceType: ResourceType.ARTICLE,
+      categoryId: createdCategories.find(c => c.name === 'Software Development')?.id,
+      tags: [createdTags.find(t => t.name === 'React')?.id, createdTags.find(t => t.name === 'JavaScript')?.id, createdTags.find(t => t.name === 'Web Development')?.id].filter(Boolean) as number[],
+    },
+    {
+      title: 'Python for Data Science Handbook',
+      url: 'https://jakevdp.github.io/PythonDataScienceHandbook/',
+      description: 'A comprehensive online book on using Python for data science tasks.',
+      resourceType: ResourceType.ARTICLE,
+      categoryId: createdCategories.find(c => c.name === 'Data Science & AI')?.id,
+      tags: [createdTags.find(t => t.name === 'Python')?.id, createdTags.find(t => t.name === 'Machine Learning')?.id, createdTags.find(t => t.name === 'BeginnerFriendly')?.id].filter(Boolean) as number[],
+    },
+    {
+      title: 'Awesome Resume Templates by Resume.io',
+      url: 'https://resume.io/resume-templates',
+      description: 'A collection of professional resume templates.',
+      resourceType: ResourceType.TOOL,
+      categoryId: createdCategories.find(c => c.name === 'Career Development')?.id,
+      tags: [createdTags.find(t => t.name === 'Career Advice')?.id, createdTags.find(t => t.name === 'Portfolio')?.id].filter(Boolean) as number[],
+    },
+    {
+      title: 'CS50: Introduction to Computer Science',
+      url: 'https://www.edx.org/course/introduction-computer-science-harvardx-cs50x',
+      description: 'Harvard University_s introduction to the intellectual enterprises of computer science and the art of programming.',
+      resourceType: ResourceType.COURSE,
+      categoryId: createdCategories.find(c => c.name === 'Software Development')?.id,
+      tags: [createdTags.find(t => t.name === 'BeginnerFriendly')?.id, createdTags.find(t => t.name === 'Web Development')?.id].filter(Boolean) as number[],
+    }
+  ];
+
+  await Promise.all(
+    resourcesData.map(async (res) => {
+      if (!res.categoryId) {
+        console.warn(`Skipping resource "${res.title}" due to missing category ID.`);
+        return null;
+      }
+      // Ensure tags are valid numbers before attempting to connect
+      const validTagIds = res.tags.filter(tagId => typeof tagId === 'number');
+
+      return prisma.resource.create({
+        data: {
+          title: res.title,
+          url: res.url,
+          description: res.description,
+          resourceType: res.resourceType, // Direct enum usage
+          category: { connect: { id: res.categoryId } },
+          tags: { connect: validTagIds.map(tagId => ({ id: tagId })) },
+        },
+      });
+    })
+  );
+  console.log('Sample resources seeded.');
+
+  // --- END RESOURCE HUB SEEDING ---
 
   console.log('Seeding finished ✅');
 }

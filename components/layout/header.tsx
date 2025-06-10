@@ -22,7 +22,14 @@ export async function Header() {
   if (!data.user || error) {
     return (
       <header className="flex items-center justify-between py-5">
-        <CaawiLogo />
+        <div className="flex items-center gap-x-4">
+          <CaawiLogo />
+          <nav>
+            <Link href="/resources" className="text-sm font-medium hover:text-primary transition-colors">
+              Resources
+            </Link>
+          </nav>
+        </div>
         <div className="flex items-center space-x-2">
           <ThemeToggle />
           <Button variant="outline" asChild className="ml-auto">
@@ -55,9 +62,14 @@ export async function Header() {
 
   return (
     <header className="flex items-center justify-between py-5">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-x-4">
         <CaawiLogo />
-        <div className="text-lg font-medium">Caawi</div>
+        <div className="text-lg font-medium hidden sm:block">Caawi</div>
+        <nav>
+          <Link href="/resources" className="text-sm font-medium hover:text-primary transition-colors">
+            Resources
+          </Link>
+        </nav>
       </div>
       <div className="flex items-center gap-2">
         <ThemeToggle />

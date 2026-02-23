@@ -1,5 +1,5 @@
-import type { MentorProfile } from '@prisma/client';
 import { Card } from '@/components/ui/card';
+import type { MentorProfile } from '@/generated/prisma/client';
 import { MentorCard } from './mentor-card';
 import { MentorsSearch } from './mentors-search';
 

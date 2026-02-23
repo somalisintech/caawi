@@ -33,5 +33,8 @@ pnpm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# prisma generated client
+/generated/
+
 # claude
 .claude/

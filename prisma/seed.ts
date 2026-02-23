@@ -1,7 +1,12 @@
 import { faker, type Sex } from '@faker-js/faker';
-import { type Gender, PrismaClient, UserType } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { type Gender, PrismaClient, UserType } from '../generated/prisma/client';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   if (process.env.NODE_ENV === 'production') {

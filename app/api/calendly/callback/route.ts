@@ -28,6 +28,20 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
 
     const { resource } = await getCurrentUser(access_token);
 
+    const {
+      uri,
+      name,
+      slug,
+      email: calendlyEmail,
+      scheduling_url,
+      timezone,
+      avatar_url,
+      created_at,
+      updated_at,
+      current_organization,
+      resource_type
+    } = resource;
+
     await prisma.user.update({
       where: {
         email: data.user.email
@@ -35,9 +49,21 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
       data: {
         profile: {
           update: {
-            calendlyUserUri: resource.uri,
+            calendlyUserUri: uri,
             calendlyUser: {
-              create: resource
+              create: {
+                uri,
+                name,
+                slug,
+                email: calendlyEmail,
+                scheduling_url,
+                timezone,
+                avatar_url,
+                created_at,
+                updated_at,
+                current_organization,
+                resource_type
+              }
             }
           }
         }

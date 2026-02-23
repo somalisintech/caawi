@@ -1,5 +1,5 @@
-import { Gender } from '@prisma/client';
 import { z } from 'zod';
+import { Gender } from '@/generated/prisma/browser';
 
 export const profileFormSchema = z
   .object({

@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Gender, UserType } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -10,6 +9,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { Gender, UserType } from '@/generated/prisma/browser';
 import type { UserWithProfile } from '@/types/user';
 import { type CompleteProfileFormFields, completeProfileFormSchema } from './complete-profile-schema-schema';
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Gender, UserType } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Gender, UserType } from '@/generated/prisma/browser';
 import type { UserWithProfile } from '@/types/user';
 import { DeleteAccountModal } from '../modals/delete-account-modal';
 import { ProfileFormImage } from './profile-form-image';

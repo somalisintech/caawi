@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { SocialAuth } from '@/components/auth/social-auth';
@@ -38,13 +39,13 @@ export default async function Auth() {
       </Card>
       <p className="mx-auto max-w-[240px] text-center text-xs text-muted-foreground">
         By continuing to Caawi, you agree to our{' '}
-        <a className="underline" href="/terms-and-conditions" target="_blank" rel="noopener">
+        <Link className="underline" href="/terms-and-conditions" target="_blank" rel="noopener">
           Terms and Conditions
-        </a>{' '}
+        </Link>{' '}
         and{' '}
-        <a className="underline" href="/privacy-policy" target="_blank" rel="noopener">
+        <Link className="underline" href="/privacy-policy" target="_blank" rel="noopener">
           Privacy Policy
-        </a>
+        </Link>
       </p>
     </div>
   );

@@ -78,7 +78,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             <CardContent className="space-y-4 py-4">
               <div className="flex items-center justify-between">
                 <div className="relative h-6 w-24">
-                  <Image src="/calendly-icon.png" alt="Calendly logo" fill className="object-contain" />
+                  <Image src="/calendly-icon.png" alt="Calendly logo" fill sizes="96px" className="object-contain" />
                 </div>
                 {calendlyConnectionButton}
               </div>

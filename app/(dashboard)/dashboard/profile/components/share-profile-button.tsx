@@ -1,7 +1,7 @@
 'use client';
 
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
 
 type Props = {
   userId: string;
@@ -14,13 +14,9 @@ export function ShareProfileButton({ userId }: Props) {
       const url = `${origin}/dashboard/mentors/${userId}`;
       navigator.clipboard.writeText(url);
 
-      toast({
-        title: 'Copied to clipboard'
-      });
+      toast.success('Copied to clipboard');
     } catch (_err) {
-      toast({
-        title: 'Failed to copy url'
-      });
+      toast.error('Failed to copy url');
     }
   };
 

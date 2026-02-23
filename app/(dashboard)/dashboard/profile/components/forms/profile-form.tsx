@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ReactElement } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -14,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/use-toast';
 import type { UserWithProfile } from '@/types/user';
 import { DeleteAccountModal } from '../modals/delete-account-modal';
 import { ProfileFormImage } from './profile-form-image';
@@ -56,13 +56,11 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
     });
 
     if (!response.ok) {
-      toast({ title: 'Update failed', variant: 'destructive' });
+      toast.error('Update failed');
       return;
     }
 
-    toast({
-      title: 'Updated'
-    });
+    toast.success('Updated');
 
     router.refresh();
   }

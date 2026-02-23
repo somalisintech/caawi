@@ -1,7 +1,7 @@
 import { Loader2 } from 'lucide-react';
 import { type ChangeEvent, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from '@/components/ui/use-toast';
 import type { UserWithProfile } from '@/types/user';
 import { createClient } from '@/utils/supabase/client';
 
@@ -54,7 +54,7 @@ export function ProfileFormImage({ user }: Props) {
         }
       } catch (err) {
         console.error({ error: err });
-        toast({ title: 'Failed to upload image', variant: 'destructive' });
+        toast.error('Failed to upload image');
       } finally {
         setLoading(false);
       }

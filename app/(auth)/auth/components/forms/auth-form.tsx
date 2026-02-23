@@ -4,11 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaSpinner } from 'react-icons/fa6';
+import { toast } from 'sonner';
 import { signInWithOtp } from '@/app/(auth)/auth/actions';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
 import { type AuthFormFields, authFormSchema } from './auth-form-schema';
 
 export function AuthForm() {
@@ -27,10 +27,8 @@ export function AuthForm() {
       formData.append('email', data.email);
       await signInWithOtp(formData);
     } catch (_error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to sign in. Please try again.',
-        variant: 'destructive'
+      toast.error('Error', {
+        description: 'Failed to sign in. Please try again.'
       });
     } finally {
       setIsLoading(false);

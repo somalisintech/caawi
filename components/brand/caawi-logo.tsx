@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button, type ButtonProps } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-type Props = ButtonProps & {
+type Props = React.ComponentProps<typeof Button> & {
   width?: number;
   height?: number;
 };

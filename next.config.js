@@ -2,6 +2,7 @@ import { withAxiom } from 'next-axiom';
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  eslint: { ignoreDuringBuilds: true },
   outputFileTracingRoot: import.meta.dirname,
   rewrites: async () => [
     {

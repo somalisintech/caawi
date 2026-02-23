@@ -6,7 +6,7 @@ import prisma from '@/lib/db';
 
 export const GET = withAxiom(async (req: AxiomRequest) => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
 
     if (!data.user) {

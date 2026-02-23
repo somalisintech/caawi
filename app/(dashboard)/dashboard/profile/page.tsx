@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { log } from 'next-axiom';
 
 export default async function SettingsProfilePage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {

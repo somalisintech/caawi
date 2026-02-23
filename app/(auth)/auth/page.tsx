@@ -8,7 +8,7 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
 export default async function Auth() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
   if (data.user) {

@@ -16,7 +16,7 @@ import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
 export async function Header() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (!data.user || error) {

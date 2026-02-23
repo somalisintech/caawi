@@ -17,7 +17,7 @@ type Props = {
 };
 
 export async function MentorProfile({ mentor }: Props) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (!data.user || error) {

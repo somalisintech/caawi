@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
 
 export const DELETE = withAxiom(async (req: AxiomRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
   if (!data.user) {
@@ -21,7 +21,7 @@ export const DELETE = withAxiom(async (req: AxiomRequest) => {
 });
 
 export const POST = withAxiom(async (req: AxiomRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (!data.user || error) {

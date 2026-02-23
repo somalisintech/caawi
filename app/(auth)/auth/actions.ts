@@ -8,7 +8,7 @@ import { Provider } from '@supabase/supabase-js';
 import { getUrl } from '@/utils/url';
 
 export async function signInWithOtp(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const email = formData.get('email');
 
@@ -31,7 +31,7 @@ export async function signInWithOtp(formData: FormData) {
 }
 
 export async function signInWithOAuth(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const provider = formData.get('provider');
 

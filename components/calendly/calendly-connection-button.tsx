@@ -5,7 +5,7 @@ import prisma from '@/lib/db';
 import { log } from 'next-axiom';
 
 export async function CalendlyConnectionButton() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (!data.user || error) {

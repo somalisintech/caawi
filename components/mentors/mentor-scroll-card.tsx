@@ -10,7 +10,7 @@ type Props = {
 };
 
 export async function MentorScrollCard({ mentor }: Props) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
   const authenticated = !!data.user;

@@ -55,7 +55,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
+    <div className="min-h-screen bg-linear-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
       <CompleteProfile user={user} />
       <div className="container">
         <Header />

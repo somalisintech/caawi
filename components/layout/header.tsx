@@ -1,19 +1,19 @@
+import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { SignOutMenuButton } from '@/components/auth/sign-out-menu-button';
+import { CaawiLogo } from '@/components/brand/caawi-logo';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuItem
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { ChevronDown } from 'lucide-react';
-import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export async function Header() {
   const supabase = await createClient();

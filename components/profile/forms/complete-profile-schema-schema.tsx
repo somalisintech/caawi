@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { Gender, UserType } from '@prisma/client';
+import { z } from 'zod';
 
 export const completeProfileFormSchema = z
   .object({

@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Profile, User } from '@prisma/client';
+import type { Profile, User } from '@prisma/client';
 import { PopupButton } from 'react-calendly';
+import { Button } from '@/components/ui/button';
 
 type CalendlyWidgetProps = {
   scheduling_url: string | null;

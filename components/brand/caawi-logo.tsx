@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Button, type ButtonProps } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Button, ButtonProps } from '@/components/ui/button';
 
 type Props = ButtonProps & {
   width?: number;

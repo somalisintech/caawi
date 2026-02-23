@@ -1,17 +1,17 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
-import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { CompleteProfileFormFields, completeProfileFormSchema } from './complete-profile-schema-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Gender, UserType } from '@prisma/client';
-import { useForm } from 'react-hook-form';
-import { UserWithProfile } from '@/types/user';
 import { Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/components/ui/use-toast';
+import type { UserWithProfile } from '@/types/user';
+import { type CompleteProfileFormFields, completeProfileFormSchema } from './complete-profile-schema-schema';
 
 interface Props {
   user: UserWithProfile;

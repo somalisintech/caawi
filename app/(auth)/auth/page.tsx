@@ -1,11 +1,11 @@
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { SocialAuth } from '@/components/auth/social-auth';
+import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { AuthForm } from './components/forms';
 import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { AuthForm } from './components/forms';
 
 export default async function Auth() {
   const supabase = await createClient();
@@ -38,11 +38,11 @@ export default async function Auth() {
       </Card>
       <p className="mx-auto max-w-[240px] text-center text-xs text-muted-foreground">
         By continuing to Caawi, you agree to our{' '}
-        <a className="underline" href="/terms-and-conditions" target="_blank">
+        <a className="underline" href="/terms-and-conditions" target="_blank" rel="noopener">
           Terms and Conditions
         </a>{' '}
         and{' '}
-        <a className="underline" href="/privacy-policy" target="_blank">
+        <a className="underline" href="/privacy-policy" target="_blank" rel="noopener">
           Privacy Policy
         </a>
       </p>

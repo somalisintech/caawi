@@ -1,17 +1,15 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AuthFormFields, authFormSchema } from './auth-form-schema';
-
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaSpinner } from 'react-icons/fa6';
 import { signInWithOtp } from '@/app/(auth)/auth/actions';
-import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
+import { type AuthFormFields, authFormSchema } from './auth-form-schema';
 
 export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +26,7 @@ export function AuthForm() {
       const formData = new FormData();
       formData.append('email', data.email);
       await signInWithOtp(formData);
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Error',
         description: 'Failed to sign in. Please try again.',

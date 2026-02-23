@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -7,8 +9,6 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu';
-import { Card } from '@/components/ui/card';
-import Link from 'next/link';
 
 export function DashboardMenu() {
   return (

@@ -1,6 +1,6 @@
-import { PropsWithChildren } from 'react';
-import { Header } from '@/components/layout/header';
+import type { PropsWithChildren } from 'react';
 import { Footer } from '@/components/layout/footer';
+import { Header } from '@/components/layout/header';
 
 export default async function MarketingLayout({ children }: PropsWithChildren) {
   return (

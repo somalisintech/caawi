@@ -15,7 +15,7 @@ export const getAccessToken = async ({ grantType, code, redirectUri }: Props) =>
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + btoa(process.env.CALENDLY_CLIENT_ID + ':' + process.env.CALENDLY_CLIENT_SECRET)
+      Authorization: `Basic ${btoa(`${process.env.CALENDLY_CLIENT_ID}:${process.env.CALENDLY_CLIENT_SECRET}`)}`
     },
     body: encodedParams
   });

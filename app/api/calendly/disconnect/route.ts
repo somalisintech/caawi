@@ -1,8 +1,8 @@
-import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
+import { type AxiomRequest, withAxiom } from 'next-axiom';
 import { revokeAccessToken } from '@/app/api/calendly/services';
-import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export const GET = withAxiom(async (req: AxiomRequest) => {
   const supabase = await createClient();
@@ -32,7 +32,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
     }
   });
 
-  const response = NextResponse.redirect(req.nextUrl.origin + '/dashboard/profile');
+  const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
   response.cookies.delete('calendly_access_token');
   response.cookies.delete('calendly_refresh_token');
   response.cookies.delete('calendly_organization');

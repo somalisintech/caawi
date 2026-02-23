@@ -1,9 +1,9 @@
-import { MentorProfile } from '@prisma/client';
+import type { MentorProfile } from '@prisma/client';
+import Link from 'next/link';
 // import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
-import Link from 'next/link';
 
 type Props = {
   mentor: MentorProfile;

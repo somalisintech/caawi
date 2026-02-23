@@ -1,24 +1,24 @@
 'use client';
 
-import { ReactElement } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { toast } from '@/components/ui/use-toast';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ProfileFormFields, profileFormSchema } from './profile-form-schema';
-import { DeleteAccountModal } from '../modals/delete-account-modal';
-import { ProfileFormImage } from './profile-form-image';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import { Gender, UserType } from '@prisma/client';
-import { UserWithProfile } from '@/types/user';
-import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import type { ReactElement } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/components/ui/use-toast';
+import type { UserWithProfile } from '@/types/user';
+import { DeleteAccountModal } from '../modals/delete-account-modal';
+import { ProfileFormImage } from './profile-form-image';
+import { type ProfileFormFields, profileFormSchema } from './profile-form-schema';
 
 interface Props {
   calendlyConnectionButton: ReactElement;

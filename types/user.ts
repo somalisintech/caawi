@@ -1,4 +1,4 @@
-import { CalendlyUser, Location, Occupation, Profile, User } from '@prisma/client';
+import type { CalendlyUser, Location, Occupation, Profile, User } from '@prisma/client';
 
 export interface UserProfile extends Profile {
   location: Location | null;

@@ -1,8 +1,8 @@
 'use client';
 
-import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { CaawiLogo } from '@/components/brand/caawi-logo';
 
 function AuthCodeErrorContent() {
   const searchParams = useSearchParams();

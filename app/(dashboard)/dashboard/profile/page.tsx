@@ -1,9 +1,9 @@
-import prisma from '@/lib/db';
-import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
-import { createClient } from '@/utils/supabase/server';
-import { ProfileForm } from './components/forms';
 import { redirect } from 'next/navigation';
 import { log } from 'next-axiom';
+import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
+import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
+import { ProfileForm } from './components/forms';
 
 export default async function SettingsProfilePage() {
   const supabase = await createClient();

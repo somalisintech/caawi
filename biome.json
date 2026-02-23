@@ -30,6 +30,14 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "suspicious": {
+        "noShadowRestrictedNames": "off",
+        "noArrayIndexKey": "off",
+        "noUnknownAtRules": "off"
       }
     }
   }

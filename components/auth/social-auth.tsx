@@ -1,12 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Provider } from '@supabase/supabase-js';
-import { FaGithub, FaGoogle, FaLinkedin } from 'react-icons/fa6';
-import { IconType } from 'react-icons/lib';
-import { useState } from 'react';
+import type { Provider } from '@supabase/supabase-js';
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { FaGithub, FaGoogle, FaLinkedin } from 'react-icons/fa6';
+import type { IconType } from 'react-icons/lib';
 import { signInWithOAuth } from '@/app/(auth)/auth/actions';
+import { Button } from '@/components/ui/button';
 
 type Auth = {
   title: string;

@@ -1,9 +1,9 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { useDebounce } from '@/hooks/use-debounce';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { useDebounce } from '@/hooks/use-debounce';
 
 type Props = {
   searchQuery?: string;

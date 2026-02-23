@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import type { UserWithProfile } from '@/types/user';
 import { CompleteProfileForm } from './forms';
-import { UserWithProfile } from '@/types/user';
 
 type Props = {
   user: UserWithProfile;

@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
-import prisma from '@/lib/db';
 import { log } from 'next-axiom';
+import { Button } from '@/components/ui/button';
+import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export async function CalendlyConnectionButton() {
   const supabase = await createClient();

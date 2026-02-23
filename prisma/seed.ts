@@ -1,5 +1,5 @@
-import { PrismaClient, UserType, Gender } from '@prisma/client';
-import { faker, Sex } from '@faker-js/faker';
+import { faker, type Sex } from '@faker-js/faker';
+import { type Gender, PrismaClient, UserType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

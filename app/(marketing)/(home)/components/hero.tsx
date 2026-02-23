@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { redirect } from 'next/navigation';
 import { MentorScrollCard } from '@/components/mentors/mentor-scroll-card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import prisma from '@/lib/db';
 
 export async function Hero() {

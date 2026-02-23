@@ -1,10 +1,10 @@
 'use server';
 
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import type { Provider } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { log } from 'next-axiom';
-import { Provider } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
 
 export async function signInWithOtp(formData: FormData) {

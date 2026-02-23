@@ -1,7 +1,7 @@
-import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { type AxiomRequest, withAxiom } from 'next-axiom';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export const DELETE = withAxiom(async (req: AxiomRequest) => {
   const supabase = await createClient();

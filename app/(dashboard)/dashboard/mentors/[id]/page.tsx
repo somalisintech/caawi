@@ -1,5 +1,5 @@
-import prisma from '@/lib/db';
 import { MentorProfile } from '@/components/mentors/mentor-profile';
+import prisma from '@/lib/db';
 
 export default async function Mentor(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

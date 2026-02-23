@@ -23,7 +23,7 @@ secure user connections.
 ### Prerequisites
 
 - Node.js
-- Yarn
+- pnpm
 - Docker (if setting up a local PostgreSQL database)
 - Doppler CLI (for managing environment variables)
 
@@ -42,23 +42,23 @@ remote database. To run the application with a local database:
 3. **Database Migrations**: Before applying migrations, confirm they are intended for your local setup to avoid
    affecting production data.
    ```bash
-   yarn migrate
+   pnpm migrate
    ```
 4. **Database Seeding**: To seed the database with initial data:
    ```bash
-   yarn seed
+   pnpm seed
    ```
 5. **Start the Application**: Finally, launch the application:
    ```bash
-   yarn dev
+   pnpm dev
    ```
 
 ## Development Scripts
 
-- `yarn build`: Builds the application for production.
-- `yarn start`: Runs the built application in production mode.
-- `yarn lint`: Enforces code quality.
-- `yarn check-types`: Ensures TypeScript correctness.
+- `pnpm build`: Builds the application for production.
+- `pnpm start`: Runs the built application in production mode.
+- `pnpm lint`: Enforces code quality.
+- `pnpm check-types`: Ensures TypeScript correctness.
 
 ## Commit Message Guidelines
 

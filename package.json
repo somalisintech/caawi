@@ -7,13 +7,23 @@
     "url": "https://somalisintech.com"
   },
   "private": true,
+  "packageManager": "pnpm@10.30.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "bcrypt",
+      "prisma",
+      "sharp"
+    ]
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "release": "release-it",
     "check-types": "tsc --noEmit",
-    "lint": "yarn run check-types && next lint",
+    "lint": "pnpm run check-types && next lint",
     "lint:fix": "next lint --fix",
     "prepare": "husky",
     "postinstall": "prisma generate",

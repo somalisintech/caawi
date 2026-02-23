@@ -11,8 +11,9 @@ Caawi is a mentorship platform by Somalis in Tech, connecting mentors and mentee
 ```bash
 pnpm dev              # Start dev server (port 3000)
 pnpm build            # Production build
-pnpm lint             # TypeScript check + ESLint
-pnpm lint:fix         # Auto-fix lint issues
+pnpm lint             # TypeScript check + Biome lint
+pnpm lint:fix         # Auto-fix lint + format issues
+pnpm format           # Format all files with Biome
 pnpm check-types      # TypeScript only
 pnpm migrate          # Prisma migrate dev
 pnpm studio           # Prisma Studio GUI
@@ -84,6 +85,6 @@ API routes use the `withAxiom` wrapper for structured logging. Pattern: authenti
 
 - **Path alias**: `@/*` maps to project root
 - **Commit format**: Conventional commits with optional JIRA ID — `feat(auth): add OAuth (CAAWI-123)`
-- **Pre-commit**: Husky runs lint-staged (ESLint --fix + Prettier) on staged files
+- **Pre-commit**: Husky runs lint-staged (Biome check --write) on staged files
 - **Styling**: Tailwind utility-first, HSL CSS variables for theming, dark mode via class
-- **Prettier**: 120 char width, single quotes, no trailing commas
+- **Biome**: 120 char width, single quotes, no trailing commas (formatter + linter)

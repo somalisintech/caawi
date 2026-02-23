@@ -11,6 +11,12 @@
     "lineWidth": 120,
     "lineEnding": "lf"
   },
+  "css": {
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
+    }
+  },
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

@@ -36,7 +36,7 @@
 
     --radius: 0.5rem;
   }
-  
+
   .dark {
     --background: 0 0% 0%;
     --foreground: 0 0% 98%;
@@ -76,7 +76,7 @@
     @apply bg-background text-foreground;
   }
 
-  .hide-dialog-close > button { 
+  .hide-dialog-close > button {
     display: none;
   }
 }

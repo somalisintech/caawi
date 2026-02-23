@@ -25,11 +25,12 @@ export function AuthForm() {
     try {
       const formData = new FormData();
       formData.append('email', data.email);
-      await signInWithOtp(formData);
-    } catch (_error) {
-      toast.error('Error', {
-        description: 'Failed to sign in. Please try again.'
-      });
+      const result = await signInWithOtp(formData);
+      if (result?.error) {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }

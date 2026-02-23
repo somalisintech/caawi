@@ -14,7 +14,7 @@ export async function signInWithOtp(formData: FormData) {
 
   if (typeof email !== 'string' || !email) {
     log.error('Invalid email provided for OTP sign in');
-    redirect('/error');
+    return { error: 'Please provide a valid email address.' };
   }
 
   const { error } = await supabase.auth.signInWithOtp({
@@ -23,7 +23,7 @@ export async function signInWithOtp(formData: FormData) {
 
   if (error) {
     log.error('Error signing in with OTP', { error });
-    redirect('/error');
+    return { error: 'Failed to sign in. Please try again.' };
   }
 
   revalidatePath('/', 'layout');

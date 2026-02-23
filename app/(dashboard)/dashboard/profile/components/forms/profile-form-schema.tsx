@@ -3,15 +3,15 @@ import { Gender } from '@/generated/prisma/browser';
 
 export const profileFormSchema = z
   .object({
-    firstName: z.string().min(1, { message: 'First name is required' }),
-    lastName: z.string().min(1, { message: 'Last name is required' }),
-    email: z.string().email({ message: 'Please enter a valid email address' }),
-    gender: z.nativeEnum(Gender, { invalid_type_error: 'Required' }),
+    firstName: z.string().min(1, { error: 'First name is required' }),
+    lastName: z.string().min(1, { error: 'Last name is required' }),
+    email: z.email({ error: 'Please enter a valid email address' }),
+    gender: z.enum(Gender, { error: 'Required' }),
     bio: z.string(),
-    yearsOfExperience: z.coerce.number().min(0).max(100).optional(),
-    linkedInUrl: z.string().url().or(z.literal('')).optional(),
-    githubUrl: z.string().url().or(z.literal('')).optional(),
-    buyMeCoffeeUrl: z.string().url().or(z.literal('')).optional(),
+    yearsOfExperience: z.number().min(0).max(100).optional(),
+    linkedInUrl: z.url().or(z.literal('')).optional(),
+    githubUrl: z.url().or(z.literal('')).optional(),
+    buyMeCoffeeUrl: z.url().or(z.literal('')).optional(),
     sameGenderPref: z.boolean().optional(),
     country: z.string().optional(),
     city: z.string().optional(),
@@ -21,16 +21,18 @@ export const profileFormSchema = z
   .superRefine((data, ctx) => {
     if (data.country && !data.city) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         path: ['city'],
-        message: 'Required'
+        message: 'Required',
+        input: data.city
       });
     }
     if (data.role && !data.company) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         path: ['company'],
-        message: 'Required'
+        message: 'Required',
+        input: data.company
       });
     }
   });

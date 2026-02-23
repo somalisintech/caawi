@@ -29,7 +29,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
   const router = useRouter();
   const { firstName, lastName, email, profile } = user;
 
-  const form = useForm<ProfileFormFields>({
+  const form = useForm<ProfileFormFields, unknown, ProfileFormFields>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       firstName: firstName || '',
@@ -187,7 +187,12 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 <FormItem>
                   <FormLabel>Years of Experience</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" />
+                    <Input
+                      {...field}
+                      type="number"
+                      onChange={(e) => field.onChange(e.target.valueAsNumber || undefined)}
+                      value={field.value ?? ''}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -29,6 +29,7 @@ export function ProfileFormImage({ user }: Props) {
       try {
         setLoading(true);
         const image = event.target.files[0];
+        if (!image) return;
 
         const { data, error } = await supabase.storage.from('avatar').upload(`${user.id}/avatar.png`, image, {
           upsert: true

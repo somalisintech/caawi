@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { type AxiomRequest, withAxiom } from 'next-axiom';
+import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 
-export const GET = withAxiom(async (req: AxiomRequest) => {
+export const GET = withLogger(async (req: LoggerRequest) => {
   const { origin } = new URL(req.url);
   const calendlyUrl = new URL('https://auth.calendly.com/oauth/authorize');
 

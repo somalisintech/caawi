@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { type AxiomRequest, withAxiom } from 'next-axiom';
 import { getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
 import prisma from '@/lib/db';
+import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
 
-export const GET = withAxiom(async (req: AxiomRequest) => {
+export const GET = withLogger(async (req: LoggerRequest) => {
   try {
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();

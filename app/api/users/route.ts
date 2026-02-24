@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { type AxiomRequest, withAxiom } from 'next-axiom';
 import prisma from '@/lib/db';
+import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
 
-export const DELETE = withAxiom(async (req: AxiomRequest) => {
+export const DELETE = withLogger(async (req: LoggerRequest) => {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -20,7 +20,7 @@ export const DELETE = withAxiom(async (req: AxiomRequest) => {
   return NextResponse.json(data);
 });
 
-export const POST = withAxiom(async (req: AxiomRequest) => {
+export const POST = withLogger(async (req: LoggerRequest) => {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 

@@ -3,7 +3,7 @@
 import type { Provider } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { log } from 'next-axiom';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
 
@@ -13,7 +13,7 @@ export async function signInWithOtp(formData: FormData) {
   const email = formData.get('email');
 
   if (typeof email !== 'string' || !email) {
-    log.error('Invalid email provided for OTP sign in');
+    logger.error('Invalid email provided for OTP sign in');
     return { error: 'Please provide a valid email address.' };
   }
 
@@ -25,7 +25,7 @@ export async function signInWithOtp(formData: FormData) {
   });
 
   if (error) {
-    log.error('Error signing in with OTP', { error });
+    logger.error('Error signing in with OTP', { error });
     return { error: 'Failed to sign in. Please try again.' };
   }
 
@@ -39,7 +39,7 @@ export async function signInWithOAuth(formData: FormData) {
   const provider = formData.get('provider');
 
   if (typeof provider !== 'string' || !provider) {
-    log.error('Invalid provider for OAuth sign in');
+    logger.error('Invalid provider for OAuth sign in');
     redirect('/error');
   }
 
@@ -51,12 +51,12 @@ export async function signInWithOAuth(formData: FormData) {
   });
 
   if (error) {
-    log.error('Error signing in with OAuth', { error });
+    logger.error('Error signing in with OAuth', { error });
     redirect('/error');
   }
 
   if (!data.url) {
-    log.error('No URL returned from OAuth sign in');
+    logger.error('No URL returned from OAuth sign in');
     redirect('/error');
   }
 

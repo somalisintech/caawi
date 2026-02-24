@@ -3,7 +3,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { AxiomWebVitals } from 'next-axiom';
 import type { PropsWithChildren } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import { PostHogProvider, ThemeProvider } from '@/providers';
@@ -23,7 +22,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <PostHogProvider>{children}</PostHogProvider>
           <Analytics />
           <SpeedInsights />
-          <AxiomWebVitals />
         </ThemeProvider>
         <Toaster />
       </body>

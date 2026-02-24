@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { log } from 'next-axiom';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     const next = searchParams.get('next') ?? '/dashboard/profile';
 
     if (!code) {
-      log.error('No code provided in OAuth callback');
+      logger.error('No code provided in OAuth callback');
       return NextResponse.redirect(`${origin}/auth/error?error=no_code`);
     }
 
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      log.error('Error exchanging code for session', { code, error: error.message, details: error });
+      logger.error('Error exchanging code for session', { code, error: error.message, details: error });
       if (error.message.includes('validation_failed')) {
         return NextResponse.redirect(`${origin}/auth/error?error=validation_failed`);
       }
@@ -29,13 +29,15 @@ export async function GET(request: Request) {
     }
 
     if (!data.session) {
-      log.error('No session data returned after code exchange');
+      logger.error('No session data returned after code exchange');
       return NextResponse.redirect(`${origin}/auth/error?error=no_session`);
     }
 
     return NextResponse.redirect(`${origin}${next}`);
   } catch (error) {
-    log.error('Unexpected error in OAuth callback', { error: error instanceof Error ? error.message : String(error) });
+    logger.error('Unexpected error in OAuth callback', {
+      error: error instanceof Error ? error.message : String(error)
+    });
     return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=unexpected`);
   }
 }

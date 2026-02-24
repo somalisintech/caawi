@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { log } from 'next-axiom';
 import type { PropsWithChildren } from 'react';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { Header } from '@/components/layout/header';
 import { ProfileSummary } from '@/components/layout/profile-summary';
 import { CompleteProfile } from '@/components/profile/complete-profile';
 import prisma from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
 
 export const metadata: Metadata = {
@@ -50,7 +50,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   });
 
   if (!user) {
-    log.warn('User not found', { data });
+    logger.warn('User not found', { data });
     redirect('/auth');
   }
 

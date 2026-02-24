@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { log } from 'next-axiom';
 import { Button } from '@/components/ui/button';
 import prisma from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
 
 export async function CalendlyConnectionButton() {
@@ -27,7 +27,7 @@ export async function CalendlyConnectionButton() {
   });
 
   if (!user) {
-    log.warn('User not found', {
+    logger.warn('User not found', {
       user: data.user
     });
     return null;

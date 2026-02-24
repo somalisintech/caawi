@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
-import { log } from 'next-axiom';
 import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
 import prisma from '@/lib/db';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
 import { ProfileForm } from './components/forms';
 
@@ -10,7 +10,7 @@ export default async function SettingsProfilePage() {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    log.warn('Error fetching user', { error });
+    logger.warn('Error fetching user', { error });
     redirect('/auth');
   }
 

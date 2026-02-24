@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { type AxiomRequest, withAxiom } from 'next-axiom';
 import prisma from '@/lib/db';
+import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
 
-export const GET = withAxiom(async (req: AxiomRequest) => {
+export const GET = withLogger(async (req: LoggerRequest) => {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 

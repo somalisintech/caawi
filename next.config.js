@@ -1,5 +1,4 @@
 import { withSentryConfig } from '@sentry/nextjs';
-import { withAxiom } from 'next-axiom';
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
@@ -27,7 +26,7 @@ const nextConfig = {
   }
 };
 
-export default withSentryConfig(withAxiom(nextConfig), {
+export default withSentryConfig(nextConfig, {
   org: 'somalisintech',
   project: 'caawi',
   silent: !process.env.CI,

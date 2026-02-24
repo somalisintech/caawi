@@ -71,7 +71,7 @@ Prisma client singleton at `lib/db.ts`. Preview feature `views` is enabled.
 
 ### API Routes
 
-API routes use the `withAxiom` wrapper for structured logging. Pattern: authenticate via Supabase server client, then query with Prisma. Profile updates use `connectOrCreate` for Location/Occupation upserts.
+API routes use the `withLogger` wrapper (`lib/with-logger.ts`) for structured logging via Sentry. The wrapper auto-attaches `userId` and `route` context, sets `Sentry.setUser`, and catches unhandled errors. The singleton `logger` (`lib/logger.ts`) wraps `Sentry.logger.*` and is used directly in server actions and components. Pattern: authenticate via Supabase server client, then query with Prisma. Profile updates use `connectOrCreate` for Location/Occupation upserts.
 
 ### Component Patterns
 

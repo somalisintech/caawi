@@ -7,6 +7,7 @@ Sentry.init({
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.browserProfilingIntegration(),
+    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] }),
     Sentry.replayIntegration({
       maskAllText: false,
       maskAllInputs: false,

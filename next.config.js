@@ -5,6 +5,12 @@ import { withAxiom } from 'next-axiom';
 const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   outputFileTracingRoot: import.meta.dirname,
+  headers: async () => [
+    {
+      source: '/:path*',
+      headers: [{ key: 'Document-Policy', value: 'js-profiling' }]
+    }
+  ],
   rewrites: async () => [
     {
       source: '/dashboard',

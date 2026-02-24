@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with some instructions
-  redirectTo.pathname = '/error';
+  redirectTo.pathname = '/auth/error';
+  redirectTo.searchParams.set('error', 'verification_failed');
   return NextResponse.redirect(redirectTo);
 }

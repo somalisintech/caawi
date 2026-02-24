@@ -40,7 +40,7 @@ export async function signInWithOAuth(formData: FormData) {
 
   if (typeof provider !== 'string' || !provider) {
     logger.error('Invalid provider for OAuth sign in');
-    redirect('/error');
+    redirect('/auth/error?error=invalid_provider');
   }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -52,12 +52,12 @@ export async function signInWithOAuth(formData: FormData) {
 
   if (error) {
     logger.error('Error signing in with OAuth', { error });
-    redirect('/error');
+    redirect('/auth/error?error=provider_error');
   }
 
   if (!data.url) {
     logger.error('No URL returned from OAuth sign in');
-    redirect('/error');
+    redirect('/auth/error?error=provider_error');
   }
 
   revalidatePath('/', 'layout');

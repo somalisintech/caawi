@@ -73,9 +73,15 @@ export const GET = withLogger(async (req: LoggerRequest) => {
     req.log.info('Updated user profile with Calendly user data', resource);
 
     const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
-    response.cookies.set('calendly_access_token', access_token);
-    response.cookies.set('calendly_refresh_token', refresh_token);
-    response.cookies.set('calendly_organization', organization);
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/'
+    };
+    response.cookies.set('calendly_access_token', access_token, cookieOptions);
+    response.cookies.set('calendly_refresh_token', refresh_token, cookieOptions);
+    response.cookies.set('calendly_organization', organization, cookieOptions);
 
     return response;
   } catch (error) {

@@ -1,3 +1,4 @@
+import { withSentryConfig } from '@sentry/nextjs';
 import { withAxiom } from 'next-axiom';
 
 /** @type {import("next").NextConfig} */
@@ -20,4 +21,16 @@ const nextConfig = {
   }
 };
 
-export default withAxiom(nextConfig);
+export default withSentryConfig(withAxiom(nextConfig), {
+  org: 'somalisintech',
+  project: 'caawi',
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: '/monitoring',
+  webpack: {
+    automaticVercelMonitors: true,
+    treeshake: {
+      removeDebugLogging: true
+    }
+  }
+});

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaSpinner } from 'react-icons/fa6';
@@ -13,6 +14,7 @@ import { type AuthFormFields, authFormSchema } from './auth-form-schema';
 
 export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const form = useForm<AuthFormFields>({
     defaultValues: {
       email: ''
@@ -28,7 +30,9 @@ export function AuthForm() {
       const result = await signInWithOtp(formData);
       if (result?.error) {
         toast.error(result.error);
+        return;
       }
+      router.push('/check-email');
     } catch {
       toast.error('Something went wrong. Please try again.');
     } finally {

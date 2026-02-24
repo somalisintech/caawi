@@ -18,7 +18,10 @@ export async function signInWithOtp(formData: FormData) {
   }
 
   const { error } = await supabase.auth.signInWithOtp({
-    email
+    email,
+    options: {
+      emailRedirectTo: `${getUrl()}/api/auth/callback`
+    }
   });
 
   if (error) {
@@ -27,7 +30,7 @@ export async function signInWithOtp(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/check-email');
+  return { success: true };
 }
 
 export async function signInWithOAuth(formData: FormData) {

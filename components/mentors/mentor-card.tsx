@@ -1,16 +1,16 @@
-import { MentorProfile } from '@prisma/client';
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import type { MentorProfile } from '@/generated/prisma/client';
 import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
-import Link from 'next/link';
 
 type Props = {
   mentor: MentorProfile;
 };
 
 export async function MentorCard({ mentor }: Props) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
   const authenticated = !!data.user;

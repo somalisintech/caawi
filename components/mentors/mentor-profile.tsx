@@ -1,23 +1,23 @@
-import { Separator } from '@/components/ui/separator';
-import { MentorProfile as MentorProfileType } from '@prisma/client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendlyWidget } from '@/components/calendly/calendly-widget';
-import { createClient } from '@/utils/supabase/server';
-import prisma from '@/lib/db';
 import Link from 'next/link';
-import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
+import { redirect } from 'next/navigation';
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SiBuymeacoffee } from 'react-icons/si';
+import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
+import { CalendlyWidget } from '@/components/calendly/calendly-widget';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { redirect } from 'next/navigation';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import type { MentorProfile as MentorProfileType } from '@/generated/prisma/client';
+import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 type Props = {
   mentor: MentorProfileType;
 };
 
 export async function MentorProfile({ mentor }: Props) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (!data.user || error) {

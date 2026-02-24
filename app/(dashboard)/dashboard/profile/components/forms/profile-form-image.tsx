@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from '@/components/ui/use-toast';
-import { UserWithProfile } from '@/types/user';
-import { createClient } from '@/utils/supabase/client';
-import { ChangeEvent, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { type ChangeEvent, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { UserWithProfile } from '@/types/user';
+import { createClient } from '@/utils/supabase/client';
 
 type Props = {
   user: UserWithProfile;
@@ -29,6 +29,7 @@ export function ProfileFormImage({ user }: Props) {
       try {
         setLoading(true);
         const image = event.target.files[0];
+        if (!image) return;
 
         const { data, error } = await supabase.storage.from('avatar').upload(`${user.id}/avatar.png`, image, {
           upsert: true
@@ -41,7 +42,7 @@ export function ProfileFormImage({ user }: Props) {
         if (data) {
           const { data: imageData } = supabase.storage.from('avatar').getPublicUrl(data.path);
 
-          const imageUrl = `${imageData.publicUrl}?updated=${new Date().getTime()}`;
+          const imageUrl = `${imageData.publicUrl}?updated=${Date.now()}`;
 
           const response = await fetch('/api/users', {
             method: 'POST',
@@ -54,7 +55,7 @@ export function ProfileFormImage({ user }: Props) {
         }
       } catch (err) {
         console.error({ error: err });
-        toast({ title: 'Failed to upload image', variant: 'destructive' });
+        toast.error('Failed to upload image');
       } finally {
         setLoading(false);
       }
@@ -68,13 +69,13 @@ export function ProfileFormImage({ user }: Props) {
   return (
     <div className="relative">
       <input ref={fileInputRef} type="file" className="sr-only" onChange={handleChange} accept="image/*" />
-      <div role="button" onClick={handleClick} className="flex items-center gap-2">
+      <button type="button" onClick={handleClick} className="flex items-center gap-2">
         <Avatar className="size-5">
           <AvatarImage src={localImage} />
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
         <div>Edit</div>
-      </div>
+      </button>
     </div>
   );
 }

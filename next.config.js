@@ -1,7 +1,9 @@
-const { withAxiom } = require('next-axiom');
+import { withAxiom } from 'next-axiom';
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  eslint: { ignoreDuringBuilds: true },
+  outputFileTracingRoot: import.meta.dirname,
   rewrites: async () => [
     {
       source: '/dashboard',
@@ -18,4 +20,4 @@ const nextConfig = {
   }
 };
 
-module.exports = withAxiom(nextConfig);
+export default withAxiom(nextConfig);

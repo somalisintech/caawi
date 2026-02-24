@@ -1,20 +1,20 @@
 'use server';
 
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import type { Provider } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { log } from 'next-axiom';
-import { Provider } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
 import { getUrl } from '@/utils/url';
 
 export async function signInWithOtp(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const email = formData.get('email');
 
   if (typeof email !== 'string' || !email) {
     log.error('Invalid email provided for OTP sign in');
-    redirect('/error');
+    return { error: 'Please provide a valid email address.' };
   }
 
   const { error } = await supabase.auth.signInWithOtp({
@@ -23,7 +23,7 @@ export async function signInWithOtp(formData: FormData) {
 
   if (error) {
     log.error('Error signing in with OTP', { error });
-    redirect('/error');
+    return { error: 'Failed to sign in. Please try again.' };
   }
 
   revalidatePath('/', 'layout');
@@ -31,7 +31,7 @@ export async function signInWithOtp(formData: FormData) {
 }
 
 export async function signInWithOAuth(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const provider = formData.get('provider');
 

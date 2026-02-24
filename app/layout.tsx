@@ -1,12 +1,12 @@
 import './globals.css';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { PropsWithChildren } from 'react';
-import { Toaster } from '@/components/ui/toaster';
-import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import { ThemeProvider, PostHogProvider } from '@/providers';
+import type { PropsWithChildren } from 'react';
+import { Toaster } from '@/components/ui/sonner';
+import { PostHogProvider, ThemeProvider } from '@/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 

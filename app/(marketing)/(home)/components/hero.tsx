@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { redirect } from 'next/navigation';
 import { MentorScrollCard } from '@/components/mentors/mentor-scroll-card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import prisma from '@/lib/db';
 
 export async function Hero() {
@@ -37,8 +37,8 @@ export async function Hero() {
         </div>
 
         <div className="relative h-[400px] w-full justify-self-end overflow-hidden lg:h-[600px] lg:w-[480px]">
-          <div className="absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-background to-transparent"></div>
-          <div className="absolute inset-x-0 bottom-0 z-10 h-8 bg-gradient-to-t from-background to-transparent"></div>
+          <div className="absolute inset-x-0 top-0 z-10 h-8 bg-linear-to-b from-background to-transparent"></div>
+          <div className="absolute inset-x-0 bottom-0 z-10 h-8 bg-linear-to-t from-background to-transparent"></div>
 
           <div className="flex animate-mentors-scroll flex-col">
             {mentors.map((mentor) => (

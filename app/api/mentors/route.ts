@@ -1,10 +1,10 @@
-import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { type AxiomRequest, withAxiom } from 'next-axiom';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export const GET = withAxiom(async (req: AxiomRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (!data.user || error) {

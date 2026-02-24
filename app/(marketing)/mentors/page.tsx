@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import { MentorsList } from '@/components/mentors/mentors-list';
 import prisma from '@/lib/db';
 
-export default async function PublicMentorsListPage({ searchParams }: { searchParams: { search?: string } }) {
+export const metadata: Metadata = {
+  title: 'Find a Mentor | Caawi',
+  description: 'Browse and connect with experienced professionals ready to mentor you on your career journey.'
+};
+
+export default async function PublicMentorsListPage(props: { searchParams: Promise<{ search?: string }> }) {
+  const searchParams = await props.searchParams;
   const search = searchParams.search;
 
   const mentors = await prisma.mentorProfile.findMany({

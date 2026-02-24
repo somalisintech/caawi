@@ -1,12 +1,12 @@
-import { AxiomRequest, withAxiom } from 'next-axiom';
 import { NextResponse } from 'next/server';
+import { type AxiomRequest, withAxiom } from 'next-axiom';
 import { getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
-import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export const GET = withAxiom(async (req: AxiomRequest) => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
 
     if (!data.user) {
@@ -18,7 +18,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
     const { access_token, refresh_token, organization } = await getAccessToken({
       grantType: 'authorization_code',
       code: req.nextUrl.searchParams.get('code')!,
-      redirectUri: req.nextUrl.origin + '/api/calendly/callback'
+      redirectUri: `${req.nextUrl.origin}/api/calendly/callback`
     });
 
     if (!access_token) {
@@ -28,6 +28,20 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
 
     const { resource } = await getCurrentUser(access_token);
 
+    const {
+      uri,
+      name,
+      slug,
+      email: calendlyEmail,
+      scheduling_url,
+      timezone,
+      avatar_url,
+      created_at,
+      updated_at,
+      current_organization,
+      resource_type
+    } = resource;
+
     await prisma.user.update({
       where: {
         email: data.user.email
@@ -35,9 +49,21 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
       data: {
         profile: {
           update: {
-            calendlyUserUri: resource.uri,
+            calendlyUserUri: uri,
             calendlyUser: {
-              create: resource
+              create: {
+                uri,
+                name,
+                slug,
+                email: calendlyEmail,
+                scheduling_url,
+                timezone,
+                avatar_url,
+                created_at,
+                updated_at,
+                current_organization,
+                resource_type
+              }
             }
           }
         }
@@ -46,7 +72,7 @@ export const GET = withAxiom(async (req: AxiomRequest) => {
 
     req.log.info('Updated user profile with Calendly user data', resource);
 
-    const response = NextResponse.redirect(req.nextUrl.origin + '/dashboard/profile');
+    const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
     response.cookies.set('calendly_access_token', access_token);
     response.cookies.set('calendly_refresh_token', refresh_token);
     response.cookies.set('calendly_organization', organization);

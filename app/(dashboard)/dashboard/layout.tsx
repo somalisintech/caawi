@@ -1,13 +1,13 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { PropsWithChildren } from 'react';
+import { log } from 'next-axiom';
+import type { PropsWithChildren } from 'react';
+import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { Header } from '@/components/layout/header';
 import { ProfileSummary } from '@/components/layout/profile-summary';
 import { CompleteProfile } from '@/components/profile/complete-profile';
-import { DashboardMenu } from '@/components/layout/dashboard-menu';
-import { createClient } from '@/utils/supabase/server';
 import prisma from '@/lib/db';
-import { log } from 'next-axiom';
+import { createClient } from '@/utils/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardLayout({ children }: PropsWithChildren) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
   if (!data.user) {
@@ -55,7 +55,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
+    <div className="min-h-screen bg-linear-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
       <CompleteProfile user={user} />
       <div className="container">
         <Header />
@@ -64,7 +64,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
         <div className="flex gap-8">
           <div className="flex flex-1 flex-col gap-4">
             <DashboardMenu />
-            <div role="main">{children}</div>
+            <main>{children}</main>
           </div>
           <div className="hidden lg:block">
             <ProfileSummary user={user} />

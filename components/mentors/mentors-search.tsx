@@ -1,24 +1,27 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/use-debounce';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
-type Props = {
-  searchQuery?: string;
-};
-
-export function MentorsSearch({ searchQuery = '' }: Props) {
+export function MentorsSearch() {
   const router = useRouter();
-  const [search, setSearch] = useState(searchQuery);
+  const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (debouncedSearch) {
-      return router.push(`?search=${debouncedSearch}`);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
     }
-  }, [router, debouncedSearch]);
+    if (debouncedSearch) {
+      router.push(`?search=${debouncedSearch}`);
+    } else {
+      router.push('?');
+    }
+  }, [debouncedSearch, router]);
 
   return (
     <Input

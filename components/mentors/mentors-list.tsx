@@ -1,7 +1,7 @@
-import { MentorProfile } from '@prisma/client';
-import { MentorsSearch } from './mentors-search';
-import { MentorCard } from './mentor-card';
 import { Card } from '@/components/ui/card';
+import type { MentorProfile } from '@/generated/prisma/client';
+import { MentorCard } from './mentor-card';
+import { MentorsSearch } from './mentors-search';
 
 type Props = {
   mentors: MentorProfile[];

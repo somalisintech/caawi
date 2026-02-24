@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -7,8 +9,6 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu';
-import { Card } from '@/components/ui/card';
-import Link from 'next/link';
 
 export function DashboardMenu() {
   return (
@@ -16,14 +16,14 @@ export function DashboardMenu() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Link href="/dashboard/mentors" passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Mentors</NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link href="/dashboard/mentors">Mentors</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="/dashboard/profile" passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Profile</NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link href="/dashboard/profile">Profile</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>

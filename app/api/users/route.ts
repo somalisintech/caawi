@@ -109,9 +109,10 @@ export const POST = withLogger(async (req: LoggerRequest) => {
               set: [],
               connectOrCreate: skills.map((name) => ({
                 where: { name },
-                create: { name, category: SKILL_TO_CATEGORY[name] }
+                create: { name, category: SKILL_TO_CATEGORY[name] ?? 'Other' }
               }))
             }
+          }),
           }),
           location: country
             ? {

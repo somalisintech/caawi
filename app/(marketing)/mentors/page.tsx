@@ -17,7 +17,7 @@ export default async function PublicMentorsListPage(props: {
   const where: Record<string, unknown>[] = [];
 
   if (search) {
-    const words = search.trim().split(/\s+/);
+    const words = search.trim().split(/\s+/).filter(word => word.length > 0);
     for (const word of words) {
       where.push({
         OR: [

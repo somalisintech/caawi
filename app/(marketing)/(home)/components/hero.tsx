@@ -6,7 +6,8 @@ import prisma from '@/lib/db';
 import { createClient } from '@/utils/supabase/server';
 
 export async function Hero() {
-  const [mentors, supabase] = await Promise.all([prisma.mentorProfile.findMany({ take: 10 }), createClient()]);
+  const mentors = await prisma.mentorProfile.findMany({ take: 10 });
+  const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
   const authenticated = !!data.user;
 

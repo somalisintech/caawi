@@ -5,9 +5,10 @@ import { MentorsSearch } from './mentors-search';
 
 type Props = {
   mentors: MentorProfile[];
+  authenticated: boolean;
 };
 
-export function MentorsList({ mentors }: Props) {
+export function MentorsList({ mentors, authenticated }: Props) {
   return (
     <Card className="grid grid-cols-1 divide-y-2">
       <div className="p-5">
@@ -17,7 +18,7 @@ export function MentorsList({ mentors }: Props) {
         <MentorsSearch />
       </div>
       {mentors.map((mentor) => (
-        <MentorCard key={mentor.id} mentor={mentor} />
+        <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />
       ))}
     </Card>
   );

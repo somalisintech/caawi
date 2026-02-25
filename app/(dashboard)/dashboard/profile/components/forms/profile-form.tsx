@@ -75,11 +75,16 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
             </CardHeader>
             <CardContent className="space-y-4 py-4">
               <div className="flex items-center justify-between">
-                <div className="relative h-6 w-24">
-                  <Image src="/calendly-icon.png" alt="Calendly logo" fill sizes="96px" className="object-contain" />
+                <div className="flex items-center gap-4">
+                  <div className="relative h-6 w-24">
+                    <Image src="/calendly-icon.png" alt="Calendly logo" fill sizes="96px" className="object-contain" />
+                  </div>
                 </div>
                 {calendlyConnectionButton}
               </div>
+              <p className="text-sm text-muted-foreground">
+                Connect your Calendly account so mentees can book sessions with you directly from your profile.
+              </p>
             </CardContent>
           </Card>
         )}

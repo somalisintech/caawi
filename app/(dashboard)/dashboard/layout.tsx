@@ -1,10 +1,13 @@
+import { CalendarX2 } from 'lucide-react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { PropsWithChildren } from 'react';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { Header } from '@/components/layout/header';
 import { ProfileSummary } from '@/components/layout/profile-summary';
 import { CompleteProfile } from '@/components/profile/complete-profile';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
@@ -43,7 +46,8 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
           githubUrl: true,
           buyMeCoffeeUrl: true,
           occupation: true,
-          location: true
+          location: true,
+          calendlyUser: true
         }
       }
     }
@@ -61,6 +65,18 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
         <Header />
       </div>
       <div className="container pb-8">
+        {user.profile?.userType === 'MENTOR' && !user.profile.calendlyUser && (
+          <Alert className="mb-4">
+            <CalendarX2 />
+            <AlertTitle>Calendly not connected</AlertTitle>
+            <AlertDescription>
+              Mentees won&apos;t be able to book sessions with you.{' '}
+              <Link href="/dashboard/profile" className="font-medium underline">
+                Connect Calendly in your profile settings
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="flex gap-8">
           <div className="flex flex-1 flex-col gap-4">
             <DashboardMenu />

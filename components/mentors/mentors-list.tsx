@@ -17,9 +17,19 @@ export function MentorsList({ mentors, authenticated }: Props) {
         </div>
         <MentorsSearch />
       </div>
-      {mentors.map((mentor) => (
-        <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />
-      ))}
+      {mentors.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
+          <p>No mentors found</p>
+          <p className="text-sm">Try adjusting your search</p>
+        </div>
+      ) : (
+        <>
+          <p className="px-6 py-2 text-sm text-muted-foreground">{mentors.length} mentors</p>
+          {mentors.map((mentor) => (
+            <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />
+          ))}
+        </>
+      )}
     </Card>
   );
 }

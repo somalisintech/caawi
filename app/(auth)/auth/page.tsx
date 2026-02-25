@@ -13,7 +13,7 @@ export default async function Auth() {
   const { data } = await supabase.auth.getUser();
 
   if (data.user) {
-    redirect('/dashboard/profile');
+    redirect('/dashboard');
   }
 
   return (

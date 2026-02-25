@@ -6,16 +6,17 @@ import { MentorsSearch } from './mentors-search';
 type Props = {
   mentors: MentorProfile[];
   authenticated: boolean;
+  countries?: string[];
 };
 
-export function MentorsList({ mentors, authenticated }: Props) {
+export function MentorsList({ mentors, authenticated, countries }: Props) {
   return (
     <Card className="grid grid-cols-1 divide-y-2">
       <div className="p-5">
         <div className="mb-2 h-fit">
           <h3 className="text-lg font-medium">Search</h3>
         </div>
-        <MentorsSearch />
+        <MentorsSearch countries={countries} />
       </div>
       {mentors.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">

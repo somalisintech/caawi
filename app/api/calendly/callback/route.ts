@@ -55,25 +55,35 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       resource_type
     };
 
-    await prisma.user.update({
+    const user = await prisma.user.findUnique({
       where: { email: data.user.email },
-      data: {
-        profile: {
-          update: {
-            calendlyUserUri: uri
-          }
-        }
-      }
+      select: { profile: { select: { id: true, calendlyUserUri: true } } }
     });
 
-    await prisma.calendlyUser.upsert({
-      where: { uri },
-      create: {
-        uri,
-        ...calendlyFields,
-        profile: { connect: { calendlyUserUri: uri } }
-      },
-      update: calendlyFields
+    if (!user?.profile) {
+      return NextResponse.json({ message: 'Profile not found' }, { status: 404 });
+    }
+
+    const profileId = user.profile.id;
+
+    await prisma.$transaction(async (tx) => {
+      // Remove old CalendlyUser if reconnecting with a different account
+      if (user.profile!.calendlyUserUri && user.profile!.calendlyUserUri !== uri) {
+        await tx.calendlyUser.delete({
+          where: { uri: user.profile!.calendlyUserUri }
+        });
+      }
+
+      await tx.calendlyUser.upsert({
+        where: { uri },
+        create: { uri, ...calendlyFields, profileId },
+        update: { ...calendlyFields, profileId }
+      });
+
+      await tx.profile.update({
+        where: { id: profileId },
+        data: { calendlyUserUri: uri }
+      });
     });
 
     req.log.info('Updated user profile with Calendly user data', resource);

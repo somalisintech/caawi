@@ -17,15 +17,17 @@ export default async function PublicMentorsListPage(props: {
   const where: Record<string, unknown>[] = [];
 
   if (search) {
-    where.push({
-      OR: [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { role: { contains: search, mode: 'insensitive' } },
-        { company: { contains: search, mode: 'insensitive' } },
-        { country: { contains: search, mode: 'insensitive' } }
-      ]
-    });
+    const words = search.trim().split(/\s+/);
+    for (const word of words) {
+      where.push({
+        OR: [
+          { firstName: { contains: word, mode: 'insensitive' } },
+          { lastName: { contains: word, mode: 'insensitive' } },
+          { role: { contains: word, mode: 'insensitive' } },
+          { company: { contains: word, mode: 'insensitive' } }
+        ]
+      });
+    }
   }
 
   if (country) {

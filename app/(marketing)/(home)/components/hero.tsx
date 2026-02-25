@@ -3,9 +3,12 @@ import { MentorScrollCard } from '@/components/mentors/mentor-scroll-card';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export async function Hero() {
-  const mentors = await prisma.mentorProfile.findMany({ take: 10 });
+  const [mentors, supabase] = await Promise.all([prisma.mentorProfile.findMany({ take: 10 }), createClient()]);
+  const { data } = await supabase.auth.getUser();
+  const authenticated = !!data.user;
 
   async function searchMentor(formData: FormData) {
     'use server';
@@ -43,14 +46,14 @@ export async function Hero() {
           <div className="flex animate-mentors-scroll flex-col">
             {mentors.map((mentor) => (
               <Card key={mentor.id} className="mb-4">
-                <MentorScrollCard mentor={mentor} />
+                <MentorScrollCard mentor={mentor} authenticated={authenticated} />
               </Card>
             ))}
           </div>
           <div className="flex animate-mentors-scroll flex-col">
             {mentors.map((mentor) => (
               <Card key={mentor.id} className="mb-4">
-                <MentorScrollCard mentor={mentor} />
+                <MentorScrollCard mentor={mentor} authenticated={authenticated} />
               </Card>
             ))}
           </div>

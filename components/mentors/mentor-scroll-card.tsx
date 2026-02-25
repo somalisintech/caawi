@@ -1,22 +1,14 @@
 import Link from 'next/link';
-// import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { MentorProfile } from '@/generated/prisma/client';
-import { createClient } from '@/utils/supabase/server';
-import { getUrl } from '@/utils/url';
 
 type Props = {
   mentor: MentorProfile;
+  authenticated: boolean;
 };
 
-export async function MentorScrollCard({ mentor }: Props) {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-
-  const authenticated = !!data.user;
-  const redirectPath = authenticated
-    ? `/dashboard/mentors/${mentor.id}`
-    : `/auth?redirectUrl=${getUrl()}/dashboard/mentors/${mentor.id}`;
+export function MentorScrollCard({ mentor, authenticated }: Props) {
+  const redirectPath = authenticated ? `/dashboard/mentors/${mentor.id}` : '/auth';
 
   return (
     <Link href={redirectPath} className="flex flex-col gap-4 p-6">

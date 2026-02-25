@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { MentorsList } from '@/components/mentors/mentors-list';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Find a Mentor | Caawi',
@@ -46,9 +47,12 @@ export default async function PublicMentorsListPage(props: { searchParams: Promi
       : {})
   });
 
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
   return (
     <div className="pb-8">
-      <MentorsList mentors={mentors} />
+      <MentorsList mentors={mentors} authenticated={!!data.user} />
     </div>
   );
 }

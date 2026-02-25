@@ -1,5 +1,6 @@
 import { MentorsList } from '@/components/mentors/mentors-list';
 import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 
 export default async function MentorsListPage(props: { searchParams: Promise<{ search?: string }> }) {
   const searchParams = await props.searchParams;
@@ -46,5 +47,8 @@ export default async function MentorsListPage(props: { searchParams: Promise<{ s
       : {})
   });
 
-  return <MentorsList mentors={mentors} />;
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  return <MentorsList mentors={mentors} authenticated={!!data.user} />;
 }

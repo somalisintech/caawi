@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,6 +33,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
   const form = useForm<ProfileFormFields, unknown, ProfileFormFields>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
+      userType: profile?.userType as UserType,
       firstName: firstName || '',
       lastName: lastName || '',
       email: email || '',
@@ -65,10 +67,48 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
     router.refresh();
   }
 
+  const watchedUserType = form.watch('userType');
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {profile?.userType === 'MENTOR' && (
+        <Card>
+          <CardHeader className="border-b-DEFAULT">
+            <CardTitle>Account type</CardTitle>
+          </CardHeader>
+          <CardContent className="py-4">
+            <FormField
+              control={form.control}
+              name="userType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-4">
+                      <FormItem className="flex items-center gap-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value={UserType.MENTEE} />
+                        </FormControl>
+                        <FormLabel className="font-normal">Mentee</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center gap-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value={UserType.MENTOR} />
+                        </FormControl>
+                        <FormLabel className="font-normal">Mentor</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormDescription>
+                    Switch between mentee and mentor. Mentor profiles are publicly listed.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        {watchedUserType === 'MENTOR' && (
           <Card>
             <CardHeader className="border-b-DEFAULT">
               <CardTitle>Integrations</CardTitle>
@@ -229,7 +269,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 </FormItem>
               )}
             />
-            {profile?.userType === UserType.MENTOR && (
+            {watchedUserType === UserType.MENTOR && (
               <FormField
                 control={form.control}
                 name="buyMeCoffeeUrl"
@@ -247,7 +287,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
           </CardContent>
         </Card>
 
-        {profile?.userType === 'MENTOR' && (
+        {watchedUserType === 'MENTOR' && (
           <Card>
             <CardHeader className="border-b-DEFAULT">
               <CardTitle>Preferences</CardTitle>

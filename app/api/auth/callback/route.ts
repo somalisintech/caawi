@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
+import { validateRedirectPath } from '@/utils/url';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
     const { searchParams, origin } = requestUrl;
     const code = searchParams.get('code');
     // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get('next') ?? '/dashboard/profile';
+    const next = validateRedirectPath(searchParams.get('next'));
 
     if (!code) {
       logger.error('No code provided in OAuth callback');

@@ -42,40 +42,62 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       resource_type
     } = resource;
 
-    await prisma.user.update({
-      where: {
-        email: data.user.email
-      },
-      data: {
-        profile: {
-          update: {
-            calendlyUserUri: uri,
-            calendlyUser: {
-              create: {
-                uri,
-                name,
-                slug,
-                email: calendlyEmail,
-                scheduling_url,
-                timezone,
-                avatar_url,
-                created_at,
-                updated_at,
-                current_organization,
-                resource_type
-              }
-            }
-          }
-        }
+    const calendlyFields = {
+      name,
+      slug,
+      email: calendlyEmail,
+      scheduling_url,
+      timezone,
+      avatar_url,
+      created_at,
+      updated_at,
+      current_organization,
+      resource_type
+    };
+
+    const user = await prisma.user.findUnique({
+      where: { email: data.user.email },
+      select: { profile: { select: { id: true, calendlyUserUri: true } } }
+    });
+
+    if (!user?.profile) {
+      return NextResponse.json({ message: 'Profile not found' }, { status: 404 });
+    }
+
+    const profileId = user.profile.id;
+
+    await prisma.$transaction(async (tx) => {
+      // Remove old CalendlyUser if reconnecting with a different account
+      if (user.profile!.calendlyUserUri && user.profile!.calendlyUserUri !== uri) {
+        await tx.calendlyUser.delete({
+          where: { uri: user.profile!.calendlyUserUri }
+        });
       }
+
+      await tx.calendlyUser.upsert({
+        where: { uri },
+        create: { uri, ...calendlyFields, profileId },
+        update: { ...calendlyFields, profileId }
+      });
+
+      await tx.profile.update({
+        where: { id: profileId },
+        data: { calendlyUserUri: uri }
+      });
     });
 
     req.log.info('Updated user profile with Calendly user data', resource);
 
     const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
-    response.cookies.set('calendly_access_token', access_token);
-    response.cookies.set('calendly_refresh_token', refresh_token);
-    response.cookies.set('calendly_organization', organization);
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/'
+    };
+    response.cookies.set('calendly_access_token', access_token, cookieOptions);
+    response.cookies.set('calendly_refresh_token', refresh_token, cookieOptions);
+    response.cookies.set('calendly_organization', organization, cookieOptions);
 
     return response;
   } catch (error) {

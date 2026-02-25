@@ -31,7 +31,7 @@ export default async function SettingsProfilePage() {
           location: true,
           occupation: true,
           calendlyUser: true,
-          skills: { select: { name: true } }
+          skills: true
         }
       }
     }

@@ -13,7 +13,8 @@ export async function Hero() {
   async function searchMentor(formData: FormData) {
     'use server';
     const search = formData.get('search');
-    const params = new URLSearchParams({ search: String(search) });
+    const searchValue = search?.toString() || '';
+    const params = new URLSearchParams(searchValue ? { search: searchValue } : {});
     redirect(`/mentors?${params}`);
   }
 

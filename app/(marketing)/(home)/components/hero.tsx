@@ -14,7 +14,9 @@ export async function Hero() {
   async function searchMentor(formData: FormData) {
     'use server';
     const search = formData.get('search');
-    redirect(`/mentors?search=${search}`);
+    const searchValue = search?.toString() || '';
+    const params = new URLSearchParams(searchValue ? { search: searchValue } : {});
+    redirect(`/mentors?${params}`);
   }
 
   return (

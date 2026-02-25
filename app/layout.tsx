@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Caawi 🤝',
-  description: 'add a description'
+  description: 'Empowering the Somali Community through Mentorship.'
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

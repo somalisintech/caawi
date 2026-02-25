@@ -5,5 +5,9 @@ export const getCurrentUser = async (accessToken: string) => {
     }
   });
 
+  if (!response.ok) {
+    throw new Error(`Calendly get current user failed: ${response.status} ${response.statusText}`);
+  }
+
   return response.json();
 };

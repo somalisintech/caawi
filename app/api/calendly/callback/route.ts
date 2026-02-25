@@ -42,32 +42,38 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       resource_type
     } = resource;
 
+    const calendlyFields = {
+      name,
+      slug,
+      email: calendlyEmail,
+      scheduling_url,
+      timezone,
+      avatar_url,
+      created_at,
+      updated_at,
+      current_organization,
+      resource_type
+    };
+
     await prisma.user.update({
-      where: {
-        email: data.user.email
-      },
+      where: { email: data.user.email },
       data: {
         profile: {
           update: {
-            calendlyUserUri: uri,
-            calendlyUser: {
-              create: {
-                uri,
-                name,
-                slug,
-                email: calendlyEmail,
-                scheduling_url,
-                timezone,
-                avatar_url,
-                created_at,
-                updated_at,
-                current_organization,
-                resource_type
-              }
-            }
+            calendlyUserUri: uri
           }
         }
       }
+    });
+
+    await prisma.calendlyUser.upsert({
+      where: { uri },
+      create: {
+        uri,
+        ...calendlyFields,
+        profile: { connect: { calendlyUserUri: uri } }
+      },
+      update: calendlyFields
     });
 
     req.log.info('Updated user profile with Calendly user data', resource);

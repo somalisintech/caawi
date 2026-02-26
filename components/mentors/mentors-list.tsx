@@ -11,10 +11,10 @@ type Props = {
 
 export function MentorsList({ mentors, authenticated, countries }: Props) {
   return (
-    <Card className="grid grid-cols-1 divide-y-2">
+    <Card className="grid grid-cols-1 divide-y-2 gap-0">
       <div className="p-5">
         <div className="mb-2 h-fit">
-          <h3 className="text-lg font-medium">Search</h3>
+          <h3 className="text-lg font-medium">Search ({mentors.length} mentors)</h3>
         </div>
         <MentorsSearch countries={countries} />
       </div>
@@ -25,7 +25,6 @@ export function MentorsList({ mentors, authenticated, countries }: Props) {
         </div>
       ) : (
         <>
-          <p className="px-6 py-2 text-sm text-muted-foreground">{mentors.length} mentors</p>
           {mentors.map((mentor) => (
             <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />
           ))}

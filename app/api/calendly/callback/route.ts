@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
+import { createWebhookSubscription, getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
+import { encrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
@@ -66,15 +67,48 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       }
     });
 
+    const encryptedAccessToken = encrypt(access_token);
+    const encryptedRefreshToken = refresh_token ? encrypt(refresh_token) : null;
+
     await prisma.calendlyUser.upsert({
       where: { uri },
       create: {
         uri,
         ...calendlyFields,
+        accessToken: encryptedAccessToken,
+        refreshToken: encryptedRefreshToken,
         profile: { connect: { calendlyUserUri: uri } }
       },
-      update: calendlyFields
+      update: {
+        ...calendlyFields,
+        accessToken: encryptedAccessToken,
+        refreshToken: encryptedRefreshToken
+      }
     });
+
+    req.log.info('Stored Calendly tokens in DB', { uri });
+
+    let webhookUri: string | undefined;
+    try {
+      const result = await createWebhookSubscription({
+        accessToken: access_token,
+        callbackUrl: `${req.nextUrl.origin}/api/calendly/webhook`,
+        organization,
+        user: uri
+      });
+      webhookUri = result.webhookUri;
+
+      await prisma.calendlyUser.update({
+        where: { uri },
+        data: { webhookUri }
+      });
+
+      req.log.info('Webhook subscription created and stored', { webhookUri });
+    } catch (webhookErr) {
+      req.log.error('Failed to create webhook subscription', {
+        error: webhookErr instanceof Error ? webhookErr.message : String(webhookErr)
+      });
+    }
 
     req.log.info('Updated user profile with Calendly user data', resource);
 

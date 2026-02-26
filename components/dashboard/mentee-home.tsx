@@ -1,14 +1,30 @@
-import { Search } from 'lucide-react';
+import { Calendar, Clock, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+
+type SessionItem = {
+  id: string;
+  eventName: string | null;
+  startTime: Date;
+  endTime: Date;
+  mentorProfile: {
+    user: {
+      firstName: string | null;
+      lastName: string | null;
+      image: string | null;
+    };
+  };
+};
 
 type Props = {
   firstName?: string | null;
   mentorCount: number;
+  upcomingSessions: SessionItem[];
 };
 
-export function MenteeHome({ firstName, mentorCount }: Props) {
+export function MenteeHome({ firstName, mentorCount, upcomingSessions }: Props) {
   const greeting = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
+  const nextSession = upcomingSessions[0];
 
   return (
     <div className="space-y-8">
@@ -21,6 +37,40 @@ export function MenteeHome({ firstName, mentorCount }: Props) {
         </p>
       </div>
 
+      {/* Stats */}
+      {upcomingSessions.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-border p-5">
+            <div className="flex items-center gap-2 text-sm text-[#777] dark:text-zinc-400">
+              <Calendar className="size-4" />
+              <span>Upcoming sessions</span>
+            </div>
+            <p className="mt-2 text-2xl font-bold text-[#111] dark:text-zinc-100">{upcomingSessions.length}</p>
+          </div>
+          {nextSession && (
+            <div className="rounded-xl border border-border p-5">
+              <div className="flex items-center gap-2 text-sm text-[#777] dark:text-zinc-400">
+                <Clock className="size-4" />
+                <span>Next session</span>
+              </div>
+              <p className="mt-2 text-sm font-semibold text-[#111] dark:text-zinc-100">
+                {new Date(nextSession.startTime).toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit'
+                })}
+              </p>
+              <p className="mt-0.5 text-sm text-[#777] dark:text-zinc-400">
+                with {nextSession.mentorProfile.user.firstName ?? 'Mentor'}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Find a mentor */}
       <div className="rounded-xl border border-border p-6 md:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -38,6 +88,47 @@ export function MenteeHome({ firstName, mentorCount }: Props) {
           </Button>
         </div>
       </div>
+
+      {/* Upcoming sessions list */}
+      {upcomingSessions.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-semibold text-[#111] dark:text-zinc-100">Upcoming sessions</h2>
+          <div className="divide-y divide-border rounded-xl border border-border">
+            {upcomingSessions.map((session) => (
+              <div key={session.id} className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium text-[#111] dark:text-zinc-100">
+                    {session.eventName ?? 'Mentoring Session'}
+                  </p>
+                  <p className="mt-0.5 text-sm text-[#777] dark:text-zinc-400">
+                    with {session.mentorProfile.user.firstName} {session.mentorProfile.user.lastName}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-[#111] dark:text-zinc-100">
+                    {new Date(session.startTime).toLocaleDateString('en-US', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </p>
+                  <p className="mt-0.5 text-sm text-[#777] dark:text-zinc-400">
+                    {new Date(session.startTime).toLocaleTimeString('en-US', {
+                      hour: 'numeric',
+                      minute: '2-digit'
+                    })}
+                    {' – '}
+                    {new Date(session.endTime).toLocaleTimeString('en-US', {
+                      hour: 'numeric',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createWebhookSubscription, getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
+import { encrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
@@ -66,19 +67,22 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       }
     });
 
+    const encryptedAccessToken = encrypt(access_token);
+    const encryptedRefreshToken = refresh_token ? encrypt(refresh_token) : null;
+
     await prisma.calendlyUser.upsert({
       where: { uri },
       create: {
         uri,
         ...calendlyFields,
-        accessToken: access_token,
-        refreshToken: refresh_token,
+        accessToken: encryptedAccessToken,
+        refreshToken: encryptedRefreshToken,
         profile: { connect: { calendlyUserUri: uri } }
       },
       update: {
         ...calendlyFields,
-        accessToken: access_token,
-        refreshToken: refresh_token
+        accessToken: encryptedAccessToken,
+        refreshToken: encryptedRefreshToken
       }
     });
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { deleteWebhookSubscription, revokeAccessToken } from '@/app/api/calendly/services';
+import { decrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
@@ -31,9 +32,17 @@ export const POST = withLogger(async (req: LoggerRequest) => {
 
   const calendlyUser = user?.profile?.calendlyUser;
 
-  if (calendlyUser?.webhookUri && calendlyUser.accessToken) {
+  let accessToken: string | undefined;
+  try {
+    accessToken = calendlyUser?.accessToken ? decrypt(calendlyUser.accessToken) : undefined;
+  } catch {
+    req.log.error('Failed to decrypt access token, falling back to cookie');
+  }
+  accessToken ??= req.cookies.get('calendly_access_token')?.value;
+
+  if (calendlyUser?.webhookUri && accessToken) {
     try {
-      await deleteWebhookSubscription(calendlyUser.webhookUri, calendlyUser.accessToken);
+      await deleteWebhookSubscription(calendlyUser.webhookUri, accessToken);
       req.log.info('Webhook subscription deleted', { webhookUri: calendlyUser.webhookUri });
     } catch (err) {
       req.log.error('Failed to delete webhook subscription', {
@@ -41,8 +50,6 @@ export const POST = withLogger(async (req: LoggerRequest) => {
       });
     }
   }
-
-  const accessToken = calendlyUser?.accessToken ?? req.cookies.get('calendly_access_token')?.value;
   if (accessToken) {
     await revokeAccessToken(accessToken);
   }

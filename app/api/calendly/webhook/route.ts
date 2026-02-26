@@ -9,38 +9,29 @@ function verifySignature(payload: string, signature: string): boolean {
   const hmac = crypto.createHmac('sha256', SIGNING_KEY);
   hmac.update(payload, 'utf8');
   const digest = hmac.digest('hex');
+  if (digest.length !== signature.length) return false;
   return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
 }
 
 export async function POST(req: Request) {
-  console.log('[webhook] ⚡ POST /api/calendly/webhook hit');
-
   const body = await req.text();
   const signature = req.headers.get('calendly-webhook-signature');
 
-  console.log('[webhook] Signature header:', signature);
-  console.log('[webhook] Body length:', body.length);
-
   // Parse Calendly's composite signature header: t=<timestamp>,v1=<sig>
   let sig = signature ?? '';
-  if (sig.includes('v1=')) {
-    sig = sig.split('v1=')[1] ?? '';
+  const v1Match = sig.match(/(?:^|,)v1=([^,]+)/);
+  if (v1Match) {
+    sig = v1Match[1] ?? '';
   }
 
   if (!sig || !verifySignature(body, sig)) {
-    console.error('[webhook] ❌ Invalid signature');
     logger.error('[webhook] Invalid signature', { signature });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  console.log('[webhook] ✅ Signature verified');
-
   const event = JSON.parse(body);
   const eventType = event.event as string;
   const payload = event.payload;
-
-  console.log('[webhook] Event type:', eventType);
-  console.log('[webhook] Payload:', JSON.stringify(payload, null, 2));
 
   logger.info(`[webhook] Received ${eventType}`, {
     eventUri: payload?.uri,
@@ -53,11 +44,8 @@ export async function POST(req: Request) {
       await handleInviteeCreated(payload);
     } else if (eventType === 'invitee.canceled') {
       await handleInviteeCanceled(payload);
-    } else {
-      console.warn('[webhook] Unknown event type:', eventType);
     }
   } catch (err) {
-    console.error('[webhook] ❌ Error processing event:', err);
     logger.error('[webhook] Error processing event', {
       eventType,
       error: err instanceof Error ? err.message : String(err)
@@ -80,13 +68,8 @@ async function handleInviteeCreated(payload: Record<string, unknown>) {
   const memberships = scheduledEvent.event_memberships as Array<{ user: string }>;
   const hostUserUri = memberships?.[0]?.user;
 
-  console.log('[webhook:created] Event URI:', calendlyEventUri);
-  console.log('[webhook:created] Invitee email:', inviteeEmail);
-  console.log('[webhook:created] Host URI:', hostUserUri);
-  console.log('[webhook:created] Time:', startTime, '→', endTime);
-
   if (!hostUserUri) {
-    console.error('[webhook:created] ❌ No host user URI in event');
+    logger.error('[webhook:created] No host user URI in event', { calendlyEventUri });
     return;
   }
 
@@ -96,10 +79,8 @@ async function handleInviteeCreated(payload: Record<string, unknown>) {
     select: { profileId: true }
   });
 
-  console.log('[webhook:created] CalendlyUser lookup:', calendlyUser);
-
   if (!calendlyUser) {
-    console.warn('[webhook:created] ❌ No CalendlyUser for host:', hostUserUri);
+    logger.warn('[webhook:created] No CalendlyUser for host', { hostUserUri });
     return;
   }
 
@@ -109,15 +90,13 @@ async function handleInviteeCreated(payload: Record<string, unknown>) {
     select: { profile: { select: { id: true } } }
   });
 
-  console.log('[webhook:created] Mentee lookup:', menteeUser);
-
   if (!menteeUser?.profile) {
-    console.log('[webhook:created] ⏭️ No platform user for', inviteeEmail, '— skipping');
+    // Invitee is not a platform user — skip
     return;
   }
 
   // Upsert session (idempotent on calendlyEventUri)
-  const session = await prisma.session.upsert({
+  await prisma.session.upsert({
     where: { calendlyEventUri },
     create: {
       calendlyEventUri,
@@ -133,22 +112,17 @@ async function handleInviteeCreated(payload: Record<string, unknown>) {
       endTime: new Date(endTime)
     }
   });
-
-  console.log('[webhook:created] ✅ Session upserted:', session.id);
 }
 
 async function handleInviteeCanceled(payload: Record<string, unknown>) {
   const scheduledEvent = payload.scheduled_event as Record<string, unknown>;
   const calendlyEventUri = scheduledEvent.uri as string;
 
-  console.log('[webhook:canceled] Event URI:', calendlyEventUri);
-
   const session = await prisma.session.findUnique({
     where: { calendlyEventUri }
   });
 
   if (!session) {
-    console.warn('[webhook:canceled] ❌ No session found for event');
     return;
   }
 
@@ -159,6 +133,4 @@ async function handleInviteeCanceled(payload: Record<string, unknown>) {
       canceledAt: new Date()
     }
   });
-
-  console.log('[webhook:canceled] ✅ Session canceled:', session.id);
 }

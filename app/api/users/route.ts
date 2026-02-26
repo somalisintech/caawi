@@ -113,7 +113,6 @@ export const POST = withLogger(async (req: LoggerRequest) => {
               }))
             }
           }),
-          }),
           location: country
             ? {
                 connectOrCreate: {

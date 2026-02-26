@@ -1,13 +1,10 @@
 import { redirect } from 'next/navigation';
+import { MenteeHome } from '@/components/dashboard/mentee-home';
 import { MentorHome } from '@/components/dashboard/mentor-home';
-import { MentorsList } from '@/components/mentors/mentors-list';
 import prisma from '@/lib/db';
-import { getMentorsWithCountries } from '@/lib/queries/mentors';
 import { createClient } from '@/utils/supabase/server';
 
-export default async function DashboardHomePage(props: {
-  searchParams: Promise<{ search?: string; country?: string }>;
-}) {
+export default async function DashboardHomePage() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -24,8 +21,7 @@ export default async function DashboardHomePage(props: {
     return <MentorHome firstName={user.firstName} hasCalendly={!!user.profile.calendlyUser} />;
   }
 
-  const searchParams = await props.searchParams;
-  const { mentors, countries } = await getMentorsWithCountries(searchParams);
+  const mentorCount = await prisma.mentorProfile.count();
 
-  return <MentorsList mentors={mentors} authenticated={true} countries={countries} />;
+  return <MenteeHome firstName={user?.firstName} mentorCount={mentorCount} />;
 }

@@ -21,25 +21,26 @@ model User {
 }
 
 model Profile {
-  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userType          UserType?
-  userId            String        @unique @db.Uuid
-  bio               String?
-  locationId        Int?
-  occupationId      Int?
-  updatedAt         DateTime      @default(now())
-  gender            Gender?
-  sameGenderPref    Boolean?
-  linkedInUrl       String?
-  githubUrl         String?
-  buyMeCoffeeUrl    String?
-  yearsOfExperience Int?
-  calendlyUserUri   String?       @unique
-  location          Location?     @relation(fields: [locationId], references: [id])
-  occupation        Occupation?   @relation(fields: [occupationId], references: [id])
-  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  calendlyUser      CalendlyUser?
-  skills            Skill[]       @relation("ProfileSkills")
+  id                    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userType              UserType?
+  userId                String        @unique @db.Uuid
+  bio                   String?
+  locationId            Int?
+  occupationId          Int?
+  updatedAt             DateTime      @default(now())
+  gender                Gender?
+  sameGenderPref        Boolean?
+  linkedInUrl           String?
+  githubUrl             String?
+  buyMeCoffeeUrl        String?
+  yearsOfExperience     Int?
+  calendlyUserUri       String?       @unique
+  onboardingCompleted   Boolean       @default(false)
+  location              Location?     @relation(fields: [locationId], references: [id])
+  occupation            Occupation?   @relation(fields: [occupationId], references: [id])
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendlyUser          CalendlyUser?
+  skills                Skill[]       @relation("ProfileSkills")
 }
 
 model Location {
@@ -77,11 +78,10 @@ model CalendlyUser {
 }
 
 model Skill {
-  id              Int            @id @default(autoincrement())
-  name            String         @unique
-  profiles        Profile[]      @relation("ProfileSkills")
-  MentorProfile   MentorProfile? @relation("MentorProfileSkills", fields: [mentorProfileId], references: [id])
-  mentorProfileId String?
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  category String?
+  profiles Profile[] @relation("ProfileSkills")
 }
 
 view MentorProfile {
@@ -102,7 +102,6 @@ view MentorProfile {
   linkedInUrl           String?
   githubUrl             String?
   buyMeCoffeeUrl        String?
-  skills                Skill[]   @relation("MentorProfileSkills")
 }
 
 enum UserType {

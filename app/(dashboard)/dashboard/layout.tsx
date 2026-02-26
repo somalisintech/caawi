@@ -6,7 +6,6 @@ import type { PropsWithChildren } from 'react';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { Header } from '@/components/layout/header';
 import { ProfileSummary } from '@/components/layout/profile-summary';
-import { CompleteProfile } from '@/components/profile/complete-profile';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
@@ -45,6 +44,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
           linkedInUrl: true,
           githubUrl: true,
           buyMeCoffeeUrl: true,
+          onboardingCompleted: true,
           occupation: true,
           location: true,
           calendlyUser: true
@@ -58,9 +58,12 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     redirect('/auth');
   }
 
+  if (!user.profile?.onboardingCompleted) {
+    redirect('/onboarding');
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
-      <CompleteProfile user={user} />
       <div className="container">
         <Header />
       </div>

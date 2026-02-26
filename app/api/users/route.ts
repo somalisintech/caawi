@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { Prisma } from '@/generated/prisma/client';
+import { SKILL_TO_CATEGORY } from '@/lib/constants/skills';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
@@ -20,7 +21,9 @@ const profileUpdateSchema = z.object({
   yearsOfExperience: z.number().int().min(0).max(100).optional().nullable(),
   linkedInUrl: z.string().url().max(2048).optional().nullable(),
   githubUrl: z.string().url().max(2048).optional().nullable(),
-  buyMeCoffeeUrl: z.string().url().max(2048).optional().nullable()
+  buyMeCoffeeUrl: z.string().url().max(2048).optional().nullable(),
+  onboardingCompleted: z.boolean().optional(),
+  skills: z.array(z.string().max(100)).optional()
 });
 
 export const DELETE = withLogger(async (req: LoggerRequest) => {
@@ -77,7 +80,9 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     yearsOfExperience,
     linkedInUrl,
     githubUrl,
-    buyMeCoffeeUrl
+    buyMeCoffeeUrl,
+    onboardingCompleted,
+    skills
   } = parsed.data;
 
   const user = await prisma.user.update({
@@ -98,6 +103,16 @@ export const POST = withLogger(async (req: LoggerRequest) => {
           linkedInUrl,
           githubUrl,
           buyMeCoffeeUrl,
+          onboardingCompleted,
+          ...(skills !== undefined && {
+            skills: {
+              set: [],
+              connectOrCreate: skills.map((name) => ({
+                where: { name },
+                create: { name, category: SKILL_TO_CATEGORY[name] ?? 'Other' }
+              }))
+            }
+          }),
           location: country
             ? {
                 connectOrCreate: {

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import type { ReactElement } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { SkillPicker } from '@/components/skills/skill-picker';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -16,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Gender, UserType } from '@/generated/prisma/browser';
+import { SKILLS_BY_CATEGORY } from '@/lib/constants/skills';
 import type { UserWithProfile } from '@/types/user';
 import { DeleteAccountModal } from '../modals/delete-account-modal';
 import { ProfileFormImage } from './profile-form-image';
@@ -47,7 +49,8 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       country: profile?.location?.country ?? undefined,
       city: profile?.location?.city ?? undefined,
       role: profile?.occupation?.role ?? undefined,
-      company: profile?.occupation?.company ?? undefined
+      company: profile?.occupation?.company ?? undefined,
+      skills: profile?.skills?.map((s: { name: string }) => s.name) ?? []
     }
   });
 
@@ -383,6 +386,19 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                 )}
               />
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="border-b-DEFAULT">
+            <CardTitle>Skills</CardTitle>
+          </CardHeader>
+          <CardContent className="py-4">
+            <SkillPicker
+              selected={form.watch('skills') ?? []}
+              skillsByCategory={SKILLS_BY_CATEGORY}
+              onChange={(skills) => form.setValue('skills', skills, { shouldDirty: true })}
+            />
           </CardContent>
         </Card>
 

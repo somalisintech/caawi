@@ -41,6 +41,8 @@ model Profile {
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendlyUser          CalendlyUser?
   skills                Skill[]       @relation("ProfileSkills")
+  mentorSessions        Session[]     @relation("MentorSessions")
+  menteeSessions        Session[]     @relation("MenteeSessions")
 }
 
 model Location {
@@ -74,7 +76,30 @@ model CalendlyUser {
   updated_at           DateTime @default(now())
   current_organization String?
   resource_type        String?
+  accessToken          String?
+  refreshToken         String?
+  webhookUri           String?
   profile              Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  calendlyEventUri String        @unique
+  eventName        String?
+  startTime        DateTime
+  endTime          DateTime
+  status           SessionStatus @default(ACTIVE)
+  mentorProfileId  String        @db.Uuid
+  mentorProfile    Profile       @relation("MentorSessions", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  menteeProfileId  String        @db.Uuid
+  menteeProfile    Profile       @relation("MenteeSessions", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+  createdAt        DateTime      @default(now())
+  canceledAt       DateTime?
+}
+
+enum SessionStatus {
+  ACTIVE
+  CANCELED
 }
 
 model Skill {

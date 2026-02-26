@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
+import { createWebhookSubscription, getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 import { createClient } from '@/utils/supabase/server';
@@ -71,10 +71,40 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       create: {
         uri,
         ...calendlyFields,
+        accessToken: access_token,
+        refreshToken: refresh_token,
         profile: { connect: { calendlyUserUri: uri } }
       },
-      update: calendlyFields
+      update: {
+        ...calendlyFields,
+        accessToken: access_token,
+        refreshToken: refresh_token
+      }
     });
+
+    req.log.info('Stored Calendly tokens in DB', { uri });
+
+    let webhookUri: string | undefined;
+    try {
+      const result = await createWebhookSubscription({
+        accessToken: access_token,
+        callbackUrl: `${req.nextUrl.origin}/api/calendly/webhook`,
+        organization,
+        user: uri
+      });
+      webhookUri = result.webhookUri;
+
+      await prisma.calendlyUser.update({
+        where: { uri },
+        data: { webhookUri }
+      });
+
+      req.log.info('Webhook subscription created and stored', { webhookUri });
+    } catch (webhookErr) {
+      req.log.error('Failed to create webhook subscription', {
+        error: webhookErr instanceof Error ? webhookErr.message : String(webhookErr)
+      });
+    }
 
     req.log.info('Updated user profile with Calendly user data', resource);
 

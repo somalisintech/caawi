@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { CalendlyDisconnectButton } from '@/components/calendly/calendly-disconnect-button';
 import { Button } from '@/components/ui/button';
 import prisma from '@/lib/db';
@@ -47,8 +46,8 @@ export async function CalendlyConnectionButton() {
   }
 
   return (
-    <Button disabled={!!scheduling_url} variant="secondary" type="button">
-      <Link href={'/api/calendly/connect'}>Connect</Link>
+    <Button asChild variant="secondary">
+      <a href="/api/calendly/connect">Connect</a>
     </Button>
   );
 }

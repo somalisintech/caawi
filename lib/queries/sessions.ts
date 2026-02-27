@@ -74,6 +74,30 @@ export async function getRecentSessions(profileId: string, limit = 5) {
   });
 }
 
+export async function getSessionsForRange(profileId: string, userType: 'MENTOR' | 'MENTEE', start: Date, end: Date) {
+  const profileFilter = userType === 'MENTOR' ? { mentorProfileId: profileId } : { menteeProfileId: profileId };
+
+  return prisma.session.findMany({
+    where: {
+      ...profileFilter,
+      startTime: { gte: start, lt: end }
+    },
+    orderBy: { startTime: 'asc' },
+    include: {
+      mentorProfile: {
+        include: {
+          user: { select: { firstName: true, lastName: true, image: true } }
+        }
+      },
+      menteeProfile: {
+        include: {
+          user: { select: { firstName: true, lastName: true, image: true } }
+        }
+      }
+    }
+  });
+}
+
 export async function getRecentMenteeSessions(profileId: string, limit = 5) {
   return prisma.session.findMany({
     where: {

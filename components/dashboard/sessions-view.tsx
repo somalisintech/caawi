@@ -1,9 +1,8 @@
 'use client';
 
 import type { CalendarApi, DatesSetArg, EventClickArg } from '@fullcalendar/core';
-import { CalendarDays, ChevronLeft, ChevronRight, Globe, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import LayerCard from '@/components/layer-card';
@@ -15,6 +14,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { LocalTime } from './local-time';
 import { RelativeBadge } from './relative-badge';
+import { SessionDetail } from './session-detail';
+import { EmptyState } from './sessions-empty-state';
 
 const FullCalendar = dynamic(() => import('./sessions-calendar'), {
   ssr: false
@@ -67,7 +68,14 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
   const [nowTs, setNowTs] = useState(() => Date.now());
 
   useEffect(() => {
-    const id = setInterval(() => setNowTs(Date.now()), 60_000);
+    // Only update once per hour or when crossing a day boundary
+    // to avoid excessive re-renders of the large calendar tree
+    const id = setInterval(
+      () => {
+        setNowTs(Date.now());
+      },
+      60 * 60 * 1000
+    );
     return () => clearInterval(id);
   }, []);
 
@@ -167,7 +175,11 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
     const api = calendarApiRef.current;
     if (!api) return;
     setViewMode(mode);
-    api.changeView(mode === 'week' ? 'timeGridWeek' : 'dayGridMonth');
+    if (mode === 'week') {
+      api.changeView(window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek');
+    } else {
+      api.changeView('dayGridMonth');
+    }
   }
 
   const roleLabel = userType === 'MENTOR' ? 'Mentee' : 'Mentor';
@@ -185,13 +197,13 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-pretty text-4xl font-bold text-[#111] leading-[44px] dark:text-zinc-50">Sessions</h1>
-          <p className="mt-1.5 text-pretty text-[15px] leading-relaxed text-[#666] dark:text-zinc-400">
-            Your mentorship calendar — all sessions at a glance.
+          <h1 className="text-pretty text-4xl font-bold text-foreground leading-[44px]">Sessions</h1>
+          <p className="mt-1.5 text-pretty text-[15px] leading-relaxed text-muted-foreground">
+            Your mentorship calendar, all sessions at a glance.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/40 px-3 py-1.5 text-[13px] text-[#777] dark:bg-zinc-900/50 dark:text-zinc-400">
+          <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/40 px-3 py-1.5 text-[13px] text-muted-foreground">
             <Globe className="size-3.5" />
             <span>{tz.replace('_', ' ')}</span>
           </div>
@@ -229,7 +241,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
               <ChevronRight className="size-4" />
             </Button>
           </div>
-          <span className="ml-1 text-[15px] font-semibold text-[#111] dark:text-zinc-100">{calendarTitle}</span>
+          <span className="ml-1 text-[15px] font-semibold text-foreground">{calendarTitle}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -244,7 +256,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                   'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors cursor-pointer',
                   filter === f.key
                     ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                    : 'text-[#888] hover:text-foreground dark:text-zinc-500 dark:hover:text-zinc-300'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 {f.label}
@@ -271,10 +283,11 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
                 viewMode === 'week'
                   ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                  : 'text-[#888] hover:text-foreground dark:text-zinc-500'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              Week
+              <span className="hidden sm:inline">Week</span>
+              <span className="sm:hidden">Day</span>
             </button>
             <button
               type="button"
@@ -283,7 +296,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
                 viewMode === 'month'
                   ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                  : 'text-[#888] hover:text-foreground dark:text-zinc-500'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               Month
@@ -445,126 +458,6 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
           ) : null}
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
-
-function SessionDetail({ session, roleLabel }: { session: Session; roleLabel: string }) {
-  const isCanceled = session.status === 'CANCELED';
-  const { counterpart } = session;
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Avatar className="size-14 ring-2 ring-border">
-          <AvatarImage src={counterpart.image ?? undefined} />
-          <AvatarFallback className="text-xl">
-            {getInitials(counterpart.firstName, counterpart.lastName)}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <p className="text-[16px] font-semibold text-[#111] dark:text-zinc-50">{getFullName(counterpart)}</p>
-          <p className="mt-0.5 text-[13px] text-[#888] dark:text-zinc-400">{roleLabel}</p>
-        </div>
-      </div>
-
-      <div className="space-y-0 divide-y divide-border/60 rounded-md border border-border/60 bg-muted/20 dark:bg-zinc-900/30">
-        <DetailRow label="Date">
-          <LocalTime
-            date={new Date(session.startTime)}
-            format="date"
-            className="text-[14px] font-medium text-[#111] dark:text-zinc-100"
-          />
-        </DetailRow>
-        <DetailRow label="Time">
-          <span className="tabular-nums text-[14px] font-medium text-[#111] dark:text-zinc-100">
-            <LocalTime date={new Date(session.startTime)} format="time" />
-            {' – '}
-            <LocalTime date={new Date(session.endTime)} format="time" />
-          </span>
-        </DetailRow>
-        <DetailRow label="Status">
-          {isCanceled ? (
-            <Badge variant="destructive" className="text-[12px]">
-              Canceled
-            </Badge>
-          ) : (
-            <Badge className="border-emerald-200 bg-emerald-50 text-[12px] text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400">
-              Active
-            </Badge>
-          )}
-        </DetailRow>
-        {isCanceled && session.canceledAt ? (
-          <DetailRow label="Canceled at">
-            <LocalTime
-              date={new Date(session.canceledAt)}
-              format="datetime"
-              className="tabular-nums text-[14px] font-medium text-[#888] dark:text-zinc-400"
-            />
-          </DetailRow>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between px-4 py-3.5">
-      <span className="text-[13px] text-[#888] dark:text-zinc-400">{label}</span>
-      {children}
-    </div>
-  );
-}
-
-function EmptyState({ userType, hasCalendly }: { userType: 'MENTOR' | 'MENTEE'; hasCalendly: boolean }) {
-  if (userType === 'MENTOR' && !hasCalendly) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-muted/20 px-8 py-16 text-center dark:bg-zinc-900/20">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20">
-          <CalendarDays className="size-7 text-primary" />
-        </div>
-        <h3 className="mt-5 text-balance text-[18px] font-semibold text-[#111] dark:text-zinc-100">
-          Connect Calendly to get started
-        </h3>
-        <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-[#888] dark:text-zinc-400">
-          Once connected, mentees can discover your profile and book sessions directly.
-        </p>
-        <Button asChild className="mt-6 h-11 rounded-xl px-6 font-semibold">
-          <Link href="/dashboard/profile">Connect Calendly</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (userType === 'MENTEE') {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-muted/20 px-8 py-16 text-center dark:bg-zinc-900/20">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20">
-          <Search className="size-7 text-primary" />
-        </div>
-        <h3 className="mt-5 text-balance text-[18px] font-semibold text-[#111] dark:text-zinc-100">
-          Book your first session
-        </h3>
-        <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-[#888] dark:text-zinc-400">
-          Browse our mentors and schedule a time that works for you.
-        </p>
-        <Button asChild className="mt-6 h-11 rounded-xl px-6 font-semibold">
-          <Link href="/dashboard/mentors">Find a mentor</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-muted/20 px-8 py-16 text-center dark:bg-zinc-900/20">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20">
-        <CalendarDays className="size-7 text-primary" />
-      </div>
-      <h3 className="mt-5 text-balance text-[18px] font-semibold text-[#111] dark:text-zinc-100">No sessions yet</h3>
-      <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-[#888] dark:text-zinc-400">
-        Share your profile so mentees can book time with you.
-      </p>
     </div>
   );
 }

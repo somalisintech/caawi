@@ -1,10 +1,9 @@
-import { BarChart3, Calendar, Clock, Search, Users } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import LayerCard from '@/components/layer-card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LocalTime } from './local-time';
-import { RelativeBadge } from './relative-badge';
+import { SessionListItem } from './session-list-item';
 
 type SessionItem = {
   id: string;
@@ -85,16 +84,11 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
           </LayerCard.Secondary>
           <LayerCard.Primary>
             {nextSession ? (
-              <>
-                <LocalTime
-                  date={nextSession.startTime}
-                  format="datetime"
-                  className="block text-sm font-semibold text-foreground"
-                />
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  with {nextSession.mentorProfile.user.firstName ?? 'Mentor'}
-                </p>
-              </>
+              <LocalTime
+                date={nextSession.startTime}
+                format="datetime"
+                className="block text-sm font-medium text-foreground"
+              />
             ) : (
               <p className="text-sm font-semibold text-muted-foreground">None scheduled</p>
             )}

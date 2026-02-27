@@ -1,10 +1,9 @@
-import { BarChart3, Calendar, Clock, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import Link from 'next/link';
 import LayerCard from '@/components/layer-card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LocalTime } from './local-time';
-import { RelativeBadge } from './relative-badge';
+import { SessionListItem } from './session-list-item';
 
 type SessionItem = {
   id: string;
@@ -93,20 +92,25 @@ export function MentorHome({
           </LayerCard.Secondary>
           <LayerCard.Primary>
             {nextSession ? (
-              <>
-                <LocalTime
-                  date={nextSession.startTime}
-                  format="datetime"
-                  className="block text-sm font-medium text-foreground"
-                />
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  with {nextSession.menteeProfile.user.firstName ?? 'Mentee'}
-                </p>
-              </>
+              <LocalTime
+                date={nextSession.startTime}
+                format="datetime"
+                className="block text-sm font-medium text-foreground"
+              />
             ) : (
               <p className="text-sm font-medium text-muted-foreground">None scheduled</p>
             )}
           </LayerCard.Primary>
+          {/* {nextSession && (
+            <LayerCard.Secondary>
+              <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
+                with {nextSession.menteeProfile.user.firstName ?? 'Mentee'}
+              </p>
+            </LayerCard.Secondary>
+                <p className="text-xs text-muted-foreground line-clamp-1">
+                with {nextSession.menteeProfile.user.firstName ?? "Mentee"}
+                </p>
+          )} */}
         </LayerCard>
       </div>
 

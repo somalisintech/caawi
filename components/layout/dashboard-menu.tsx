@@ -9,14 +9,13 @@ type Props = {
   userType: string;
 };
 
-const comingSoon = [{ icon: CalendarDays, label: 'Sessions' }];
-
 export function DashboardMenu({ userType }: Props) {
   const pathname = usePathname();
   const isMentor = userType === 'MENTOR';
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: 'Home', exact: true },
+    { href: '/dashboard/sessions', icon: CalendarDays, label: 'Sessions' },
     {
       href: '/dashboard/mentors',
       icon: Search,
@@ -46,15 +45,6 @@ export function DashboardMenu({ userType }: Props) {
             </Link>
           );
         })}
-        {comingSoon.map((item) => (
-          <span
-            key={item.label}
-            className="flex h-full cursor-not-allowed items-center gap-1.5 px-3 text-sm text-[#777] opacity-40 dark:text-zinc-500"
-          >
-            <item.icon className="size-4" />
-            {item.label}
-          </span>
-        ))}
       </div>
     </nav>
   );

@@ -43,6 +43,8 @@ model Profile {
   skills                Skill[]       @relation("ProfileSkills")
   mentorSessions        Session[]     @relation("MentorSessions")
   menteeSessions        Session[]     @relation("MenteeSessions")
+  menteeRequests        MentorshipRequest[] @relation("MenteeRequests")
+  mentorRequests        MentorshipRequest[] @relation("MentorRequests")
 }
 
 model Location {
@@ -100,6 +102,27 @@ model Session {
 enum SessionStatus {
   ACTIVE
   CANCELED
+}
+
+model MentorshipRequest {
+  id              String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  menteeProfileId String                  @db.Uuid
+  mentorProfileId String                  @db.Uuid
+  message         String
+  status          MentorshipRequestStatus @default(PENDING)
+  lastNudgedAt    DateTime?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  menteeProfile   Profile                 @relation("MenteeRequests", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+  mentorProfile   Profile                 @relation("MentorRequests", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([menteeProfileId, mentorProfileId])
+}
+
+enum MentorshipRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
 
 model Skill {

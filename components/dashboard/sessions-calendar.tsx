@@ -6,7 +6,6 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { useEffect, useMemo, useRef } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
 type SessionUser = {
@@ -32,23 +31,12 @@ export type Props = {
   onReady: (api: CalendarApi) => void;
 };
 
-function getInitials(firstName: string | null, lastName: string | null) {
-  return [firstName?.[0], lastName?.[0]].filter(Boolean).join('').toUpperCase() || '?';
-}
-
 function renderEventContent(eventInfo: EventContentArg) {
   const session = eventInfo.event.extendedProps.session as { status: string; counterpart: SessionUser };
-  const { counterpart } = session;
   const isCanceled = session.status === 'CANCELED';
 
   return (
-    <div className="flex h-full items-start gap-1.5 overflow-hidden px-2 py-1.5">
-      <Avatar className="mt-0.5 size-5 shrink-0">
-        <AvatarImage src={counterpart.image ?? undefined} />
-        <AvatarFallback className="text-[9px]">
-          {getInitials(counterpart.firstName, counterpart.lastName)}
-        </AvatarFallback>
-      </Avatar>
+    <div className="flex h-full items-start gap-1.5 overflow-hidden px-2 py-0.5">
       <div className="min-w-0 flex-1">
         <p className={cn('truncate text-[12px] font-medium leading-tight', isCanceled && 'line-through')}>
           {eventInfo.event.title}

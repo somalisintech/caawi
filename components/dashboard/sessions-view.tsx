@@ -1,21 +1,24 @@
 'use client';
 
 import type { CalendarApi, DatesSetArg, EventClickArg } from '@fullcalendar/core';
-import { CalendarDays, ChevronLeft, ChevronRight, Clock, Globe, Search } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Globe, Search } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import LayerCard from '@/components/layer-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { LocalTime } from './local-time';
 import { RelativeBadge } from './relative-badge';
 
-const FullCalendar = dynamic(() => import('./sessions-calendar'), { ssr: false });
+const FullCalendar = dynamic(() => import('./sessions-calendar'), {
+  ssr: false
+});
 
 type SessionUser = {
   firstName: string | null;
@@ -100,7 +103,11 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
       }
     }
 
-    return { filteredSessions: filtered, upcomingSessions: upcoming, monthFilteredSessions: monthFiltered };
+    return {
+      filteredSessions: filtered,
+      upcomingSessions: upcoming,
+      monthFilteredSessions: monthFiltered
+    };
   }, [sessions, filter, month, now, year]);
 
   const calendarEvents = useMemo(() => {
@@ -113,10 +120,10 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
         end: s.endTime,
         extendedProps: { session: s },
         className: cn(
-          'fc-caawi-event cursor-pointer !rounded-lg !border-0 !text-[13px]',
+          'fc-caawi-event cursor-pointer !rounded-sm !border-0 !text-[13px]',
           isCanceled
             ? '!bg-muted/60 !text-muted-foreground line-through opacity-60'
-            : '!bg-primary/10 !text-primary hover:!bg-primary/20 dark:!bg-primary/20 dark:hover:!bg-primary/30'
+            : '!bg-primary !text-primary-foreground hover:!bg-primary/90 dark:!bg-primary/20 dark:hover:!bg-primary/30'
         )
       };
     });
@@ -184,7 +191,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 py-1.5 text-[13px] text-[#777] dark:bg-zinc-900/50 dark:text-zinc-400">
+          <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/40 px-3 py-1.5 text-[13px] text-[#777] dark:bg-zinc-900/50 dark:text-zinc-400">
             <Globe className="size-3.5" />
             <span>{tz.replace('_', ' ')}</span>
           </div>
@@ -234,7 +241,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 type="button"
                 onClick={() => setFilter(f.key)}
                 className={cn(
-                  'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
+                  'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors cursor-pointer',
                   filter === f.key
                     ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
                     : 'text-[#888] hover:text-foreground dark:text-zinc-500 dark:hover:text-zinc-300'
@@ -292,132 +299,130 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
         <div className="flex flex-col gap-6 xl:flex-row">
           {/* Calendar (primary) */}
           <div className="min-w-0 xl:flex-[7]">
-            <div className="rounded-2xl border border-border/60 bg-background p-4 shadow-sm dark:bg-zinc-950 dark:shadow-none">
-              <FullCalendar
-                initialDate={new Date(year, month, day)}
-                events={calendarEvents}
-                eventClick={handleEventClick}
-                datesSet={handleDatesSet}
-                onReady={handleCalendarReady}
-              />
-            </div>
+            <LayerCard>
+              <LayerCard.Primary className="p-4">
+                <FullCalendar
+                  initialDate={new Date(year, month, day)}
+                  events={calendarEvents}
+                  eventClick={handleEventClick}
+                  datesSet={handleDatesSet}
+                  onReady={handleCalendarReady}
+                />
+              </LayerCard.Primary>
+            </LayerCard>
           </div>
 
           {/* Agenda rail (secondary) */}
           <div className="xl:flex-[3]">
             <div className="sticky top-8 space-y-4">
               {/* Next up */}
-              <div className="rounded-2xl border border-border/60 bg-background p-5 shadow-sm dark:bg-zinc-950 dark:shadow-none">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20">
-                    <Clock className="size-4 text-primary" />
-                  </div>
-                  <h2 className="text-[14px] font-semibold text-[#111] dark:text-zinc-100">Next up</h2>
-                </div>
-                {upcomingSessions.length > 0 ? (
-                  <div className="mt-4 space-y-1">
-                    {upcomingSessions.slice(0, 3).map((s) => (
-                      <button
-                        type="button"
-                        key={s.id}
-                        onClick={() => setSelectedSession(s)}
-                        className="group flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-muted/60 dark:hover:bg-zinc-900/60"
-                      >
-                        <Avatar className="size-9 ring-2 ring-background">
-                          <AvatarImage src={s.counterpart.image ?? undefined} />
-                          <AvatarFallback className="text-xs">
-                            {getInitials(s.counterpart.firstName, s.counterpart.lastName)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-[13px] font-medium text-[#111] dark:text-zinc-100">
-                            {s.eventName ?? 'Mentoring Session'}
-                          </p>
-                          <p className="mt-0.5 truncate text-[12px] text-[#888] dark:text-zinc-500">
-                            {getFullName(s.counterpart)}
-                          </p>
-                        </div>
-                        <div className="shrink-0 text-right">
-                          <RelativeBadge date={new Date(s.startTime)} />
-                          <LocalTime
-                            date={new Date(s.startTime)}
-                            format="time"
-                            className="mt-0.5 block text-[12px] tabular-nums text-[#888] dark:text-zinc-500"
-                          />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-3 text-[13px] text-[#888] dark:text-zinc-500">No upcoming sessions.</p>
-                )}
-              </div>
+              <LayerCard>
+                <LayerCard.Secondary>Next up</LayerCard.Secondary>
+                <LayerCard.Primary className="pt-2">
+                  {upcomingSessions.length > 0 ? (
+                    <div className="space-y-1">
+                      {upcomingSessions.slice(0, 3).map((s) => (
+                        <button
+                          type="button"
+                          key={s.id}
+                          onClick={() => setSelectedSession(s)}
+                          className="group flex w-full items-center gap-3 rounded-md p-2.5 text-left transition-colors hover:bg-muted/60 dark:hover:bg-zinc-900/60 cursor-pointer"
+                        >
+                          <Avatar className="size-9 ring-2 ring-background">
+                            <AvatarImage src={s.counterpart.image ?? undefined} />
+                            <AvatarFallback className="text-xs">
+                              {getInitials(s.counterpart.firstName, s.counterpart.lastName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-[13px] font-medium text-foreground">
+                              {s.eventName ?? 'Mentoring Session'}
+                            </p>
+                            <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
+                              {getFullName(s.counterpart)}
+                            </p>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <RelativeBadge date={new Date(s.startTime)} />
+                            <LocalTime
+                              date={new Date(s.startTime)}
+                              format="time"
+                              className="mt-0.5 block text-[12px] tabular-nums text-muted-foreground"
+                            />
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[13px] text-muted-foreground">No upcoming sessions.</p>
+                  )}
+                </LayerCard.Primary>
+              </LayerCard>
 
               {/* Full agenda */}
-              <div className="rounded-2xl border border-border/60 bg-background shadow-sm dark:bg-zinc-950 dark:shadow-none">
-                <div className="border-b border-border/60 px-5 py-4">
-                  <h2 className="text-[14px] font-semibold text-[#111] dark:text-zinc-100">
-                    This month
-                    <span className="ml-1.5 tabular-nums text-[12px] font-normal text-[#999] dark:text-zinc-500">
-                      {monthFilteredSessions.length} sessions
-                    </span>
-                  </h2>
-                </div>
-                <ScrollArea className="max-h-[400px]">
-                  <div className="divide-y divide-border/40">
-                    {monthFilteredSessions.length > 0 ? (
-                      monthFilteredSessions.map((s) => {
-                        const isCanceled = s.status === 'CANCELED';
-                        return (
-                          <button
-                            type="button"
-                            key={s.id}
-                            onClick={() => setSelectedSession(s)}
-                            className={cn(
-                              'flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/50 dark:hover:bg-zinc-900/40',
-                              selectedSession?.id === s.id && 'bg-muted/60 dark:bg-zinc-900/60'
-                            )}
-                          >
-                            <div
+              <LayerCard>
+                <LayerCard.Secondary className="border-b border-border">
+                  This month
+                  <span className="ml-1.5 tabular-nums text-[12px] font-normal text-muted-foreground">
+                    {monthFilteredSessions.length} sessions
+                  </span>
+                </LayerCard.Secondary>
+                <LayerCard.Primary className="p-0">
+                  <ScrollArea className="max-h-[400px]">
+                    <div className="divide-y divide-border/40">
+                      {monthFilteredSessions.length > 0 ? (
+                        monthFilteredSessions.map((s) => {
+                          const isCanceled = s.status === 'CANCELED';
+                          return (
+                            <button
+                              type="button"
+                              key={s.id}
+                              onClick={() => setSelectedSession(s)}
                               className={cn(
-                                'h-8 w-1 shrink-0 rounded-full',
-                                isCanceled ? 'bg-muted-foreground/30' : 'bg-primary/70'
+                                'flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/50 dark:hover:bg-zinc-900/40 cursor-pointer',
+                                selectedSession?.id === s.id && 'bg-muted/60 dark:bg-zinc-900/60'
                               )}
-                            />
-                            <div className="min-w-0 flex-1">
-                              <p
+                            >
+                              <div
                                 className={cn(
-                                  'truncate text-[13px] font-medium',
-                                  isCanceled
-                                    ? 'text-[#aaa] line-through dark:text-zinc-600'
-                                    : 'text-[#111] dark:text-zinc-100'
+                                  'h-8 w-1 shrink-0 rounded-full',
+                                  isCanceled ? 'bg-muted-foreground/30' : 'bg-primary/70'
                                 )}
-                              >
-                                {s.eventName ?? 'Mentoring Session'}
-                              </p>
-                              <p className="mt-0.5 text-[12px] text-[#888] dark:text-zinc-500">
-                                <LocalTime date={new Date(s.startTime)} format="date" /> · {getFullName(s.counterpart)}
-                              </p>
-                            </div>
-                            {isCanceled ? (
-                              <Badge
-                                variant="outline"
-                                className="shrink-0 text-[11px] font-normal text-muted-foreground"
-                              >
-                                Canceled
-                              </Badge>
-                            ) : null}
-                          </button>
-                        );
-                      })
-                    ) : (
-                      <div className="px-5 py-8 text-center text-[13px] text-[#888] dark:text-zinc-500">
-                        No {filter === 'all' ? '' : filter} sessions this month.
-                      </div>
-                    )}
-                  </div>
-                </ScrollArea>
-              </div>
+                              />
+                              <div className="min-w-0 flex-1">
+                                <p
+                                  className={cn(
+                                    'truncate text-[13px] font-medium',
+                                    isCanceled ? 'text-muted-foreground line-through' : 'text-foreground'
+                                  )}
+                                >
+                                  {s.eventName ?? 'Mentoring Session'}
+                                </p>
+                                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                                  <LocalTime date={new Date(s.startTime)} format="date" /> ·{' '}
+                                  {getFullName(s.counterpart)}
+                                </p>
+                              </div>
+                              {isCanceled ? (
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-[11px] font-normal text-muted-foreground"
+                                >
+                                  Canceled
+                                </Badge>
+                              ) : null}
+                            </button>
+                          );
+                        })
+                      ) : (
+                        <div className="px-5 py-8 text-center text-[13px] text-muted-foreground">
+                          No {filter === 'all' ? '' : filter} sessions this month.
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </LayerCard.Primary>
+              </LayerCard>
             </div>
           </div>
         </div>
@@ -425,14 +430,18 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
 
       {/* Session detail dialog */}
       <Dialog open={!!selectedSession} onOpenChange={(open) => !open && setSelectedSession(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="border-0 bg-transparent p-0 shadow-none sm:max-w-md">
           {selectedSession ? (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-lg">{selectedSession.eventName ?? 'Mentoring Session'}</DialogTitle>
-              </DialogHeader>
-              <SessionDetail session={selectedSession} roleLabel={roleLabel} />
-            </>
+            <LayerCard>
+              <LayerCard.Secondary className="py-4">
+                <DialogTitle className="text-base font-normal border-0">
+                  {selectedSession.eventName ?? 'Mentoring Session'}
+                </DialogTitle>
+              </LayerCard.Secondary>
+              <LayerCard.Primary className="p-5 rounded-2xl">
+                <SessionDetail session={selectedSession} roleLabel={roleLabel} />
+              </LayerCard.Primary>
+            </LayerCard>
           ) : null}
         </DialogContent>
       </Dialog>
@@ -445,7 +454,7 @@ function SessionDetail({ session, roleLabel }: { session: Session; roleLabel: st
   const { counterpart } = session;
 
   return (
-    <div className="mt-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Avatar className="size-14 ring-2 ring-border">
           <AvatarImage src={counterpart.image ?? undefined} />
@@ -459,7 +468,7 @@ function SessionDetail({ session, roleLabel }: { session: Session; roleLabel: st
         </div>
       </div>
 
-      <div className="space-y-0 divide-y divide-border/60 rounded-xl border border-border/60 bg-muted/20 dark:bg-zinc-900/30">
+      <div className="space-y-0 divide-y divide-border/60 rounded-md border border-border/60 bg-muted/20 dark:bg-zinc-900/30">
         <DetailRow label="Date">
           <LocalTime
             date={new Date(session.startTime)}

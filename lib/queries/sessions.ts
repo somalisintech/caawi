@@ -44,3 +44,51 @@ export async function getMenteeCount(profileId: string) {
   });
   return result.length;
 }
+
+export async function getTotalSessionCount(profileId: string) {
+  return prisma.session.count({
+    where: {
+      OR: [{ mentorProfileId: profileId }, { menteeProfileId: profileId }],
+      status: 'ACTIVE',
+      startTime: { lt: new Date() }
+    }
+  });
+}
+
+export async function getRecentSessions(profileId: string, limit = 5) {
+  return prisma.session.findMany({
+    where: {
+      mentorProfileId: profileId,
+      status: 'ACTIVE',
+      startTime: { lt: new Date() }
+    },
+    orderBy: { startTime: 'desc' },
+    take: limit,
+    include: {
+      menteeProfile: {
+        include: {
+          user: { select: { firstName: true, lastName: true, image: true } }
+        }
+      }
+    }
+  });
+}
+
+export async function getRecentMenteeSessions(profileId: string, limit = 5) {
+  return prisma.session.findMany({
+    where: {
+      menteeProfileId: profileId,
+      status: 'ACTIVE',
+      startTime: { lt: new Date() }
+    },
+    orderBy: { startTime: 'desc' },
+    take: limit,
+    include: {
+      mentorProfile: {
+        include: {
+          user: { select: { firstName: true, lastName: true, image: true } }
+        }
+      }
+    }
+  });
+}

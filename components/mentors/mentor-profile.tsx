@@ -4,12 +4,15 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SiBuymeacoffee } from 'react-icons/si';
 import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
 import { CalendlyWidget } from '@/components/calendly/calendly-widget';
+import LayerCard from '@/components/layer-card';
+import { RequestForm } from '@/components/mentorship/request-form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { MentorProfile as MentorProfileType } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
+import { getRequestStatus } from '@/lib/queries/mentorship-requests';
 import { createClient } from '@/utils/supabase/server';
 
 type Props = {
@@ -35,14 +38,19 @@ export async function MentorProfile({ mentor }: Props) {
       image: true,
       profile: {
         select: {
+          id: true,
           gender: true,
-          bio: true
+          bio: true,
+          userType: true
         }
       }
     }
   });
 
   const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
+  const isMentee = user?.profile?.userType === 'MENTEE';
+  const requestStatus =
+    canBook && isMentee && user?.profile?.id ? await getRequestStatus(user.profile.id, mentor.id) : null;
 
   return (
     <Card className="flex flex-col">
@@ -57,7 +65,32 @@ export async function MentorProfile({ mentor }: Props) {
               {mentor.firstName} {mentor.lastName}
             </div>
           </div>
-          <ShareProfileButton userId={mentor.id} />
+          <div className="flex flex-col items-end gap-2">
+            {canBook && isMentee && (!requestStatus || requestStatus.status === 'DECLINED') && (
+              <RequestForm mentorProfileId={mentor.id} />
+            )}
+            {canBook && requestStatus?.status === 'PENDING' && (
+              <LayerCard className="w-auto">
+                <LayerCard.Primary className="px-4 py-2">
+                  <p className="text-sm text-muted-foreground">Request pending</p>
+                </LayerCard.Primary>
+              </LayerCard>
+            )}
+            {canBook && requestStatus?.status === 'ACCEPTED' && (
+              <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} profile={user?.profile} />
+            )}
+            {canBook && !isMentee && (
+              <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} profile={user?.profile} />
+            )}
+            {!canBook && (
+              <LayerCard className="w-auto">
+                <LayerCard.Primary className="px-4 py-2">
+                  <p className="text-sm text-muted-foreground">Same-gender mentees only</p>
+                </LayerCard.Primary>
+              </LayerCard>
+            )}
+            <ShareProfileButton userId={mentor.id} />
+          </div>
         </CardTitle>
         <CardDescription>
           {mentor.role} @ {mentor.company}
@@ -116,14 +149,6 @@ export async function MentorProfile({ mentor }: Props) {
           )}
         </div>
       </CardContent>
-      <CardFooter>
-        {canBook && (
-          <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} profile={user?.profile} />
-        )}
-        {!canBook && (
-          <p className="text-sm text-muted-foreground">*This mentor only accepts bookings with the same gender</p>
-        )}
-      </CardFooter>
     </Card>
   );
 }

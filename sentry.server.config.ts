@@ -1,12 +1,17 @@
 import * as Sentry from '@sentry/nextjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
+const isLocalDev = process.env.NODE_ENV === 'development';
+
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  integrations: [nodeProfilingIntegration(), Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] })],
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
-  profileSessionSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  integrations: [
+    nodeProfilingIntegration(),
+    ...(isLocalDev ? [] : [Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] })])
+  ],
+  tracesSampleRate: isLocalDev ? 0 : 0.2,
+  profileSessionSampleRate: isLocalDev ? 0 : 0.2,
   profileLifecycle: 'trace',
-  enableLogs: true,
-  sendDefaultPii: true
+  enableLogs: !isLocalDev,
+  sendDefaultPii: !isLocalDev
 });

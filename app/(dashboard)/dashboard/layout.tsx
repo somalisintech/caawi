@@ -1,12 +1,8 @@
-import { CalendarX2 } from 'lucide-react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { PropsWithChildren } from 'react';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { Header } from '@/components/layout/header';
-import { ProfileSummary } from '@/components/layout/profile-summary';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
@@ -63,32 +59,13 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
-      <div className="container">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
+      <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <Header />
       </div>
-      <div className="container pb-8">
-        {user.profile?.userType === 'MENTOR' && !user.profile.calendlyUser && (
-          <Alert className="mb-4">
-            <CalendarX2 />
-            <AlertTitle>Calendly not connected</AlertTitle>
-            <AlertDescription>
-              Mentees won&apos;t be able to book sessions with you.{' '}
-              <Link href="/dashboard/profile" className="font-medium underline">
-                Connect Calendly in your profile settings
-              </Link>
-            </AlertDescription>
-          </Alert>
-        )}
-        <div className="flex gap-8">
-          <div className="flex flex-1 flex-col gap-4">
-            <DashboardMenu />
-            <main>{children}</main>
-          </div>
-          <div className="hidden lg:block">
-            <ProfileSummary user={user} />
-          </div>
-        </div>
+      <DashboardMenu userType={user.profile?.userType ?? 'MENTEE'} />
+      <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-10 md:px-8 md:pt-12">
+        <main>{children}</main>
       </div>
     </div>
   );

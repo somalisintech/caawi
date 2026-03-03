@@ -24,11 +24,7 @@ export function MentorsList({ mentors, authenticated, countries }: Props) {
           <p className="text-sm">Try adjusting your search</p>
         </div>
       ) : (
-        <>
-          {mentors.map((mentor) => (
-            <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />
-          ))}
-        </>
+        mentors.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />)
       )}
     </Card>
   );

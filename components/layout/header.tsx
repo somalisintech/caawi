@@ -50,8 +50,6 @@ export async function Header() {
   const avatarImage = user?.image ?? '';
   const avatarFallback = user?.firstName?.at(0) ?? '-';
 
-  const name = [user?.firstName, user?.lastName].join(' ');
-
   return (
     <header className="flex items-center justify-between py-5">
       <div className="flex items-center gap-3">

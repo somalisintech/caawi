@@ -8,8 +8,10 @@ export type LoggerRequest = NextRequest & {
   log: typeof logger;
 };
 
-export function withLogger(handler: (req: LoggerRequest) => Promise<NextResponse>) {
-  return async (req: NextRequest) => {
+type RouteContext = { params: Promise<Record<string, string>> };
+
+export function withLogger(handler: (req: LoggerRequest, context: RouteContext) => Promise<NextResponse>) {
+  return async (req: NextRequest, context: RouteContext) => {
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     const userId = data.user?.id;
@@ -29,7 +31,7 @@ export function withLogger(handler: (req: LoggerRequest) => Promise<NextResponse
     (req as LoggerRequest).log = scopedLog;
 
     try {
-      return await handler(req as LoggerRequest);
+      return await handler(req as LoggerRequest, context);
     } catch (error) {
       scopedLog.error('Unhandled route error', {
         error: error instanceof Error ? error.message : String(error)

@@ -2,7 +2,7 @@ generator client {
   provider            = "prisma-client"
   output              = "../generated/prisma"
   importFileExtension = ""
-  previewFeatures     = ["views"]
+  previewFeatures     = ["views", "fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -41,6 +41,12 @@ model Profile {
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendlyUser          CalendlyUser?
   skills                Skill[]       @relation("ProfileSkills")
+  mentorSessions        Session[]     @relation("MentorSessions")
+  menteeSessions        Session[]     @relation("MenteeSessions")
+  menteeRequests        MentorshipRequest[] @relation("MenteeRequests")
+  mentorRequests        MentorshipRequest[] @relation("MentorRequests")
+  nudgesSent            MenteeNudge[]       @relation("MentorNudgesSent")
+  nudgesReceived        MenteeNudge[]       @relation("MenteeNudgesReceived")
 }
 
 model Location {
@@ -74,7 +80,62 @@ model CalendlyUser {
   updated_at           DateTime @default(now())
   current_organization String?
   resource_type        String?
+  accessToken          String?
+  refreshToken         String?
+  webhookUri           String?
   profile              Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  calendlyEventUri String        @unique
+  eventName        String?
+  startTime        DateTime
+  endTime          DateTime
+  status           SessionStatus @default(ACTIVE)
+  mentorProfileId  String        @db.Uuid
+  mentorProfile    Profile       @relation("MentorSessions", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  menteeProfileId  String        @db.Uuid
+  menteeProfile    Profile       @relation("MenteeSessions", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+  createdAt        DateTime      @default(now())
+  canceledAt       DateTime?
+}
+
+enum SessionStatus {
+  ACTIVE
+  CANCELED
+}
+
+model MentorshipRequest {
+  id              String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  menteeProfileId String                  @db.Uuid
+  mentorProfileId String                  @db.Uuid
+  message         String
+  status          MentorshipRequestStatus @default(PENDING)
+  lastNudgedAt    DateTime?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  menteeProfile   Profile                 @relation("MenteeRequests", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+  mentorProfile   Profile                 @relation("MentorRequests", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([menteeProfileId, mentorProfileId])
+}
+
+enum MentorshipRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model MenteeNudge {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mentorProfileId String   @db.Uuid
+  menteeProfileId String   @db.Uuid
+  lastNudgedAt    DateTime @default(now())
+  mentorProfile   Profile  @relation("MentorNudgesSent", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  menteeProfile   Profile  @relation("MenteeNudgesReceived", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([mentorProfileId, menteeProfileId])
 }
 
 model Skill {

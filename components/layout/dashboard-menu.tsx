@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, Home, Search, User } from 'lucide-react';
+import { CalendarDays, Home, Search, User, UserSearch, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,8 @@ export function DashboardMenu({ userType }: Props) {
   const navItems = [
     { href: '/dashboard', icon: Home, label: 'Home', exact: true },
     { href: '/dashboard/sessions', icon: CalendarDays, label: 'Sessions' },
+    ...(isMentor ? [{ href: '/dashboard/mentees', icon: Users, label: 'Mentees' }] : []),
+    ...(isMentor ? [{ href: '/dashboard/browse-mentees', icon: UserSearch, label: 'Find Mentees' }] : []),
     {
       href: '/dashboard/mentors',
       icon: Search,

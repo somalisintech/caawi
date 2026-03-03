@@ -1,10 +1,9 @@
-import { BarChart3, Calendar, Clock, Search, Users } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import LayerCard from '@/components/layer-card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LocalTime } from './local-time';
-import { RelativeBadge } from './relative-badge';
+import { SessionListItem } from './session-list-item';
 
 type SessionItem = {
   id: string;
@@ -28,14 +27,6 @@ type Props = {
   recentSessions: SessionItem[];
 };
 
-function getInitials(firstName: string | null, lastName: string | null) {
-  return [firstName?.[0], lastName?.[0]].filter(Boolean).join('').toUpperCase() || '?';
-}
-
-function getFullName(firstName: string | null, lastName: string | null) {
-  return [firstName, lastName].filter(Boolean).join(' ') || 'Mentor';
-}
-
 export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSessions, recentSessions }: Props) {
   const greeting = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
   const nextSession = upcomingSessions[0];
@@ -53,7 +44,6 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <LayerCard>
           <LayerCard.Secondary>
-            <Calendar className="size-4" />
             <span>Upcoming sessions</span>
           </LayerCard.Secondary>
           <LayerCard.Primary>
@@ -62,7 +52,6 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
         </LayerCard>
         <LayerCard>
           <LayerCard.Secondary>
-            <Users className="size-4" />
             <span>Mentors available</span>
           </LayerCard.Secondary>
           <LayerCard.Primary>
@@ -71,7 +60,6 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
         </LayerCard>
         <LayerCard>
           <LayerCard.Secondary>
-            <BarChart3 className="size-4" />
             <span>Completed sessions</span>
           </LayerCard.Secondary>
           <LayerCard.Primary>
@@ -80,25 +68,26 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
         </LayerCard>
         <LayerCard>
           <LayerCard.Secondary>
-            <Clock className="size-4" />
             <span>Next session</span>
           </LayerCard.Secondary>
           <LayerCard.Primary>
             {nextSession ? (
-              <>
-                <LocalTime
-                  date={nextSession.startTime}
-                  format="datetime"
-                  className="block text-sm font-semibold text-foreground"
-                />
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  with {nextSession.mentorProfile.user.firstName ?? 'Mentor'}
-                </p>
-              </>
+              <LocalTime
+                date={nextSession.startTime}
+                format="datetime"
+                className="block text-sm font-medium text-foreground"
+              />
             ) : (
-              <p className="text-sm font-semibold text-muted-foreground">None scheduled</p>
+              <p className="text-sm font-medium text-muted-foreground">None scheduled</p>
             )}
           </LayerCard.Primary>
+          {nextSession && (
+            <LayerCard.Secondary>
+              <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
+                with {nextSession.mentorProfile.user.firstName ?? 'Mentor'}
+              </p>
+            </LayerCard.Secondary>
+          )}
         </LayerCard>
       </div>
 
@@ -129,40 +118,9 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
           <LayerCard.Secondary>Upcoming sessions</LayerCard.Secondary>
           <LayerCard.Primary className="p-0">
             <div className="divide-y divide-border">
-              {upcomingSessions.map((session) => {
-                const { user } = session.mentorProfile;
-                return (
-                  <div key={session.id} className="flex items-center justify-between p-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={user.image ?? undefined} />
-                        <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-foreground">{session.eventName ?? 'Mentoring Session'}</p>
-                        <p className="mt-0.5 text-sm text-muted-foreground">
-                          with {getFullName(user.firstName, user.lastName)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RelativeBadge date={session.startTime} />
-                      <div className="text-right">
-                        <LocalTime
-                          date={session.startTime}
-                          format="date"
-                          className="block text-sm font-medium text-foreground"
-                        />
-                        <p className="mt-0.5 text-sm text-muted-foreground">
-                          <LocalTime date={session.startTime} format="time" />
-                          {' – '}
-                          <LocalTime date={session.endTime} format="time" />
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {upcomingSessions.map((session) => (
+                <SessionListItem key={session.id} session={session} otherUser={session.mentorProfile.user} />
+              ))}
             </div>
           </LayerCard.Primary>
         </LayerCard>
@@ -183,37 +141,9 @@ export function MenteeHome({ firstName, mentorCount, upcomingSessions, totalSess
           <LayerCard.Secondary>Recent sessions</LayerCard.Secondary>
           <LayerCard.Primary className="p-0">
             <div className="divide-y divide-border">
-              {recentSessions.map((session) => {
-                const { user } = session.mentorProfile;
-                return (
-                  <div key={session.id} className="flex items-center justify-between p-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={user.image ?? undefined} />
-                        <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-muted-foreground">{session.eventName ?? 'Mentoring Session'}</p>
-                        <p className="mt-0.5 text-sm text-muted-foreground">
-                          with {getFullName(user.firstName, user.lastName)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <LocalTime
-                        date={session.startTime}
-                        format="date"
-                        className="block text-sm font-medium text-muted-foreground"
-                      />
-                      <p className="mt-0.5 text-sm text-muted-foreground">
-                        <LocalTime date={session.startTime} format="time" />
-                        {' – '}
-                        <LocalTime date={session.endTime} format="time" />
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+              {recentSessions.map((session) => (
+                <SessionListItem key={session.id} session={session} otherUser={session.mentorProfile.user} isRecent />
+              ))}
             </div>
           </LayerCard.Primary>
         </LayerCard>

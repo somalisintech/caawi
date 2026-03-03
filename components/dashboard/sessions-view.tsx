@@ -1,21 +1,25 @@
 'use client';
 
 import type { CalendarApi, DatesSetArg, EventClickArg } from '@fullcalendar/core';
-import { CalendarDays, ChevronLeft, ChevronRight, Clock, Globe, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import LayerCard from '@/components/layer-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { LocalTime } from './local-time';
 import { RelativeBadge } from './relative-badge';
+import { SessionDetail } from './session-detail';
+import { EmptyState } from './sessions-empty-state';
 
-const FullCalendar = dynamic(() => import('./sessions-calendar'), { ssr: false });
+const FullCalendar = dynamic(() => import('./sessions-calendar'), {
+  ssr: false
+});
 
 type SessionUser = {
   firstName: string | null;
@@ -64,7 +68,14 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
   const [nowTs, setNowTs] = useState(() => Date.now());
 
   useEffect(() => {
-    const id = setInterval(() => setNowTs(Date.now()), 60_000);
+    // Only update once per hour or when crossing a day boundary
+    // to avoid excessive re-renders of the large calendar tree
+    const id = setInterval(
+      () => {
+        setNowTs(Date.now());
+      },
+      60 * 60 * 1000
+    );
     return () => clearInterval(id);
   }, []);
 
@@ -100,7 +111,11 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
       }
     }
 
-    return { filteredSessions: filtered, upcomingSessions: upcoming, monthFilteredSessions: monthFiltered };
+    return {
+      filteredSessions: filtered,
+      upcomingSessions: upcoming,
+      monthFilteredSessions: monthFiltered
+    };
   }, [sessions, filter, month, now, year]);
 
   const calendarEvents = useMemo(() => {
@@ -113,10 +128,10 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
         end: s.endTime,
         extendedProps: { session: s },
         className: cn(
-          'fc-caawi-event cursor-pointer !rounded-lg !border-0 !text-[13px]',
+          'fc-caawi-event cursor-pointer !rounded-sm !border-0 !text-[13px]',
           isCanceled
             ? '!bg-muted/60 !text-muted-foreground line-through opacity-60'
-            : '!bg-primary/10 !text-primary hover:!bg-primary/20 dark:!bg-primary/20 dark:hover:!bg-primary/30'
+            : '!bg-primary !text-primary-foreground hover:!bg-primary/90 dark:!bg-primary/20 dark:hover:!bg-primary/30'
         )
       };
     });
@@ -160,7 +175,11 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
     const api = calendarApiRef.current;
     if (!api) return;
     setViewMode(mode);
-    api.changeView(mode === 'week' ? 'timeGridWeek' : 'dayGridMonth');
+    if (mode === 'week') {
+      api.changeView(window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek');
+    } else {
+      api.changeView('dayGridMonth');
+    }
   }
 
   const roleLabel = userType === 'MENTOR' ? 'Mentee' : 'Mentor';
@@ -178,13 +197,13 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-pretty text-4xl font-bold text-[#111] leading-[44px] dark:text-zinc-50">Sessions</h1>
-          <p className="mt-1.5 text-pretty text-[15px] leading-relaxed text-[#666] dark:text-zinc-400">
-            Your mentorship calendar — all sessions at a glance.
+          <h1 className="text-pretty text-4xl font-bold text-foreground leading-[44px]">Sessions</h1>
+          <p className="mt-1.5 text-pretty text-[15px] leading-relaxed text-muted-foreground">
+            Your mentorship calendar, all sessions at a glance.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 py-1.5 text-[13px] text-[#777] dark:bg-zinc-900/50 dark:text-zinc-400">
+          <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/40 px-3 py-1.5 text-[13px] text-muted-foreground">
             <Globe className="size-3.5" />
             <span>{tz.replace('_', ' ')}</span>
           </div>
@@ -222,7 +241,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
               <ChevronRight className="size-4" />
             </Button>
           </div>
-          <span className="ml-1 text-[15px] font-semibold text-[#111] dark:text-zinc-100">{calendarTitle}</span>
+          <span className="ml-1 text-[15px] font-semibold text-foreground">{calendarTitle}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -234,10 +253,10 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 type="button"
                 onClick={() => setFilter(f.key)}
                 className={cn(
-                  'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
+                  'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors cursor-pointer',
                   filter === f.key
                     ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                    : 'text-[#888] hover:text-foreground dark:text-zinc-500 dark:hover:text-zinc-300'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 {f.label}
@@ -264,10 +283,11 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
                 viewMode === 'week'
                   ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                  : 'text-[#888] hover:text-foreground dark:text-zinc-500'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              Week
+              <span className="hidden sm:inline">Week</span>
+              <span className="sm:hidden">Day</span>
             </button>
             <button
               type="button"
@@ -276,7 +296,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
                 viewMode === 'month'
                   ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                  : 'text-[#888] hover:text-foreground dark:text-zinc-500'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               Month
@@ -292,132 +312,130 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
         <div className="flex flex-col gap-6 xl:flex-row">
           {/* Calendar (primary) */}
           <div className="min-w-0 xl:flex-[7]">
-            <div className="rounded-2xl border border-border/60 bg-background p-4 shadow-sm dark:bg-zinc-950 dark:shadow-none">
-              <FullCalendar
-                initialDate={new Date(year, month, day)}
-                events={calendarEvents}
-                eventClick={handleEventClick}
-                datesSet={handleDatesSet}
-                onReady={handleCalendarReady}
-              />
-            </div>
+            <LayerCard>
+              <LayerCard.Primary className="p-4">
+                <FullCalendar
+                  initialDate={new Date(year, month, day)}
+                  events={calendarEvents}
+                  eventClick={handleEventClick}
+                  datesSet={handleDatesSet}
+                  onReady={handleCalendarReady}
+                />
+              </LayerCard.Primary>
+            </LayerCard>
           </div>
 
           {/* Agenda rail (secondary) */}
           <div className="xl:flex-[3]">
             <div className="sticky top-8 space-y-4">
               {/* Next up */}
-              <div className="rounded-2xl border border-border/60 bg-background p-5 shadow-sm dark:bg-zinc-950 dark:shadow-none">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20">
-                    <Clock className="size-4 text-primary" />
-                  </div>
-                  <h2 className="text-[14px] font-semibold text-[#111] dark:text-zinc-100">Next up</h2>
-                </div>
-                {upcomingSessions.length > 0 ? (
-                  <div className="mt-4 space-y-1">
-                    {upcomingSessions.slice(0, 3).map((s) => (
-                      <button
-                        type="button"
-                        key={s.id}
-                        onClick={() => setSelectedSession(s)}
-                        className="group flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-muted/60 dark:hover:bg-zinc-900/60"
-                      >
-                        <Avatar className="size-9 ring-2 ring-background">
-                          <AvatarImage src={s.counterpart.image ?? undefined} />
-                          <AvatarFallback className="text-xs">
-                            {getInitials(s.counterpart.firstName, s.counterpart.lastName)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-[13px] font-medium text-[#111] dark:text-zinc-100">
-                            {s.eventName ?? 'Mentoring Session'}
-                          </p>
-                          <p className="mt-0.5 truncate text-[12px] text-[#888] dark:text-zinc-500">
-                            {getFullName(s.counterpart)}
-                          </p>
-                        </div>
-                        <div className="shrink-0 text-right">
-                          <RelativeBadge date={new Date(s.startTime)} />
-                          <LocalTime
-                            date={new Date(s.startTime)}
-                            format="time"
-                            className="mt-0.5 block text-[12px] tabular-nums text-[#888] dark:text-zinc-500"
-                          />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-3 text-[13px] text-[#888] dark:text-zinc-500">No upcoming sessions.</p>
-                )}
-              </div>
+              <LayerCard>
+                <LayerCard.Secondary>Next up</LayerCard.Secondary>
+                <LayerCard.Primary className="pt-2">
+                  {upcomingSessions.length > 0 ? (
+                    <div className="space-y-1">
+                      {upcomingSessions.slice(0, 3).map((s) => (
+                        <button
+                          type="button"
+                          key={s.id}
+                          onClick={() => setSelectedSession(s)}
+                          className="group flex w-full items-center gap-3 rounded-md p-2.5 text-left transition-colors hover:bg-muted/60 dark:hover:bg-zinc-900/60 cursor-pointer"
+                        >
+                          <Avatar className="size-9 ring-2 ring-background">
+                            <AvatarImage src={s.counterpart.image ?? undefined} />
+                            <AvatarFallback className="text-xs">
+                              {getInitials(s.counterpart.firstName, s.counterpart.lastName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-[13px] font-medium text-foreground">
+                              {s.eventName ?? 'Mentoring Session'}
+                            </p>
+                            <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
+                              {getFullName(s.counterpart)}
+                            </p>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <RelativeBadge date={new Date(s.startTime)} />
+                            <LocalTime
+                              date={new Date(s.startTime)}
+                              format="time"
+                              className="mt-0.5 block text-[12px] tabular-nums text-muted-foreground"
+                            />
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[13px] text-muted-foreground">No upcoming sessions.</p>
+                  )}
+                </LayerCard.Primary>
+              </LayerCard>
 
               {/* Full agenda */}
-              <div className="rounded-2xl border border-border/60 bg-background shadow-sm dark:bg-zinc-950 dark:shadow-none">
-                <div className="border-b border-border/60 px-5 py-4">
-                  <h2 className="text-[14px] font-semibold text-[#111] dark:text-zinc-100">
-                    This month
-                    <span className="ml-1.5 tabular-nums text-[12px] font-normal text-[#999] dark:text-zinc-500">
-                      {monthFilteredSessions.length} sessions
-                    </span>
-                  </h2>
-                </div>
-                <ScrollArea className="max-h-[400px]">
-                  <div className="divide-y divide-border/40">
-                    {monthFilteredSessions.length > 0 ? (
-                      monthFilteredSessions.map((s) => {
-                        const isCanceled = s.status === 'CANCELED';
-                        return (
-                          <button
-                            type="button"
-                            key={s.id}
-                            onClick={() => setSelectedSession(s)}
-                            className={cn(
-                              'flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/50 dark:hover:bg-zinc-900/40',
-                              selectedSession?.id === s.id && 'bg-muted/60 dark:bg-zinc-900/60'
-                            )}
-                          >
-                            <div
+              <LayerCard>
+                <LayerCard.Secondary className="border-b border-border">
+                  This month
+                  <span className="ml-1.5 tabular-nums text-[12px] font-normal text-muted-foreground">
+                    {monthFilteredSessions.length} sessions
+                  </span>
+                </LayerCard.Secondary>
+                <LayerCard.Primary className="p-0">
+                  <ScrollArea className="max-h-[400px]">
+                    <div className="divide-y divide-border/40">
+                      {monthFilteredSessions.length > 0 ? (
+                        monthFilteredSessions.map((s) => {
+                          const isCanceled = s.status === 'CANCELED';
+                          return (
+                            <button
+                              type="button"
+                              key={s.id}
+                              onClick={() => setSelectedSession(s)}
                               className={cn(
-                                'h-8 w-1 shrink-0 rounded-full',
-                                isCanceled ? 'bg-muted-foreground/30' : 'bg-primary/70'
+                                'flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/50 dark:hover:bg-zinc-900/40 cursor-pointer',
+                                selectedSession?.id === s.id && 'bg-muted/60 dark:bg-zinc-900/60'
                               )}
-                            />
-                            <div className="min-w-0 flex-1">
-                              <p
+                            >
+                              <div
                                 className={cn(
-                                  'truncate text-[13px] font-medium',
-                                  isCanceled
-                                    ? 'text-[#aaa] line-through dark:text-zinc-600'
-                                    : 'text-[#111] dark:text-zinc-100'
+                                  'h-8 w-1 shrink-0 rounded-full',
+                                  isCanceled ? 'bg-muted-foreground/30' : 'bg-primary/70'
                                 )}
-                              >
-                                {s.eventName ?? 'Mentoring Session'}
-                              </p>
-                              <p className="mt-0.5 text-[12px] text-[#888] dark:text-zinc-500">
-                                <LocalTime date={new Date(s.startTime)} format="date" /> · {getFullName(s.counterpart)}
-                              </p>
-                            </div>
-                            {isCanceled ? (
-                              <Badge
-                                variant="outline"
-                                className="shrink-0 text-[11px] font-normal text-muted-foreground"
-                              >
-                                Canceled
-                              </Badge>
-                            ) : null}
-                          </button>
-                        );
-                      })
-                    ) : (
-                      <div className="px-5 py-8 text-center text-[13px] text-[#888] dark:text-zinc-500">
-                        No {filter === 'all' ? '' : filter} sessions this month.
-                      </div>
-                    )}
-                  </div>
-                </ScrollArea>
-              </div>
+                              />
+                              <div className="min-w-0 flex-1">
+                                <p
+                                  className={cn(
+                                    'truncate text-[13px] font-medium',
+                                    isCanceled ? 'text-muted-foreground line-through' : 'text-foreground'
+                                  )}
+                                >
+                                  {s.eventName ?? 'Mentoring Session'}
+                                </p>
+                                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                                  <LocalTime date={new Date(s.startTime)} format="date" /> ·{' '}
+                                  {getFullName(s.counterpart)}
+                                </p>
+                              </div>
+                              {isCanceled ? (
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-[11px] font-normal text-muted-foreground"
+                                >
+                                  Canceled
+                                </Badge>
+                              ) : null}
+                            </button>
+                          );
+                        })
+                      ) : (
+                        <div className="px-5 py-8 text-center text-[13px] text-muted-foreground">
+                          No {filter === 'all' ? '' : filter} sessions this month.
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </LayerCard.Primary>
+              </LayerCard>
             </div>
           </div>
         </div>
@@ -425,137 +443,21 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
 
       {/* Session detail dialog */}
       <Dialog open={!!selectedSession} onOpenChange={(open) => !open && setSelectedSession(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="border-0 bg-transparent p-0 shadow-none sm:max-w-md">
           {selectedSession ? (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-lg">{selectedSession.eventName ?? 'Mentoring Session'}</DialogTitle>
-              </DialogHeader>
-              <SessionDetail session={selectedSession} roleLabel={roleLabel} />
-            </>
+            <LayerCard>
+              <LayerCard.Secondary className="py-4">
+                <DialogTitle className="text-base font-normal border-0">
+                  {selectedSession.eventName ?? 'Mentoring Session'}
+                </DialogTitle>
+              </LayerCard.Secondary>
+              <LayerCard.Primary className="p-5 rounded-2xl">
+                <SessionDetail session={selectedSession} roleLabel={roleLabel} />
+              </LayerCard.Primary>
+            </LayerCard>
           ) : null}
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
-
-function SessionDetail({ session, roleLabel }: { session: Session; roleLabel: string }) {
-  const isCanceled = session.status === 'CANCELED';
-  const { counterpart } = session;
-
-  return (
-    <div className="mt-6 space-y-6">
-      <div className="flex items-center gap-4">
-        <Avatar className="size-14 ring-2 ring-border">
-          <AvatarImage src={counterpart.image ?? undefined} />
-          <AvatarFallback className="text-xl">
-            {getInitials(counterpart.firstName, counterpart.lastName)}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <p className="text-[16px] font-semibold text-[#111] dark:text-zinc-50">{getFullName(counterpart)}</p>
-          <p className="mt-0.5 text-[13px] text-[#888] dark:text-zinc-400">{roleLabel}</p>
-        </div>
-      </div>
-
-      <div className="space-y-0 divide-y divide-border/60 rounded-xl border border-border/60 bg-muted/20 dark:bg-zinc-900/30">
-        <DetailRow label="Date">
-          <LocalTime
-            date={new Date(session.startTime)}
-            format="date"
-            className="text-[14px] font-medium text-[#111] dark:text-zinc-100"
-          />
-        </DetailRow>
-        <DetailRow label="Time">
-          <span className="tabular-nums text-[14px] font-medium text-[#111] dark:text-zinc-100">
-            <LocalTime date={new Date(session.startTime)} format="time" />
-            {' – '}
-            <LocalTime date={new Date(session.endTime)} format="time" />
-          </span>
-        </DetailRow>
-        <DetailRow label="Status">
-          {isCanceled ? (
-            <Badge variant="destructive" className="text-[12px]">
-              Canceled
-            </Badge>
-          ) : (
-            <Badge className="border-emerald-200 bg-emerald-50 text-[12px] text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400">
-              Active
-            </Badge>
-          )}
-        </DetailRow>
-        {isCanceled && session.canceledAt ? (
-          <DetailRow label="Canceled at">
-            <LocalTime
-              date={new Date(session.canceledAt)}
-              format="datetime"
-              className="tabular-nums text-[14px] font-medium text-[#888] dark:text-zinc-400"
-            />
-          </DetailRow>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between px-4 py-3.5">
-      <span className="text-[13px] text-[#888] dark:text-zinc-400">{label}</span>
-      {children}
-    </div>
-  );
-}
-
-function EmptyState({ userType, hasCalendly }: { userType: 'MENTOR' | 'MENTEE'; hasCalendly: boolean }) {
-  if (userType === 'MENTOR' && !hasCalendly) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-muted/20 px-8 py-16 text-center dark:bg-zinc-900/20">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20">
-          <CalendarDays className="size-7 text-primary" />
-        </div>
-        <h3 className="mt-5 text-balance text-[18px] font-semibold text-[#111] dark:text-zinc-100">
-          Connect Calendly to get started
-        </h3>
-        <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-[#888] dark:text-zinc-400">
-          Once connected, mentees can discover your profile and book sessions directly.
-        </p>
-        <Button asChild className="mt-6 h-11 rounded-xl px-6 font-semibold">
-          <Link href="/dashboard/profile">Connect Calendly</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (userType === 'MENTEE') {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-muted/20 px-8 py-16 text-center dark:bg-zinc-900/20">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20">
-          <Search className="size-7 text-primary" />
-        </div>
-        <h3 className="mt-5 text-balance text-[18px] font-semibold text-[#111] dark:text-zinc-100">
-          Book your first session
-        </h3>
-        <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-[#888] dark:text-zinc-400">
-          Browse our mentors and schedule a time that works for you.
-        </p>
-        <Button asChild className="mt-6 h-11 rounded-xl px-6 font-semibold">
-          <Link href="/dashboard/mentors">Find a mentor</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-muted/20 px-8 py-16 text-center dark:bg-zinc-900/20">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20">
-        <CalendarDays className="size-7 text-primary" />
-      </div>
-      <h3 className="mt-5 text-balance text-[18px] font-semibold text-[#111] dark:text-zinc-100">No sessions yet</h3>
-      <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-[#888] dark:text-zinc-400">
-        Share your profile so mentees can book time with you.
-      </p>
     </div>
   );
 }

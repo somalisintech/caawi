@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { MenteeHome } from '@/components/dashboard/mentee-home';
 import { MentorHome } from '@/components/dashboard/mentor-home';
 import prisma from '@/lib/db';
+import { getPendingRequestCount } from '@/lib/queries/mentorship-requests';
 import {
   getMenteeCount,
   getRecentMenteeSessions,
@@ -36,11 +37,12 @@ export default async function DashboardHomePage() {
 
   if (user?.profile?.userType === 'MENTOR') {
     const profileId = user.profile.id;
-    const [upcomingSessions, menteeCount, totalSessions, recentSessions] = await Promise.all([
+    const [upcomingSessions, menteeCount, totalSessions, recentSessions, pendingRequestCount] = await Promise.all([
       getUpcomingSessions(profileId),
       getMenteeCount(profileId),
       getTotalSessionCount(profileId),
-      getRecentSessions(profileId)
+      getRecentSessions(profileId),
+      getPendingRequestCount(profileId)
     ]);
 
     return (
@@ -51,6 +53,7 @@ export default async function DashboardHomePage() {
         menteeCount={menteeCount}
         totalSessions={totalSessions}
         recentSessions={recentSessions}
+        pendingRequestCount={pendingRequestCount}
       />
     );
   }

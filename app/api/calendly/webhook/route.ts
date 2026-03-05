@@ -19,12 +19,23 @@ export async function POST(req: Request) {
 
   // Parse Calendly's composite signature header: t=<timestamp>,v1=<sig>
   let sig = signature ?? '';
+  const tMatch = sig.match(/(?:^|,)t=([^,]+)/);
   const v1Match = sig.match(/(?:^|,)v1=([^,]+)/);
-  if (v1Match) {
-    sig = v1Match[1] ?? '';
+
+  const timestamp = tMatch?.[1] ?? '';
+  sig = v1Match?.[1] ?? '';
+
+  // Reject stale webhooks (> 5 minutes)
+  const tsSeconds = Number(timestamp);
+  if (!tsSeconds || Math.abs(Date.now() / 1000 - tsSeconds) > 300) {
+    return NextResponse.json({ error: 'Invalid or stale signature' }, { status: 401 });
   }
 
-  if (!sig || !verifySignature(body, sig)) {
+  const signedPayload = `${timestamp}.${body}`;
+  if (!sig || !verifySignature(signedPayload, sig)) {
+    logger.error('[webhook] Invalid signature', { signature });
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+  }
     logger.error('[webhook] Invalid signature', { signature });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }

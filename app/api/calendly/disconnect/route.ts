@@ -54,6 +54,12 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     try {
       await revokeAccessToken(accessToken);
     } catch (err) {
+      req.log.error('Failed to revoke access token', {
+        error: err instanceof Error ? err.message : String(err)
+      });
+    }
+  }
+    } catch (err) {
       req.log.error('Failed to revoke access token, continuing with disconnect', {
         error: err instanceof Error ? err.message : String(err)
       });

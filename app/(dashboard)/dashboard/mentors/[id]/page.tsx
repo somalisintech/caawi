@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import { MentorProfile } from '@/components/mentors/mentor-profile';
 import prisma from '@/lib/db';
 
@@ -9,5 +10,7 @@ export default async function Mentor(props: { params: Promise<{ id: string }> })
     }
   });
 
-  return mentor && <MentorProfile mentor={mentor} />;
+  if (!mentor) notFound();
+
+  return <MentorProfile mentor={mentor} />;
 }

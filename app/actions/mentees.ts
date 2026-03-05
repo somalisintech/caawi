@@ -69,15 +69,6 @@ export async function browseNudgeAction(menteeProfileId: string) {
     const mentorName = [mentorUser.firstName, mentorUser.lastName].filter(Boolean).join(' ') || 'A mentor';
     const menteeEmail = menteeProfile.user.email;
 
-    if (menteeEmail) {
-      await resend.emails.send({
-        from: 'Caawi <notifications@caawi.com>',
-        to: menteeEmail,
-        subject: `${mentorName} wants to connect with you on Caawi`,
-        react: MenteeNudgeEmail({ mentorName, mentorProfileId: mentorUser.profile.id })
-      });
-    }
-
     await prisma.menteeNudge.upsert({
       where: {
         mentorProfileId_menteeProfileId: {
@@ -91,6 +82,15 @@ export async function browseNudgeAction(menteeProfileId: string) {
         menteeProfileId
       }
     });
+
+    if (menteeEmail) {
+      await resend.emails.send({
+        from: 'Caawi <notifications@caawi.com>',
+        to: menteeEmail,
+        subject: `${mentorName} wants to connect with you on Caawi`,
+        react: MenteeNudgeEmail({ mentorName, mentorProfileId: mentorUser.profile.id })
+      });
+    }
 
     revalidatePath('/dashboard/browse-mentees');
     return { success: true, message: 'Nudge sent!' };

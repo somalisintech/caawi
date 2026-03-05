@@ -3,22 +3,18 @@ import prisma from '@/lib/db';
 import { resend } from '@/lib/email';
 import { NudgeEmail } from '@/lib/emails/nudge';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
 const NUDGE_COOLDOWN_DAYS = 7;
 
 export const POST = withLogger(async (req: LoggerRequest, { params }) => {
   const { id } = await params;
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (!data.user || error) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401 });
   }
 
   const mentorUser = await prisma.user.findUnique({
-    where: { email: data.user.email },
+    where: { email: req.user.email },
     select: {
       firstName: true,
       lastName: true,
@@ -61,6 +57,13 @@ export const POST = withLogger(async (req: LoggerRequest, { params }) => {
     }
   }
 
+  // Update cooldown timestamp before sending email to prevent email bombing
+  // if the email send succeeds but the DB update fails
+  await prisma.mentorshipRequest.update({
+    where: { id },
+    data: { lastNudgedAt: new Date() }
+  });
+
   const mentorName = [mentorUser.firstName, mentorUser.lastName].filter(Boolean).join(' ') || 'Your mentor';
   const menteeEmail = request.menteeProfile.user.email;
 
@@ -72,11 +75,6 @@ export const POST = withLogger(async (req: LoggerRequest, { params }) => {
       react: NudgeEmail({ mentorName, mentorProfileId: request.mentorProfileId })
     });
   }
-
-  await prisma.mentorshipRequest.update({
-    where: { id },
-    data: { lastNudgedAt: new Date() }
-  });
 
   req.log.debug('Mentee nudged', { requestId: id });
 

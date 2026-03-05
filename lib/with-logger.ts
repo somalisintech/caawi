@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import type { User } from '@supabase/supabase-js';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
@@ -6,6 +7,7 @@ import { createClient } from '@/utils/supabase/server';
 
 export type LoggerRequest = NextRequest & {
   log: typeof logger;
+  user: User | null;
 };
 
 type RouteContext = { params: Promise<Record<string, string>> };
@@ -29,6 +31,7 @@ export function withLogger(handler: (req: LoggerRequest, context: RouteContext) 
     };
 
     (req as LoggerRequest).log = scopedLog;
+    (req as LoggerRequest).user = data.user;
 
     try {
       return await handler(req as LoggerRequest, context);

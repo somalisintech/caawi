@@ -3,14 +3,10 @@ import { createWebhookSubscription, getAccessToken, getCurrentUser } from '@/app
 import { encrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
 export const GET = withLogger(async (req: LoggerRequest) => {
   try {
-    const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-
-    if (!data.user) {
+    if (!req.user) {
       return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
     }
 
@@ -57,12 +53,12 @@ export const GET = withLogger(async (req: LoggerRequest) => {
     };
 
     const user = await prisma.user.findUnique({
-      where: { email: data.user.email },
+      where: { email: req.user.email },
       select: { profile: { select: { id: true, calendlyUserUri: true } } }
     });
 
     if (!user?.profile) {
-      req.log.error('User profile not found', { email: data.user.email });
+      req.log.error('User profile not found', { email: req.user.email });
       return NextResponse.json({ message: 'User profile not found' }, { status: 404 });
     }
 
@@ -111,20 +107,7 @@ export const GET = withLogger(async (req: LoggerRequest) => {
 
     req.log.info('Updated user profile with Calendly user data', resource);
 
-    const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      path: '/'
-    };
-    response.cookies.set('calendly_access_token', access_token, cookieOptions);
-    if (refresh_token) {
-      response.cookies.set('calendly_refresh_token', refresh_token, cookieOptions);
-    }
-    response.cookies.set('calendly_organization', organization, cookieOptions);
-
-    return response;
+    return NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
   } catch (error) {
     req.log.error('Error fetching access token', { error });
     return NextResponse.json(

@@ -3,23 +3,19 @@ import { deleteWebhookSubscription, revokeAccessToken } from '@/app/api/calendly
 import { decrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
 export const POST = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (!data.user || error) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
   req.log.info('Disconnecting Calendly', {
-    userId: data.user.id
+    userId: req.user.id
   });
 
   const user = await prisma.user.findUnique({
     where: {
-      email: data.user.email
+      email: req.user.email
     },
     select: {
       profile: {
@@ -36,9 +32,8 @@ export const POST = withLogger(async (req: LoggerRequest) => {
   try {
     accessToken = calendlyUser?.accessToken ? decrypt(calendlyUser.accessToken) : undefined;
   } catch {
-    req.log.error('Failed to decrypt access token, falling back to cookie');
+    req.log.error('Failed to decrypt access token');
   }
-  accessToken ??= req.cookies.get('calendly_access_token')?.value;
 
   if (calendlyUser?.webhookUri && accessToken) {
     try {
@@ -60,13 +55,8 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     }
   }
 
-  const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
-  response.cookies.delete('calendly_access_token');
-  response.cookies.delete('calendly_refresh_token');
-  response.cookies.delete('calendly_organization');
-
   if (!calendlyUser) {
-    return response;
+    return NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
   }
 
   await prisma.calendlyUser.delete({
@@ -77,5 +67,5 @@ export const POST = withLogger(async (req: LoggerRequest) => {
 
   req.log.info('Calendly disconnected successfully');
 
-  return response;
+  return NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
 });

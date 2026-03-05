@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { Prisma } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
 const createRequestSchema = z.object({
   mentorProfileId: z.string().uuid(),
@@ -10,10 +10,7 @@ const createRequestSchema = z.object({
 });
 
 export const POST = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (!data.user || error) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401 });
   }
 
@@ -27,7 +24,7 @@ export const POST = withLogger(async (req: LoggerRequest) => {
   const { mentorProfileId, message } = parsed.data;
 
   const menteeUser = await prisma.user.findUnique({
-    where: { email: data.user.email },
+    where: { email: req.user.email },
     select: {
       profile: {
         select: { id: true, userType: true, gender: true }
@@ -58,38 +55,51 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     return NextResponse.json({ message: 'This mentor only accepts same-gender mentees' }, { status: 403 });
   }
 
-  // Delete existing DECLINED request so mentee can re-request
-  await prisma.mentorshipRequest.deleteMany({
-    where: {
-      menteeProfileId: menteeProfile.id,
-      mentorProfileId,
-      status: 'DECLINED'
-    }
-  });
+  try {
+    const request = await prisma.$transaction(async (tx) => {
+      // Delete existing DECLINED request so mentee can re-request
+      await tx.mentorshipRequest.deleteMany({
+        where: {
+          menteeProfileId: menteeProfile.id,
+          mentorProfileId,
+          status: 'DECLINED'
+        }
+      });
 
-  // Check for existing PENDING/ACCEPTED request
-  const existing = await prisma.mentorshipRequest.findUnique({
-    where: {
-      menteeProfileId_mentorProfileId: {
-        menteeProfileId: menteeProfile.id,
-        mentorProfileId
+      // Check for existing PENDING/ACCEPTED request
+      const existing = await tx.mentorshipRequest.findUnique({
+        where: {
+          menteeProfileId_mentorProfileId: {
+            menteeProfileId: menteeProfile.id,
+            mentorProfileId
+          }
+        }
+      });
+
+      if (existing) {
+        return null;
       }
-    }
-  });
 
-  if (existing) {
-    return NextResponse.json({ message: 'Request already exists' }, { status: 409 });
+      return tx.mentorshipRequest.create({
+        data: {
+          menteeProfileId: menteeProfile.id,
+          mentorProfileId,
+          message
+        }
+      });
+    });
+
+    if (!request) {
+      return NextResponse.json({ message: 'Request already exists' }, { status: 409 });
+    }
+
+    req.log.debug('Mentorship request created', { requestId: request.id });
+
+    return NextResponse.json(request, { status: 201 });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return NextResponse.json({ message: 'Request already exists' }, { status: 409 });
+    }
+    throw error;
   }
-
-  const request = await prisma.mentorshipRequest.create({
-    data: {
-      menteeProfileId: menteeProfile.id,
-      mentorProfileId,
-      message
-    }
-  });
-
-  req.log.debug('Mentorship request created', { requestId: request.id });
-
-  return NextResponse.json(request, { status: 201 });
 });

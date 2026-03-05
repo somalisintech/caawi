@@ -4,7 +4,6 @@ import { Prisma } from '@/generated/prisma/client';
 import { SKILL_TO_CATEGORY } from '@/lib/constants/skills';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
 const profileUpdateSchema = z.object({
   userType: z.enum(['MENTOR', 'MENTEE']).optional(),
@@ -27,15 +26,12 @@ const profileUpdateSchema = z.object({
 });
 
 export const DELETE = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-
-  if (!data.user) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
   try {
-    await prisma.user.delete({ where: { email: data.user.email } });
+    await prisma.user.delete({ where: { email: req.user.email } });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
@@ -44,17 +40,14 @@ export const DELETE = withLogger(async (req: LoggerRequest) => {
   }
 
   req.log.debug('User deleted', {
-    userId: data.user.id
+    userId: req.user.id
   });
 
-  return NextResponse.json(data);
+  return NextResponse.json({ user: req.user });
 });
 
 export const POST = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (!data.user || error) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
@@ -87,7 +80,7 @@ export const POST = withLogger(async (req: LoggerRequest) => {
 
   const user = await prisma.user.update({
     where: {
-      email: data.user.email
+      email: req.user.email
     },
     data: {
       firstName,
@@ -151,7 +144,7 @@ export const POST = withLogger(async (req: LoggerRequest) => {
   });
 
   req.log.debug('User profile updated', {
-    userId: data.user.id
+    userId: req.user.id
   });
 
   return NextResponse.json(user);

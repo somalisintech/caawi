@@ -4,7 +4,6 @@ import prisma from '@/lib/db';
 import { resend } from '@/lib/email';
 import { RequestAcceptedEmail } from '@/lib/emails/request-accepted';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
 const updateStatusSchema = z.object({
   status: z.enum(['ACCEPTED', 'DECLINED'])
@@ -12,10 +11,8 @@ const updateStatusSchema = z.object({
 
 export const PATCH = withLogger(async (req: LoggerRequest, { params }) => {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
 
-  if (!data.user || error) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401 });
   }
 
@@ -27,7 +24,7 @@ export const PATCH = withLogger(async (req: LoggerRequest, { params }) => {
   }
 
   const mentorUser = await prisma.user.findUnique({
-    where: { email: data.user.email },
+    where: { email: req.user.email },
     select: {
       firstName: true,
       lastName: true,

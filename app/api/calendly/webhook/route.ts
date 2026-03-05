@@ -14,6 +14,11 @@ function verifySignature(payload: string, signature: string): boolean {
 }
 
 export async function POST(req: Request) {
+  if (!SIGNING_KEY) {
+    logger.error('[webhook] Missing CALENDLY_WEBHOOK_SIGNING_KEY');
+    return NextResponse.json({ error: 'Webhook signing key not configured' }, { status: 500 });
+  }
+
   const body = await req.text();
   const signature = req.headers.get('calendly-webhook-signature');
 
@@ -33,9 +38,6 @@ export async function POST(req: Request) {
 
   const signedPayload = `${timestamp}.${body}`;
   if (!sig || !verifySignature(signedPayload, sig)) {
-    logger.error('[webhook] Invalid signature', { signature });
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-  }
     logger.error('[webhook] Invalid signature', { signature });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }

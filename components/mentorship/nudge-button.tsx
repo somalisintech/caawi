@@ -47,7 +47,7 @@ export function NudgeButton({ requestId, lastNudgedAt }: Props) {
 
   if (!canNudge) {
     return (
-      <Button size="sm" variant="outline" disabled className="gap-1">
+      <Button size="icon" variant="outline" disabled className="text-xs font-mono uppercase w-fit px-2">
         <Bell className="size-3.5" />
         Nudged {daysRemaining}d ago
       </Button>
@@ -55,7 +55,13 @@ export function NudgeButton({ requestId, lastNudgedAt }: Props) {
   }
 
   return (
-    <Button size="sm" variant="outline" disabled={isPending} onClick={handleNudge} className="gap-1">
+    <Button
+      size="icon"
+      variant="outline"
+      disabled={isPending}
+      onClick={handleNudge}
+      className="text-xs font-mono uppercase w-fit px-2"
+    >
       <Bell className="size-3.5" />
       {isPending ? 'Sending...' : 'Nudge'}
     </Button>

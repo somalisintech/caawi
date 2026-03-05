@@ -59,12 +59,6 @@ export const POST = withLogger(async (req: LoggerRequest) => {
       });
     }
   }
-    } catch (err) {
-      req.log.error('Failed to revoke access token, continuing with disconnect', {
-        error: err instanceof Error ? err.message : String(err)
-      });
-    }
-  }
 
   const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
   response.cookies.delete('calendly_access_token');

@@ -35,7 +35,7 @@ export function BrowseNudgeButton({ menteeProfileId, lastNudgedAt }: Props) {
 
   if (!canNudge) {
     return (
-      <Button size="sm" variant="outline" disabled className="gap-1">
+      <Button size="sm" variant="outline" disabled className="text-xs gap-1 font-mono uppercase w-fit px-2">
         <Bell className="size-3.5" />
         Nudged {daysRemaining}d ago
       </Button>
@@ -43,7 +43,13 @@ export function BrowseNudgeButton({ menteeProfileId, lastNudgedAt }: Props) {
   }
 
   return (
-    <Button size="sm" variant="outline" disabled={isPending} onClick={handleNudge} className="gap-1">
+    <Button
+      size="sm"
+      variant="outline"
+      disabled={isPending}
+      onClick={handleNudge}
+      className="text-xs gap-1 font-mono uppercase w-fit px-2"
+    >
       <Bell className="size-3.5" />
       {isPending ? 'Sending...' : 'Nudge'}
     </Button>

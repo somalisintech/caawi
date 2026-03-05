@@ -117,11 +117,11 @@ export const POST = withLogger(async (req: LoggerRequest) => {
             ? {
                 connectOrCreate: {
                   where: {
-                    city_country: { city: city ?? '', country: country }
+                    city_country: { city: city ?? '', country }
                   },
                   create: {
                     country,
-                    city
+                    city: city ?? ''
                   }
                 }
               }
@@ -130,14 +130,11 @@ export const POST = withLogger(async (req: LoggerRequest) => {
             ? {
                 connectOrCreate: {
                   where: {
-                    role_company: {
-                      role: role,
-                      company: company ?? ''
-                    }
+                    role_company: { role, company: company ?? '' }
                   },
                   create: {
                     role,
-                    company
+                    company: company ?? ''
                   }
                 }
               }

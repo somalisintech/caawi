@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import { Gender } from '@/generated/prisma/browser';
+import { Gender, UserType } from '@/generated/prisma/browser';
 
 export const profileFormSchema = z
   .object({
+    userType: z.enum(UserType, { error: 'Required' }),
     firstName: z.string().min(1, { error: 'First name is required' }),
     lastName: z.string().min(1, { error: 'Last name is required' }),
     email: z.email({ error: 'Please enter a valid email address' }),
@@ -16,7 +17,8 @@ export const profileFormSchema = z
     country: z.string().optional(),
     city: z.string().optional(),
     role: z.string().optional(),
-    company: z.string().optional()
+    company: z.string().optional(),
+    skills: z.array(z.string()).optional()
   })
   .superRefine((data, ctx) => {
     if (data.country && !data.city) {

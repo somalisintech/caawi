@@ -3,8 +3,6 @@ import { redirect } from 'next/navigation';
 import type { PropsWithChildren } from 'react';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
 import { Header } from '@/components/layout/header';
-import { ProfileSummary } from '@/components/layout/profile-summary';
-import { CompleteProfile } from '@/components/profile/complete-profile';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
@@ -42,8 +40,10 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
           linkedInUrl: true,
           githubUrl: true,
           buyMeCoffeeUrl: true,
+          onboardingCompleted: true,
           occupation: true,
-          location: true
+          location: true,
+          calendlyUser: true
         }
       }
     }
@@ -54,22 +54,18 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     redirect('/auth');
   }
 
+  if (!user.profile?.onboardingCompleted) {
+    redirect('/onboarding');
+  }
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-zinc-50 to-primary/20 dark:from-zinc-950 dark:to-primary/10">
-      <CompleteProfile user={user} />
-      <div className="container">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
+      <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <Header />
       </div>
-      <div className="container pb-8">
-        <div className="flex gap-8">
-          <div className="flex flex-1 flex-col gap-4">
-            <DashboardMenu />
-            <main>{children}</main>
-          </div>
-          <div className="hidden lg:block">
-            <ProfileSummary user={user} />
-          </div>
-        </div>
+      <DashboardMenu userType={user.profile?.userType ?? 'MENTEE'} />
+      <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-10 md:px-8 md:pt-12">
+        <main>{children}</main>
       </div>
     </div>
   );

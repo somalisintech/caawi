@@ -17,7 +17,8 @@ export const profileFormSchema = z
     country: z.string().optional(),
     city: z.string().optional(),
     role: z.string().optional(),
-    company: z.string().optional()
+    company: z.string().optional(),
+    skills: z.array(z.string()).optional()
   })
   .superRefine((data, ctx) => {
     if (data.country && !data.city) {

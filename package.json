@@ -40,9 +40,15 @@
     "seed": "doppler run -- tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.4.1",
+    "@react-email/components": "^1.0.8",
     "@sentry/nextjs": "^10.39.0",
     "@sentry/profiling-node": "^10.39.0",
     "@supabase/ssr": "^0.8.0",
@@ -66,6 +72,7 @@
     "react-hook-form": "^7.71.2",
     "react-icons": "^5.5.0",
     "require-in-the-middle": "8.0.1",
+    "resend": "^6.9.2",
     "sharp": "^0.34.5",
     "sonner": "^2.0.7",
     "tailwind-scrollbar-hide": "^4.0.0",

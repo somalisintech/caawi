@@ -1,4 +1,4 @@
-const DEFAULT_REDIRECT = '/dashboard/profile';
+const DEFAULT_REDIRECT = '/onboarding';
 
 /**
  * Validates a redirect path to prevent open redirects.

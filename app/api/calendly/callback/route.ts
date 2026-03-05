@@ -61,6 +61,11 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       select: { profile: { select: { id: true, calendlyUserUri: true } } }
     });
 
+    if (!user?.profile) {
+      req.log.error('User profile not found', { email: data.user.email });
+      return NextResponse.json({ message: 'User profile not found' }, { status: 404 });
+    }
+
     const encryptedAccessToken = encrypt(access_token);
     const encryptedRefreshToken = refresh_token ? encrypt(refresh_token) : null;
 
@@ -71,7 +76,7 @@ export const GET = withLogger(async (req: LoggerRequest) => {
         ...calendlyFields,
         accessToken: encryptedAccessToken,
         refreshToken: encryptedRefreshToken,
-    profile: undefined
+        profile: { connect: { id: user.profile.id } }
       },
       update: {
         ...calendlyFields,

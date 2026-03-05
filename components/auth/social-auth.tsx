@@ -32,7 +32,7 @@ const socialAuth: Auth[] = [
   }
 ];
 
-export function SocialAuth() {
+export function SocialAuth({ next }: { next?: string }) {
   const [loading, setLoading] = useState<Provider | null>();
 
   return (
@@ -46,6 +46,7 @@ export function SocialAuth() {
           onClick={() => setLoading(auth.provider)}
           formAction={(formData) => {
             formData.set('provider', auth.provider);
+            if (next) formData.set('next', next);
             return signInWithOAuth(formData);
           }}
         >

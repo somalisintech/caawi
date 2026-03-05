@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { type AuthFormFields, authFormSchema } from './auth-form-schema';
 
-export function AuthForm() {
+export function AuthForm({ next }: { next?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<AuthFormFields>({
@@ -27,6 +27,7 @@ export function AuthForm() {
     try {
       const formData = new FormData();
       formData.append('email', data.email);
+      if (next) formData.append('next', next);
       const result = await signInWithOtp(formData);
       if (result?.error) {
         toast.error(result.error);

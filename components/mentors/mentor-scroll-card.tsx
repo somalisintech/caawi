@@ -8,7 +8,8 @@ type Props = {
 };
 
 export function MentorScrollCard({ mentor, authenticated }: Props) {
-  const redirectPath = authenticated ? `/dashboard/mentors/${mentor.id}` : '/auth';
+  const mentorPath = `/dashboard/mentors/${mentor.id}`;
+  const redirectPath = authenticated ? mentorPath : `/auth?next=${mentorPath}`;
 
   return (
     <Link href={redirectPath} className="flex flex-col gap-4 p-6">

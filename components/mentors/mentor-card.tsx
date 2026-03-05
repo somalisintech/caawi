@@ -9,7 +9,8 @@ type Props = {
 };
 
 export function MentorCard({ mentor, authenticated }: Props) {
-  const redirectPath = authenticated ? `/dashboard/mentors/${mentor.id}` : '/auth';
+  const mentorPath = `/dashboard/mentors/${mentor.id}`;
+  const redirectPath = authenticated ? mentorPath : `/auth?next=${mentorPath}`;
 
   return (
     <div className="flex flex-col gap-4 p-6">

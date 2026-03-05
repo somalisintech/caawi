@@ -114,7 +114,9 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       path: '/'
     };
     response.cookies.set('calendly_access_token', access_token, cookieOptions);
-    response.cookies.set('calendly_refresh_token', refresh_token, cookieOptions);
+    if (refresh_token) {
+      response.cookies.set('calendly_refresh_token', refresh_token, cookieOptions);
+    }
     response.cookies.set('calendly_organization', organization, cookieOptions);
 
     return response;

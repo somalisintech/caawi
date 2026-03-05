@@ -56,15 +56,9 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       resource_type
     };
 
-    await prisma.user.update({
+    const user = await prisma.user.findUnique({
       where: { email: data.user.email },
-      data: {
-        profile: {
-          update: {
-            calendlyUserUri: uri
-          }
-        }
-      }
+      select: { profile: { select: { id: true, calendlyUserUri: true } } }
     });
 
     const encryptedAccessToken = encrypt(access_token);

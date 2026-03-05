@@ -64,6 +64,11 @@ export async function nudgeMenteeAction(requestId: string) {
     const mentorName = [mentorUser.firstName, mentorUser.lastName].filter(Boolean).join(' ') || 'Your mentor';
     const menteeEmail = request.menteeProfile.user.email;
 
+    await prisma.mentorshipRequest.update({
+      where: { id: requestId },
+      data: { lastNudgedAt: new Date() }
+    });
+
     if (menteeEmail) {
       await resend.emails.send({
         from: 'Caawi <notifications@caawi.com>',
@@ -72,11 +77,6 @@ export async function nudgeMenteeAction(requestId: string) {
         react: NudgeEmail({ mentorName, mentorProfileId: request.mentorProfileId })
       });
     }
-
-    await prisma.mentorshipRequest.update({
-      where: { id: requestId },
-      data: { lastNudgedAt: new Date() }
-    });
 
     revalidatePath('/dashboard/requests');
     return { success: true, message: 'Nudge sent!' };

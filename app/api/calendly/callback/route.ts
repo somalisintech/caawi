@@ -71,7 +71,7 @@ export const GET = withLogger(async (req: LoggerRequest) => {
         ...calendlyFields,
         accessToken: encryptedAccessToken,
         refreshToken: encryptedRefreshToken,
-        profile: { connect: { calendlyUserUri: uri } }
+    profile: undefined
       },
       update: {
         ...calendlyFields,

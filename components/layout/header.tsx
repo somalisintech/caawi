@@ -1,4 +1,3 @@
-import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { SignOutMenuButton } from '@/components/auth/sign-out-menu-button';
 import { CaawiLogo } from '@/components/brand/caawi-logo';
@@ -51,8 +50,6 @@ export async function Header() {
   const avatarImage = user?.image ?? '';
   const avatarFallback = user?.firstName?.at(0) ?? '-';
 
-  const name = [user?.firstName, user?.lastName].join(' ');
-
   return (
     <header className="flex items-center justify-between py-5">
       <div className="flex items-center gap-3">
@@ -63,15 +60,13 @@ export async function Header() {
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="flex items-center gap-2 px-2" variant="secondary">
+            <Button className="flex items-center gap-2 px-2" variant="outline">
               <div className="flex items-center gap-2">
                 <Avatar className="size-6">
                   <AvatarImage src={avatarImage} alt="" />
-                  <AvatarFallback className="text-sm">{avatarFallback}</AvatarFallback>
+                  <AvatarFallback className="text-sm bg-transparent">{avatarFallback}</AvatarFallback>
                 </Avatar>
-                <div>{name}</div>
               </div>
-              <ChevronDown size={16} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

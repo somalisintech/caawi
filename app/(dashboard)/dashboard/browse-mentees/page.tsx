@@ -5,7 +5,7 @@ import { getMenteesWithCountries } from '@/lib/queries/mentees';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function BrowseMenteesPage(props: {
-  searchParams: Promise<{ search?: string; country?: string }>;
+  searchParams: Promise<{ search?: string; country?: string; page?: string }>;
 }) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
@@ -20,7 +20,7 @@ export default async function BrowseMenteesPage(props: {
   if (!profile || profile.userType !== 'MENTOR') redirect('/dashboard');
 
   const searchParams = await props.searchParams;
-  const [{ mentees, countries }, nudges] = await Promise.all([
+  const [{ mentees, countries, totalCount, totalPages, currentPage }, nudges] = await Promise.all([
     getMenteesWithCountries(searchParams),
     prisma.menteeNudge.findMany({
       where: { mentorProfileId: profile.id },
@@ -33,5 +33,23 @@ export default async function BrowseMenteesPage(props: {
     nudgeMap[nudge.menteeProfileId] = nudge.lastNudgedAt;
   }
 
-  return <MenteesBrowseList mentees={mentees} countries={countries} nudgeMap={nudgeMap} />;
+  function buildHref(page: number) {
+    const params = new URLSearchParams();
+    if (searchParams.search) params.set('search', searchParams.search);
+    if (searchParams.country) params.set('country', searchParams.country);
+    if (page > 1) params.set('page', String(page));
+    return params.toString() ? `?${params}` : '?';
+  }
+
+  return (
+    <MenteesBrowseList
+      mentees={mentees}
+      countries={countries}
+      nudgeMap={nudgeMap}
+      totalCount={totalCount}
+      totalPages={totalPages}
+      currentPage={currentPage}
+      buildHref={buildHref}
+    />
+  );
 }

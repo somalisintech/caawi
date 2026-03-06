@@ -102,6 +102,7 @@ export async function MentorProfile({ mentor }: Props) {
         <div className="space-y-1">
           <div className="text-sm uppercase text-muted-foreground">Bio</div>
           <p>{mentor.bio || '-'}</p>
+        </div>
         {mentor.skills.length > 0 && (
           <>
             <div className="space-y-2">

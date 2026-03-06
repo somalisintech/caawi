@@ -10,17 +10,38 @@ export const metadata: Metadata = {
 };
 
 export default async function PublicMentorsListPage(props: {
-  searchParams: Promise<{ search?: string; country?: string; skills?: string | string[] }>;
+  searchParams: Promise<{ search?: string; country?: string; skills?: string | string[]; page?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const { mentors, countries } = await getMentorsWithCountries(searchParams);
+  const { mentors, countries, totalCount, totalPages, currentPage } = await getMentorsWithCountries(searchParams);
 
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
+  function buildHref(page: number) {
+    const params = new URLSearchParams();
+    if (searchParams.search) params.set('search', searchParams.search);
+    if (searchParams.country) params.set('country', searchParams.country);
+    if (searchParams.skills) {
+      const skills = Array.isArray(searchParams.skills) ? searchParams.skills : [searchParams.skills];
+      for (const skill of skills) params.append('skills', skill);
+    }
+    if (page > 1) params.set('page', String(page));
+    return params.toString() ? `?${params}` : '?';
+  }
+
   return (
     <div className="pb-8">
-      <MentorsList mentors={mentors} authenticated={!!data.user} countries={countries} allSkills={SKILLS_BY_CATEGORY} />
+      <MentorsList
+        mentors={mentors}
+        authenticated={!!data.user}
+        countries={countries}
+        allSkills={SKILLS_BY_CATEGORY}
+        totalCount={totalCount}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        buildHref={buildHref}
+      />
     </div>
   );
 }

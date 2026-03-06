@@ -3,10 +3,33 @@ import { SKILLS_BY_CATEGORY } from '@/lib/constants/skills';
 import { getMentorsWithCountries } from '@/lib/queries/mentors';
 
 export default async function MentorsListPage(props: {
-  searchParams: Promise<{ search?: string; country?: string; skills?: string | string[] }>;
+  searchParams: Promise<{ search?: string; country?: string; skills?: string | string[]; page?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const { mentors, countries } = await getMentorsWithCountries(searchParams);
+  const { mentors, countries, totalCount, totalPages, currentPage } = await getMentorsWithCountries(searchParams);
 
-  return <MentorsList mentors={mentors} authenticated={true} countries={countries} allSkills={SKILLS_BY_CATEGORY} />;
+  function buildHref(page: number) {
+    const params = new URLSearchParams();
+    if (searchParams.search) params.set('search', searchParams.search);
+    if (searchParams.country) params.set('country', searchParams.country);
+    if (searchParams.skills) {
+      const skills = Array.isArray(searchParams.skills) ? searchParams.skills : [searchParams.skills];
+      for (const skill of skills) params.append('skills', skill);
+    }
+    if (page > 1) params.set('page', String(page));
+    return params.toString() ? `?${params}` : '?';
+  }
+
+  return (
+    <MentorsList
+      mentors={mentors}
+      authenticated={true}
+      countries={countries}
+      allSkills={SKILLS_BY_CATEGORY}
+      totalCount={totalCount}
+      totalPages={totalPages}
+      currentPage={currentPage}
+      buildHref={buildHref}
+    />
+  );
 }

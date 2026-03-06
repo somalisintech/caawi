@@ -1,5 +1,7 @@
 import { MentorsSearch } from '@/components/mentors/mentors-search';
 import { Card } from '@/components/ui/card';
+import { Pagination } from '@/components/ui/pagination';
+import { PAGE_SIZE } from '@/lib/constants/data';
 import type { MenteeWithDetails } from '@/lib/queries/mentees';
 import { MenteeBrowseCard } from './mentee-browse-card';
 
@@ -7,14 +9,31 @@ type Props = {
   mentees: MenteeWithDetails[];
   countries: string[];
   nudgeMap: Record<string, Date | null>;
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+  buildHref: (page: number) => string;
 };
 
-export function MenteesBrowseList({ mentees, countries, nudgeMap }: Props) {
+export function MenteesBrowseList({
+  mentees,
+  countries,
+  nudgeMap,
+  totalCount,
+  totalPages,
+  currentPage,
+  buildHref
+}: Props) {
+  const start = totalCount > 0 ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
+  const end = start + mentees.length - 1;
+
   return (
     <Card className="grid grid-cols-1 divide-y-2 gap-0">
       <div className="p-5">
         <div className="mb-2 h-fit">
-          <h3 className="text-lg font-medium">Search ({mentees.length} mentees)</h3>
+          <h3 className="text-lg font-medium">
+            {totalCount > 0 ? `Showing ${start}-${end} of ${totalCount} mentees` : `Search (0 mentees)`}
+          </h3>
         </div>
         <MentorsSearch countries={countries} />
       </div>
@@ -28,6 +47,7 @@ export function MenteesBrowseList({ mentees, countries, nudgeMap }: Props) {
           <MenteeBrowseCard key={mentee.id} mentee={mentee} lastNudgedAt={nudgeMap[mentee.id] ?? null} />
         ))
       )}
+      <Pagination currentPage={currentPage} totalPages={totalPages} buildHref={buildHref} />
     </Card>
   );
 }

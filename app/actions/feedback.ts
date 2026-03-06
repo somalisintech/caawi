@@ -76,8 +76,9 @@ export async function submitSessionFeedbackAction(data: { sessionId: string; sta
 
   revalidatePath('/dashboard/sessions');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard');
   return { success: true, message: 'Feedback submitted' };
-  return { success: true, message: 'Feedback submitted' };
+}
 }
 
 const sessionFeedbackSchema = z.object({

@@ -75,7 +75,10 @@ export async function submitSessionFeedbackAction(data: { sessionId: string; sta
   logger.info('Session feedback submitted', { userId: authData.user.id, sessionId, role, stars });
 
   revalidatePath('/dashboard/sessions');
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard');
   return { success: true, message: 'Feedback submitted' };
+}
 }
 
 const sessionFeedbackSchema = z.object({

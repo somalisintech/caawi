@@ -35,6 +35,8 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
       } else {
         setFetchError(true);
       }
+    } catch {
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -71,20 +73,8 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
   }
 
   // User has submitted — show their feedback + other party status
-  const windowClosed = feedback.windowClosesAt ? new Date() >= new Date(feedback.windowClosesAt) : false;
-
-  return (
-    <div className="space-y-3 rounded-md border border-border/60 bg-muted/20 p-4 dark:bg-zinc-900/30">
-      <div className="flex items-center justify-between">
-        <p className="text-[13px] font-medium text-foreground">Your rating</p>
-        <StarRating value={feedback.myFeedback.stars} readonly size="sm" />
-      </div>
-      {feedback.myFeedback.comment ? (
-        <p className="text-[13px] text-muted-foreground">&ldquo;{feedback.myFeedback.comment}&rdquo;</p>
-      ) : null}
-
-      {/* Other party's feedback */}
-      {feedback.otherFeedback && windowClosed ? (
+  // Other party's feedback
+  {feedback.otherFeedback ? (
         <div className="border-t border-border/40 pt-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">

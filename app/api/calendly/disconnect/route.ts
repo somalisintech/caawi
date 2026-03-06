@@ -18,8 +18,10 @@ export const POST = withLogger(async (req: LoggerRequest) => {
       email: req.user.email
     },
     select: {
+      id: true,
       profile: {
         select: {
+          id: true,
           calendlyUser: true
         }
       }
@@ -63,6 +65,11 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     where: {
       uri: calendlyUser.uri
     }
+  });
+
+  await prisma.profile.update({
+    where: { id: user.profile!.id },
+    data: { calendlyUserUri: null }
   });
 
   req.log.info('Calendly disconnected successfully');

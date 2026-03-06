@@ -25,17 +25,20 @@ type Props = {
 export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props) {
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
-const loadFeedback = useCallback(async () => {
-  try {
-    const result = await getSessionFeedbackAction(sessionId);
-    if (result.success && result.data) {
-      setFeedback(result.data);
+  const loadFeedback = useCallback(async () => {
+    try {
+      const result = await getSessionFeedbackAction(sessionId);
+      if (result.success && result.data) {
+        setFeedback(result.data);
+      } else {
+        setFetchError(true);
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-}, [sessionId]);
+  }, [sessionId]);
 
   useEffect(() => {
     loadFeedback();
@@ -43,23 +46,11 @@ const loadFeedback = useCallback(async () => {
 
   const sessionEnded = new Date(sessionEndTime) < new Date();
 
-const [fetchError, setFetchError] = useState(false);
+  if (loading || fetchError) return null;
+  if (isCanceled || !sessionEnded) return null;
 
-const loadFeedback = useCallback(async () => {
-  try {
-    const result = await getSessionFeedbackAction(sessionId);
-    if (result.success && result.data) {
-      setFeedback(result.data);
-    } else {
-      setFetchError(true);
-    }
-  } finally {
-    setLoading(false);
-  }
-}, [sessionId]);
-
-// then early-return on error:
-if (fetchError) return null; // or a small error/retry UI
+  // User hasn't submitted yet — show rating CTA
+  if (!feedback?.myFeedback) {
     return (
       <Dialog>
         <DialogTrigger asChild>

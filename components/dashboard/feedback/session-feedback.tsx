@@ -54,7 +54,7 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="w-full gap-2 text-[13px]">
+  const windowClosed = !!feedback.otherFeedback;
             <MessageSquare className="size-3.5" />
             Rate this session
           </Button>

@@ -35,6 +35,8 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
       } else {
         setFetchError(true);
       }
+    } catch {
+      setFetchError(true);
     } finally {
       setLoading(false);
     }

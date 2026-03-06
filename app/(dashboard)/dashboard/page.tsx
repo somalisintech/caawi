@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import { MenteeHome } from '@/components/dashboard/mentee-home';
 import { MentorHome } from '@/components/dashboard/mentor-home';
 import prisma from '@/lib/db';
@@ -12,8 +13,17 @@ import {
   getUpcomingSessions
 } from '@/lib/queries/sessions';
 import { createClient } from '@/utils/supabase/server';
+import DashboardLoading from './loading';
 
-export default async function DashboardHomePage() {
+export default function DashboardHomePage() {
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+async function DashboardContent() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 

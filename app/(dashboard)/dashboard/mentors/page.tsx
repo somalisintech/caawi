@@ -1,11 +1,21 @@
+import { Suspense } from 'react';
 import { MentorsList } from '@/components/mentors/mentors-list';
 import { SKILLS_BY_CATEGORY } from '@/lib/constants/skills';
 import { getMentorsWithCountries } from '@/lib/queries/mentors';
+import MentorsLoading from './loading';
 
-export default async function MentorsListPage(props: {
-  searchParams: Promise<{ search?: string; country?: string; skills?: string | string[]; page?: string }>;
-}) {
-  const searchParams = await props.searchParams;
+type SearchParams = Promise<{ search?: string; country?: string; skills?: string | string[]; page?: string }>;
+
+export default function MentorsListPage(props: { searchParams: SearchParams }) {
+  return (
+    <Suspense fallback={<MentorsLoading />}>
+      <MentorsContent searchParams={props.searchParams} />
+    </Suspense>
+  );
+}
+
+async function MentorsContent({ searchParams: searchParamsPromise }: { searchParams: SearchParams }) {
+  const searchParams = await searchParamsPromise;
   const { mentors, countries, totalCount, totalPages, currentPage } = await getMentorsWithCountries(searchParams);
 
   function buildHref(page: number) {

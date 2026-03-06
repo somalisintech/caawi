@@ -1,12 +1,22 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import { MenteesBrowseList } from '@/components/mentees/mentees-browse-list';
 import prisma from '@/lib/db';
 import { getMenteesWithCountries } from '@/lib/queries/mentees';
 import { createClient } from '@/utils/supabase/server';
+import BrowseMenteesLoading from './loading';
 
-export default async function BrowseMenteesPage(props: {
-  searchParams: Promise<{ search?: string; country?: string; page?: string }>;
-}) {
+type SearchParams = Promise<{ search?: string; country?: string; page?: string }>;
+
+export default function BrowseMenteesPage(props: { searchParams: SearchParams }) {
+  return (
+    <Suspense fallback={<BrowseMenteesLoading />}>
+      <BrowseMenteesContent searchParams={props.searchParams} />
+    </Suspense>
+  );
+}
+
+async function BrowseMenteesContent({ searchParams: searchParamsPromise }: { searchParams: SearchParams }) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -19,7 +29,7 @@ export default async function BrowseMenteesPage(props: {
 
   if (!profile || profile.userType !== 'MENTOR') redirect('/dashboard');
 
-  const searchParams = await props.searchParams;
+  const searchParams = await searchParamsPromise;
   const [{ mentees, countries, totalCount, totalPages, currentPage }, nudges] = await Promise.all([
     getMenteesWithCountries(searchParams),
     prisma.menteeNudge.findMany({

@@ -50,11 +50,12 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
   if (isCanceled || !sessionEnded) return null;
 
   // User hasn't submitted yet — show rating CTA
+  // User hasn't submitted yet — show rating CTA
   if (!feedback?.myFeedback) {
     return (
       <Dialog>
         <DialogTrigger asChild>
-  const windowClosed = !!feedback.otherFeedback;
+          <Button variant="outline" size="sm" className="flex items-center gap-1.5 text-[12px]">
             <MessageSquare className="size-3.5" />
             Rate this session
           </Button>
@@ -67,6 +68,7 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
         </DialogContent>
       </Dialog>
     );
+  }
   }
 
   // User has submitted — show their feedback + other party status

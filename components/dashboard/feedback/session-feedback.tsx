@@ -43,10 +43,23 @@ const loadFeedback = useCallback(async () => {
 
   const sessionEnded = new Date(sessionEndTime) < new Date();
 
-  if (isCanceled || !sessionEnded || loading) return null;
+const [fetchError, setFetchError] = useState(false);
 
-  // User hasn't submitted feedback yet — show CTA
-  if (!feedback?.myFeedback) {
+const loadFeedback = useCallback(async () => {
+  try {
+    const result = await getSessionFeedbackAction(sessionId);
+    if (result.success && result.data) {
+      setFeedback(result.data);
+    } else {
+      setFetchError(true);
+    }
+  } finally {
+    setLoading(false);
+  }
+}, [sessionId]);
+
+// then early-return on error:
+if (fetchError) return null; // or a small error/retry UI
     return (
       <Dialog>
         <DialogTrigger asChild>

@@ -102,7 +102,6 @@ export async function MentorProfile({ mentor }: Props) {
         <div className="space-y-1">
           <div className="text-sm uppercase text-muted-foreground">Bio</div>
           <p>{mentor.bio || '-'}</p>
-        </div>
         {mentor.skills.length > 0 && (
           <>
             <div className="space-y-2">
@@ -111,6 +110,7 @@ export async function MentorProfile({ mentor }: Props) {
             </div>
           </>
         )}
+        <Separator />
         <Separator />
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div className="space-y-1">

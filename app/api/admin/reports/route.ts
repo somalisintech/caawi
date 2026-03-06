@@ -68,6 +68,11 @@ export const PATCH = withLogger(async (req: LoggerRequest) => {
 
   const { reportId, status } = parsed.data;
 
+  const existing = await prisma.report.findUnique({ where: { id: reportId } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Report not found' }, { status: 404 });
+  }
+
   const report = await prisma.report.update({
     where: { id: reportId },
     data: {

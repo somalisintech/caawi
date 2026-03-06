@@ -41,6 +41,19 @@ export const profileFormSchema = z
         input: data.company
       });
     }
+    if (data.onVacation && data.vacationEndsAt) {
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      const endsAt = new Date(data.vacationEndsAt);
+      if (endsAt < today) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['vacationEndsAt'],
+          message: 'Vacation end date must be today or in the future',
+          input: data.vacationEndsAt
+        });
+      }
+    }
   });
 
 export type ProfileFormFields = z.infer<typeof profileFormSchema>;

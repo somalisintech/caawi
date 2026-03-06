@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import type { MentorshipRequest } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
 import { resend } from '@/lib/email';
 import { RequestAcceptedEmail } from '@/lib/emails/request-accepted';
@@ -61,10 +62,40 @@ export const PATCH = withLogger(async (req: LoggerRequest, { params }) => {
     return NextResponse.json({ message: 'Request declined' });
   }
 
-  const updated = await prisma.mentorshipRequest.update({
-    where: { id },
-    data: { status: 'ACCEPTED' }
-  });
+  const mentorProfileId = mentorUser.profile.id;
+
+  let updated: MentorshipRequest;
+  try {
+    updated = await prisma.$transaction(async (tx) => {
+      const profile = await tx.profile.findUnique({
+        where: { id: mentorProfileId },
+        select: { monthlyCapacity: true }
+      });
+
+      if (profile?.monthlyCapacity != null) {
+        const acceptedCount = await tx.mentorshipRequest.count({
+          where: {
+            mentorProfileId,
+            status: 'ACCEPTED'
+          }
+        });
+
+        if (acceptedCount >= profile.monthlyCapacity) {
+          throw new Error('CAPACITY_REACHED');
+        }
+      }
+
+      return tx.mentorshipRequest.update({
+        where: { id },
+        data: { status: 'ACCEPTED' }
+      });
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'CAPACITY_REACHED') {
+      return NextResponse.json({ message: 'Mentee capacity reached' }, { status: 403 });
+    }
+    throw err;
+  }
 
   const mentorName = [mentorUser.firstName, mentorUser.lastName].filter(Boolean).join(' ') || 'Your mentor';
   const menteeEmail = request.menteeProfile.user.email;

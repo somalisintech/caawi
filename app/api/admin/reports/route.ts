@@ -3,16 +3,37 @@ import { z } from 'zod';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 
+const statusFilterSchema = z.enum(['PENDING', 'REVIEWED', 'DISMISSED', 'ACTION_TAKEN']);
+
+async function requireAdmin(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true }
+  });
+  return user?.role === 'ADMIN';
+}
+
 export const GET = withLogger(async (req: LoggerRequest) => {
   if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401 });
   }
 
+  if (!(await requireAdmin(req.user.id))) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+  }
+
   const { searchParams } = req.nextUrl;
-  const status = searchParams.get('status') || 'PENDING';
+  const rawStatus = searchParams.get('status') || 'PENDING';
+  const parsed = statusFilterSchema.safeParse(rawStatus);
+
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid status parameter' }, { status: 400 });
+  }
+
+  const status = parsed.data;
 
   const reports = await prisma.report.findMany({
-    where: { status: status as 'PENDING' | 'REVIEWED' | 'DISMISSED' | 'ACTION_TAKEN' },
+    where: { status },
     include: {
       reporter: { select: { id: true, firstName: true, lastName: true, email: true } },
       reported: { select: { id: true, firstName: true, lastName: true, email: true } }
@@ -32,6 +53,10 @@ const reviewSchema = z.object({
 export const PATCH = withLogger(async (req: LoggerRequest) => {
   if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401 });
+  }
+
+  if (!(await requireAdmin(req.user.id))) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
 
   const body = await req.json();

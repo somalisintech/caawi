@@ -46,7 +46,6 @@ export function ReportBlockButtons({ targetUserId, isBlockedByViewer }: Props) {
     if (result.success) {
       toast.success(result.message);
       setReportOpen(false);
-      setDescription('');
     } else {
       toast.error(result.message);
     }
@@ -69,7 +68,16 @@ export function ReportBlockButtons({ targetUserId, isBlockedByViewer }: Props) {
 
   return (
     <div className="flex gap-2">
-      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+      <Dialog
+        open={reportOpen}
+        onOpenChange={(open) => {
+          setReportOpen(open);
+          if (!open) {
+            setReason('HARASSMENT');
+            setDescription('');
+          }
+        }}
+      >
         <DialogTrigger asChild>
           <Button size="sm" variant="ghost" className="gap-1 text-muted-foreground">
             <Flag className="size-3.5" />

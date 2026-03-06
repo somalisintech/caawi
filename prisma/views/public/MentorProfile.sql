@@ -12,11 +12,17 @@ SELECT
   p."linkedInUrl",
   p."githubUrl",
   p."buyMeCoffeeUrl",
+  p."isAcceptingMentees",
+  p."onVacation",
+  p."vacationEndsAt",
+  p."monthlyCapacity",
+  u."createdAt" AS "memberSince",
   l.city,
   l.country,
   o.role,
   o.company,
-  array_remove(array_agg(s.name), NULL) as skills
+  array_remove(array_agg(s.name), NULL) as skills,
+  sc."sessionCount"
 FROM "Profile" p
        JOIN "User" u ON u."id" = p."userId"
        LEFT JOIN "Location" l ON p."locationId" = l.id
@@ -24,5 +30,10 @@ FROM "Profile" p
        LEFT JOIN "CalendlyUser" cu ON p."calendlyUserUri" = cu.uri
        LEFT JOIN "_ProfileSkills" ps ON p.id = ps."A"
        LEFT JOIN "Skill" s ON ps."B" = s.id
+       LEFT JOIN LATERAL (
+         SELECT COUNT(*)::int AS "sessionCount"
+         FROM "MentorshipRequest" mr
+         WHERE mr."mentorProfileId" = p.id AND mr.status = 'ACCEPTED'
+       ) sc ON true
 WHERE p."userType" = 'MENTOR'
-GROUP BY p.id, u."firstName", u."lastName", p.bio, u.image, cu.scheduling_url, p.gender, p."sameGenderPref", p."yearsOfExperience", p."linkedInUrl", p."githubUrl", p."buyMeCoffeeUrl", l.city, l.country, o.role, o.company;
+GROUP BY p.id, u."firstName", u."lastName", p.bio, u.image, cu.scheduling_url, p.gender, p."sameGenderPref", p."yearsOfExperience", p."linkedInUrl", p."githubUrl", p."buyMeCoffeeUrl", p."isAcceptingMentees", p."onVacation", p."vacationEndsAt", p."monthlyCapacity", u."createdAt", l.city, l.country, o.role, o.company, sc."sessionCount";

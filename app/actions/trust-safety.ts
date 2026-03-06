@@ -40,14 +40,26 @@ export async function reportUserAction(data: { reportedId: string; reason: strin
     return { success: false, message: 'User not found' };
   }
 
-  await prisma.report.create({
-    data: {
-      reporterId: authData.user.id,
-      reportedId,
-      reason,
-      description
-    }
+  const existingReport = await prisma.report.findFirst({
+    where: { reporterId: authData.user.id, reportedId, status: 'PENDING' }
   });
+  if (existingReport) {
+    return { success: false, message: 'You already have a pending report for this user' };
+  }
+
+  try {
+    await prisma.report.create({
+      data: {
+        reporterId: authData.user.id,
+        reportedId,
+        reason,
+        description
+      }
+    });
+  } catch (err) {
+    logger.error('Failed to create report', { reporterId: authData.user.id, reportedId, err });
+    return { success: false, message: 'Report could not be submitted. Please try again.' };
+  }
 
   logger.info('User reported', { reporterId: authData.user.id, reportedId, reason });
 
@@ -94,7 +106,7 @@ export async function blockUserAction(data: { blockedId: string }) {
 
   logger.info('User blocked', { blockerId: authData.user.id, blockedId });
 
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard', 'layout');
   return { success: true, message: 'User blocked' };
 }
 
@@ -122,6 +134,6 @@ export async function unblockUserAction(data: { blockedId: string }) {
 
   logger.info('User unblocked', { blockerId: authData.user.id, blockedId });
 
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard', 'layout');
   return { success: true, message: 'User unblocked' };
 }

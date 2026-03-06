@@ -127,7 +127,7 @@ export async function MentorProfile({ mentor }: Props) {
             {canBook && !isMentee && (
               <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} profile={user?.profile} />
             )}
-            {!canBook && (
+            {!canBook && isAvailable && !isBlockedRelationship && (
               <LayerCard className="w-auto">
                 <LayerCard.Primary className="px-4 py-2">
                   <p className="text-sm text-muted-foreground">Same-gender mentees only</p>

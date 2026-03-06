@@ -109,6 +109,7 @@ model Session {
   createdAt        DateTime          @default(now())
   canceledAt       DateTime?
   feedback         SessionFeedback[]
+  notes            SessionNote[]
 }
 
 enum SessionStatus {
@@ -135,6 +136,25 @@ model SessionFeedback {
 enum FeedbackRole {
   MENTOR
   MENTEE
+}
+
+model SessionNote {
+  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId String          @db.Uuid
+  session   Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  authorId  String          @db.Uuid
+  type      SessionNoteType
+  content   String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([sessionId])
+  @@index([authorId])
+}
+
+enum SessionNoteType {
+  PRE_SESSION
+  POST_SESSION
 }
 
 model MentorshipRequest {

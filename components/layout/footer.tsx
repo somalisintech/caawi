@@ -46,7 +46,7 @@ export function Footer() {
           <div className="flex gap-5">
             {legalLink.map((link) => (
               <Link
-                key={link.label}
+                key={link.href}
                 href={link.href}
                 target={'_blank'}
                 className="text-sm text-muted-foreground underline"

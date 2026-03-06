@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { deleteAccountAction } from '@/app/actions/profile';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,11 +17,9 @@ export function DeleteAccountModal() {
 
   const handleClick = async () => {
     try {
-      const response = await fetch('/api/users', {
-        method: 'DELETE'
-      });
-      if (!response.ok) {
-        throw Error('Failed to delete user');
+      const result = await deleteAccountAction();
+      if (!result.success) {
+        throw Error(result.message);
       }
       router.refresh();
     } catch (err) {

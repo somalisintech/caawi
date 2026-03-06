@@ -11,18 +11,22 @@ export async function getMentorsWithCountries(params?: {
   const where: Record<string, unknown>[] = [];
 
   if (params?.search) {
-    const words = params.search.trim().split(/\s+/);
-    for (const word of words) {
-      where.push({
-        OR: [
-          { firstName: { contains: word, mode: 'insensitive' } },
-          { lastName: { contains: word, mode: 'insensitive' } },
-          { role: { contains: word, mode: 'insensitive' } },
-          { company: { contains: word, mode: 'insensitive' } },
-          { country: { contains: word, mode: 'insensitive' } }
-        ]
-      });
-    }
+    const words = params.search
+      .trim()
+      .replace(/[&|!():*<>'\\]/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean);
+    if (words.length === 0) return getMentorsWithCountries({ ...params, search: undefined });
+    const formattedSearch = words.join(' | ');
+    where.push({
+      OR: [
+        { firstName: { search: formattedSearch } },
+        { lastName: { search: formattedSearch } },
+        { role: { search: formattedSearch } },
+        { company: { search: formattedSearch } },
+        { country: { search: formattedSearch } }
+      ]
+    });
   }
 
   if (params?.country) {
@@ -65,7 +69,7 @@ export async function getMentorsWithCountries(params?: {
           take: PAGE_SIZE
         });
 
-  const countries = allMentors.map((m) => m.country).filter(Boolean) as string[];
+  const countries = [...new Set(allMentors.map((m) => m.country).filter(Boolean) as string[])];
   countries.sort();
 
   return { mentors, countries, totalCount, totalPages, currentPage: page };

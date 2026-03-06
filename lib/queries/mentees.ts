@@ -6,7 +6,13 @@ export async function getMenteesWithCountries(params?: { search?: string; countr
   const where: Record<string, unknown>[] = [{ userType: 'MENTEE' }, { onboardingCompleted: true }];
 
   if (params?.search) {
-    const formattedSearch = params.search.trim().split(/\s+/).join(' | ');
+    const words = params.search
+      .trim()
+      .replace(/[&|!():*<>'\\]/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean);
+    if (words.length === 0) return getMenteesWithCountries({ ...params, search: undefined });
+    const formattedSearch = words.join(' | ');
     where.push({
       OR: [
         { user: { firstName: { search: formattedSearch } } },

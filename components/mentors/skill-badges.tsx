@@ -15,8 +15,8 @@ export function SkillBadges({ skills, max = 3, className }: Props) {
 
   return (
     <div className={cn('flex flex-wrap gap-1.5', className)}>
-      {visible.map((skill) => (
-        <Badge key={skill} variant="secondary" className="text-xs">
+      {visible.map((skill, i) => (
+        <Badge key={`${skill}-${i}`} variant="secondary" className="text-xs">
           {skill}
         </Badge>
       ))}

@@ -5,7 +5,9 @@ SECURITY DEFINER
 SET search_path = public, auth
 AS $$
 BEGIN
-  DELETE FROM public."User" WHERE id = OLD.id;
+  IF pg_trigger_depth() < 2 THEN
+    DELETE FROM public."User" WHERE id = OLD.id;
+  END IF;
   RETURN OLD;
 END;
 $$;

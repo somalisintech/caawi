@@ -3,10 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import type { ReactElement } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { updateProfileAction } from '@/app/actions/profile';
 import { SkillPicker } from '@/components/skills/skill-picker';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +29,6 @@ interface Props {
 }
 
 export function ProfileForm({ user, calendlyConnectionButton }: Props) {
-  const router = useRouter();
   const { firstName, lastName, email, profile } = user;
 
   const form = useForm<ProfileFormFields, unknown, ProfileFormFields>({
@@ -55,19 +54,14 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
   });
 
   async function onSubmit(data: ProfileFormFields) {
-    const response = await fetch('/api/users', {
-      method: 'POST',
-      body: JSON.stringify({ ...data })
-    });
+    const result = await updateProfileAction(data);
 
-    if (!response.ok) {
-      toast.error('Update failed');
+    if (!result.success) {
+      toast.error(result.message);
       return;
     }
 
-    toast.success('Updated');
-
-    router.refresh();
+    toast.success(result.message);
   }
 
   const watchedUserType = form.watch('userType');

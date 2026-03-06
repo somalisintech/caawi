@@ -43,20 +43,22 @@ export function MentorCard({ mentor, authenticated }: Props) {
           <p>{mentor.bio || '-'}</p>
         </div>
       </div>
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-        {mentor.sessionCount > 0 && (
-          <span className="flex items-center gap-1">
-            <Users className="size-3.5" />
-            {mentor.sessionCount} {mentor.sessionCount === 1 ? 'session' : 'sessions'}
-          </span>
-        )}
-        {mentor.memberSince && (
-          <span className="flex items-center gap-1">
-            <CalendarDays className="size-3.5" />
-            Mentor since {formatMemberSince(mentor.memberSince)}
-          </span>
-        )}
-      </div>
+      {(mentor.sessionCount > 0 || mentor.memberSince) && (
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          {mentor.sessionCount > 0 && (
+            <span className="flex items-center gap-1">
+              <Users className="size-3.5" />
+              {mentor.sessionCount} {mentor.sessionCount === 1 ? 'session' : 'sessions'}
+            </span>
+          )}
+          {mentor.memberSince && (
+            <span className="flex items-center gap-1">
+              <CalendarDays className="size-3.5" />
+              Mentor since {formatMemberSince(mentor.memberSince)}
+            </span>
+          )}
+        </div>
+      )}
       <SkillBadges skills={mentor.skills} />
     </div>
   );

@@ -60,22 +60,17 @@ export async function submitSessionFeedbackAction(data: { sessionId: string; sta
   const windowClosesAt = new Date(session.endTime);
   windowClosesAt.setDate(windowClosesAt.getDate() + BLIND_WINDOW_DAYS);
 
-  const existing = await prisma.sessionFeedback.findUnique({
-    where: { sessionId_authorId: { sessionId, authorId: authData.user.id } }
+try {
+  await prisma.sessionFeedback.create({
+    data: { sessionId, authorId: authData.user.id, role, stars, comment, windowClosesAt }
   });
-
-  if (existing) {
+} catch (err: any) {
+  if (err?.code === 'P2002') {
     return { success: false, message: 'You have already submitted feedback for this session' };
   }
-
-  try {
-    await prisma.sessionFeedback.create({
-      data: { sessionId, authorId: authData.user.id, role, stars, comment, windowClosesAt }
-    });
-  } catch (err) {
-    logger.error('Failed to submit feedback', { userId: authData.user.id, sessionId, err });
-    return { success: false, message: 'Could not submit feedback. Please try again.' };
-  }
+  logger.error('Failed to submit feedback', { userId: authData.user.id, sessionId, err });
+  return { success: false, message: 'Could not submit feedback. Please try again.' };
+}
 
   logger.info('Session feedback submitted', { userId: authData.user.id, sessionId, role, stars });
 

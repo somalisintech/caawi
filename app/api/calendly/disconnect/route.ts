@@ -57,20 +57,19 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     }
   }
 
-  if (!calendlyUser) {
+  if (!calendlyUser || !user?.profile) {
     return NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
   }
 
-  await prisma.calendlyUser.delete({
-    where: {
-      uri: calendlyUser.uri
-    }
-  });
-
-  await prisma.profile.update({
-    where: { id: user.profile!.id },
-    data: { calendlyUserUri: null }
-  });
+  await prisma.$transaction([
+    prisma.calendlyUser.delete({
+      where: { uri: calendlyUser.uri }
+    }),
+    prisma.profile.update({
+      where: { id: user.profile.id },
+      data: { calendlyUserUri: null }
+    })
+  ]);
 
   req.log.info('Calendly disconnected successfully');
 

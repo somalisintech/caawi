@@ -64,12 +64,28 @@ export async function createSessionNoteAction(data: { sessionId: string; type: s
     return { success: false, message: 'Only mentees can create pre-session agendas' };
   }
 
-if (type === 'PRE_SESSION') {
-  const existing = await prisma.sessionNote.findFirst({
-    where: { sessionId, authorId: user.id, type: 'PRE_SESSION' }
-  });
-  if (existing) return { success: false, message: 'An agenda already exists for this session' };
-}
+  // Server-side timing guards — client flags are bypassable
+  const now = new Date();
+  const sessionEnded = new Date(participant.session.endTime) < now;
+
+  if (type === 'PRE_SESSION' && sessionEnded) {
+    return { success: false, message: 'Session has already ended' };
+  }
+  if (type === 'POST_SESSION' && !sessionEnded) {
+    return { success: false, message: 'Session has not ended yet' };
+  }
+
+  if (type === 'PRE_SESSION') {
+    const existing = await prisma.sessionNote.findFirst({
+      where: { sessionId, authorId: user.id, type: 'PRE_SESSION' }
+    });
+    if (existing) return { success: false, message: 'An agenda already exists for this session' };
+  }
+
+  try {
+    const note = await prisma.sessionNote.create({
+      data: { sessionId, authorId: user.id, type, content }
+    });
     logger.info('Session note created', { userId: user.id, sessionId, type, noteId: note.id });
     revalidatePath('/dashboard/sessions');
     return { success: true, message: 'Note saved', data: { id: note.id } };

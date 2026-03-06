@@ -90,19 +90,24 @@ export async function blockUserAction(data: { blockedId: string }) {
     return { success: false, message: 'User not found' };
   }
 
-  await prisma.block.upsert({
-    where: {
-      blockerId_blockedId: {
+  try {
+    await prisma.block.upsert({
+      where: {
+        blockerId_blockedId: {
+          blockerId: authData.user.id,
+          blockedId
+        }
+      },
+      create: {
         blockerId: authData.user.id,
         blockedId
-      }
-    },
-    create: {
-      blockerId: authData.user.id,
-      blockedId
-    },
-    update: {}
-  });
+      },
+      update: {}
+    });
+  } catch (err) {
+    logger.error('Failed to block user', { blockerId: authData.user.id, blockedId, err });
+    return { success: false, message: 'Could not block user. Please try again.' };
+  }
 
   logger.info('User blocked', { blockerId: authData.user.id, blockedId });
 
@@ -125,12 +130,17 @@ export async function unblockUserAction(data: { blockedId: string }) {
 
   const { blockedId } = parsed.data;
 
-  await prisma.block.deleteMany({
-    where: {
-      blockerId: authData.user.id,
-      blockedId
-    }
-  });
+  try {
+    await prisma.block.deleteMany({
+      where: {
+        blockerId: authData.user.id,
+        blockedId
+      }
+    });
+  } catch (err) {
+    logger.error('Failed to unblock user', { blockerId: authData.user.id, blockedId, err });
+    return { success: false, message: 'Could not unblock user. Please try again.' };
+  }
 
   logger.info('User unblocked', { blockerId: authData.user.id, blockedId });
 

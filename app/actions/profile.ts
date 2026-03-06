@@ -135,6 +135,8 @@ export async function updateProfileAction(data: ProfileUpdateInput) {
     logger.debug('User profile updated', { userId: authData.user.id });
 
     revalidatePath('/dashboard/profile');
+    revalidatePath('/dashboard');
+    return { success: true, message: 'Updated' };
     return { success: true, message: 'Updated' };
   } catch (error) {
     console.error('Failed to update profile:', error);

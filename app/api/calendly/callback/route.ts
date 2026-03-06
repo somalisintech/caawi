@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createWebhookSubscription, getAccessToken, getCurrentUser } from '@/app/api/calendly/services';
+import {
+  createWebhookSubscription,
+  deleteWebhookSubscription,
+  getAccessToken,
+  getCurrentUser
+} from '@/app/api/calendly/services';
 import { encrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
@@ -92,17 +97,33 @@ export const GET = withLogger(async (req: LoggerRequest) => {
         user: uri
       });
       webhookUri = result.webhookUri;
-
-      await prisma.calendlyUser.update({
-        where: { uri },
-        data: { webhookUri }
-      });
-
-      req.log.info('Webhook subscription created and stored', { webhookUri });
     } catch (webhookErr) {
       req.log.error('Failed to create webhook subscription', {
         error: webhookErr instanceof Error ? webhookErr.message : String(webhookErr)
       });
+    }
+
+    if (webhookUri) {
+      try {
+        await prisma.calendlyUser.update({
+          where: { uri },
+          data: { webhookUri }
+        });
+        req.log.info('Webhook subscription created and stored', { webhookUri });
+      } catch (dbErr) {
+        req.log.error('Failed to persist webhookUri, cleaning up orphaned subscription', {
+          webhookUri,
+          error: dbErr instanceof Error ? dbErr.message : String(dbErr)
+        });
+        try {
+          await deleteWebhookSubscription(webhookUri, access_token);
+        } catch (cleanupErr) {
+          req.log.error('Failed to clean up orphaned webhook subscription', {
+            webhookUri,
+            error: cleanupErr instanceof Error ? cleanupErr.message : String(cleanupErr)
+          });
+        }
+      }
     }
 
     req.log.info('Updated user profile with Calendly user data', resource);

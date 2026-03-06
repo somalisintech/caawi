@@ -5,11 +5,14 @@ import { SKILL_TO_CATEGORY } from '@/lib/constants/skills';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 
+const emptyToNull = (v: unknown) => (v === '' ? null : v);
+const optionalUrl = z.preprocess(emptyToNull, z.string().url().max(2048).optional().nullable());
+
 const profileUpdateSchema = z.object({
   userType: z.enum(['MENTOR', 'MENTEE']).optional(),
   firstName: z.string().max(100).optional(),
   lastName: z.string().max(100).optional(),
-  image: z.string().url().max(2048).optional().nullable(),
+  image: optionalUrl,
   gender: z.enum(['MALE', 'FEMALE']).optional().nullable(),
   bio: z.string().max(1000).optional().nullable(),
   sameGenderPref: z.boolean().optional(),
@@ -18,9 +21,9 @@ const profileUpdateSchema = z.object({
   role: z.string().max(100).optional().nullable(),
   company: z.string().max(100).optional().nullable(),
   yearsOfExperience: z.number().int().min(0).max(100).optional().nullable(),
-  linkedInUrl: z.string().url().max(2048).optional().nullable(),
-  githubUrl: z.string().url().max(2048).optional().nullable(),
-  buyMeCoffeeUrl: z.string().url().max(2048).optional().nullable(),
+  linkedInUrl: optionalUrl,
+  githubUrl: optionalUrl,
+  buyMeCoffeeUrl: optionalUrl,
   onboardingCompleted: z.boolean().optional(),
   skills: z.array(z.string().max(100)).optional()
 });

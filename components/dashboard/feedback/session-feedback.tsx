@@ -26,13 +26,16 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadFeedback = useCallback(async () => {
+const loadFeedback = useCallback(async () => {
+  try {
     const result = await getSessionFeedbackAction(sessionId);
     if (result.success && result.data) {
       setFeedback(result.data);
     }
+  } finally {
     setLoading(false);
-  }, [sessionId]);
+  }
+}, [sessionId]);
 
   useEffect(() => {
     loadFeedback();

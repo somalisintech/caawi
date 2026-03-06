@@ -164,6 +164,8 @@ view MentorProfile {
   githubUrl             String?
   buyMeCoffeeUrl        String?
   skills                String[]
+  sessionCount          Int       @default(0)
+  memberSince           DateTime?
 }
 
 enum UserType {

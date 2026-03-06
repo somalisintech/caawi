@@ -1,3 +1,4 @@
+import { CalendarDays, Users } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
@@ -13,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import type { MentorProfile as MentorProfileType } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
+import { formatMemberSince } from '@/lib/format-member-since';
 import { getRequestStatus } from '@/lib/queries/mentorship-requests';
 import { createClient } from '@/utils/supabase/server';
 
@@ -104,14 +106,30 @@ export async function MentorProfile({ mentor }: Props) {
           <p>{mentor.bio || '-'}</p>
         </div>
         {mentor.skills.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm uppercase text-muted-foreground">Skills</div>
+            <SkillBadges skills={mentor.skills} max={Infinity} />
+          </div>
+        )}
+        {(mentor.sessionCount > 0 || mentor.memberSince) && (
           <>
-            <div className="space-y-2">
-              <div className="text-sm uppercase text-muted-foreground">Skills</div>
-              <SkillBadges skills={mentor.skills} max={Infinity} />
+            <Separator />
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              {mentor.sessionCount > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Users className="size-4" />
+                  {mentor.sessionCount} {mentor.sessionCount === 1 ? 'session' : 'sessions'} completed
+                </span>
+              )}
+              {mentor.memberSince && (
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="size-4" />
+                  Mentor since {formatMemberSince(mentor.memberSince)}
+                </span>
+              )}
             </div>
           </>
         )}
-        <Separator />
         <Separator />
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div className="space-y-1">

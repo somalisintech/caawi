@@ -42,7 +42,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  const event = JSON.parse(body);
+  let event: { event: string; payload: Record<string, unknown> };
+  try {
+    event = JSON.parse(body);
+  } catch {
+    logger.error('[webhook] Failed to parse request body');
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
   const eventType = event.event as string;
   const payload = event.payload;
 

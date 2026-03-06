@@ -1,5 +1,6 @@
 import { CalendarDays, Users } from 'lucide-react';
 import Link from 'next/link';
+import { AvailabilityBadge } from '@/components/mentors/availability-badge';
 import { SkillBadges } from '@/components/mentors/skill-badges';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,8 @@ export function MentorCard({ mentor, authenticated }: Props) {
             </div>
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          <AvailabilityBadge mentor={mentor} />
           <Button asChild variant="outline" size="sm" className="rounded-full">
             <Link href={redirectPath}>View</Link>
           </Button>

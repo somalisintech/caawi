@@ -6,6 +6,7 @@ import { SiBuymeacoffee } from 'react-icons/si';
 import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
 import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 import LayerCard from '@/components/layer-card';
+import { AvailabilityBadge } from '@/components/mentors/availability-badge';
 import { SkillBadges } from '@/components/mentors/skill-badges';
 import { RequestForm } from '@/components/mentorship/request-form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -50,7 +51,8 @@ export async function MentorProfile({ mentor }: Props) {
     }
   });
 
-  const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
+  const isAvailable = mentor.isAcceptingMentees && !mentor.onVacation;
+  const canBook = isAvailable && (!mentor.sameGenderPref || mentor.gender === user?.profile?.gender);
   const isMentee = user?.profile?.userType === 'MENTEE';
   const requestStatus =
     canBook && isMentee && user?.profile?.id ? await getRequestStatus(user.profile.id, mentor.id) : null;
@@ -64,11 +66,21 @@ export async function MentorProfile({ mentor }: Props) {
               <AvatarImage src={mentor.image || ''} />
               <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex items-center gap-2">
               {mentor.firstName} {mentor.lastName}
+              <AvailabilityBadge mentor={mentor} />
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
+            {!isAvailable && (
+              <LayerCard className="w-auto">
+                <LayerCard.Primary className="px-4 py-2">
+                  <p className="text-sm text-muted-foreground">
+                    {mentor.onVacation ? 'Mentor is on vacation' : 'Not accepting mentees'}
+                  </p>
+                </LayerCard.Primary>
+              </LayerCard>
+            )}
             {canBook && isMentee && (!requestStatus || requestStatus.status === 'DECLINED') && (
               <RequestForm mentorProfileId={mentor.id} />
             )}

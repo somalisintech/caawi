@@ -44,11 +44,26 @@ export const POST = withLogger(async (req: LoggerRequest) => {
 
   const mentorProfile = await prisma.profile.findUnique({
     where: { id: mentorProfileId },
-    select: { id: true, userType: true, gender: true, sameGenderPref: true }
+    select: {
+      id: true,
+      userType: true,
+      gender: true,
+      sameGenderPref: true,
+      isAcceptingMentees: true,
+      onVacation: true
+    }
   });
 
   if (!mentorProfile || mentorProfile.userType !== 'MENTOR') {
     return NextResponse.json({ message: 'Mentor not found' }, { status: 404 });
+  }
+
+  if (!mentorProfile.isAcceptingMentees) {
+    return NextResponse.json({ message: 'This mentor is not accepting mentees' }, { status: 403 });
+  }
+
+  if (mentorProfile.onVacation) {
+    return NextResponse.json({ message: 'This mentor is currently on vacation' }, { status: 403 });
   }
 
   if (mentorProfile.sameGenderPref && mentorProfile.gender !== menteeProfile.gender) {

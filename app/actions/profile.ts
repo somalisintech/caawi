@@ -19,6 +19,13 @@ const profileUpdateSchema = z.object({
   gender: z.enum(['MALE', 'FEMALE']).optional().nullable(),
   bio: z.string().max(1000).optional().nullable(),
   sameGenderPref: z.boolean().optional(),
+  isAcceptingMentees: z.boolean().optional(),
+  onVacation: z.boolean().optional(),
+  vacationEndsAt: z.preprocess(
+    (v) => (typeof v === 'string' && v ? new Date(v) : v === '' ? null : v),
+    z.date().optional().nullable()
+  ),
+  monthlyCapacity: z.number().int().min(1).max(100).optional().nullable(),
   country: z.string().max(100).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   role: z.string().max(100).optional().nullable(),
@@ -39,6 +46,10 @@ type ProfileUpdateInput = Partial<Record<string, unknown>> & {
   gender?: 'MALE' | 'FEMALE' | null;
   bio?: string | null;
   sameGenderPref?: boolean;
+  isAcceptingMentees?: boolean;
+  onVacation?: boolean;
+  vacationEndsAt?: Date | string | null;
+  monthlyCapacity?: number | null;
   country?: string | null;
   city?: string | null;
   role?: string | null;
@@ -73,6 +84,10 @@ export async function updateProfileAction(data: ProfileUpdateInput) {
       gender,
       bio,
       sameGenderPref,
+      isAcceptingMentees,
+      onVacation,
+      vacationEndsAt,
+      monthlyCapacity,
       country,
       city,
       role,
@@ -97,6 +112,10 @@ export async function updateProfileAction(data: ProfileUpdateInput) {
             gender,
             userType,
             sameGenderPref,
+            isAcceptingMentees,
+            onVacation,
+            vacationEndsAt,
+            monthlyCapacity,
             yearsOfExperience,
             linkedInUrl,
             githubUrl,
@@ -137,14 +156,8 @@ export async function updateProfileAction(data: ProfileUpdateInput) {
     revalidatePath('/dashboard/profile');
     revalidatePath('/dashboard');
     return { success: true, message: 'Updated' };
-    return { success: true, message: 'Updated' };
   } catch (error) {
     console.error('Failed to update profile:', error);
     return { success: false, message: 'Something went wrong' };
   }
 }
-
-    logger.debug('User deleted', { userId: data.user.id });
-
-    await supabase.auth.signOut();
-    return { success: true, message: 'Account deleted' };

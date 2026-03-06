@@ -1,12 +1,15 @@
 import { faker, type Sex } from '@faker-js/faker';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { type Gender, PrismaClient, UserType } from '../generated/prisma/client';
+import { SKILL_TO_CATEGORY, SKILLS_BY_CATEGORY } from '../lib/constants/skills';
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 const prisma = new PrismaClient({ adapter });
+
+const ALL_SKILLS = Object.values(SKILLS_BY_CATEGORY).flat();
 
 async function main() {
   if (process.env.NODE_ENV === 'production') {
@@ -21,18 +24,7 @@ async function main() {
   await prisma.location.deleteMany();
   await prisma.occupation.deleteMany();
 
-  console.log('Start seeding 🌱');
-
-  const skills = ['JavaScript', 'React', 'Node.js']; // Add more skills as needed
-  const userSkills = await Promise.all(
-    skills.map(async (skill) => {
-      return prisma.skill.upsert({
-        where: { name: skill },
-        update: {},
-        create: { name: skill }
-      });
-    })
-  );
+  console.log('Seeding users... 🌱');
 
   const promises = Array.from({ length: 100 }, async () => {
     const gender = faker.person.sex();
@@ -47,6 +39,8 @@ async function main() {
     const yearsOfExperience = faker.number.int({ min: 1, max: 30 });
     const company = faker.company.name();
 
+    const randomSkills = faker.helpers.arrayElements(ALL_SKILLS, faker.number.int({ min: 1, max: 5 }));
+
     return prisma.user.create({
       data: {
         firstName,
@@ -59,15 +53,13 @@ async function main() {
             bio: faker.person.bio(),
             gender: gender.toUpperCase() as Gender,
             yearsOfExperience,
+            onboardingCompleted: true,
             location: {
               connectOrCreate: {
                 where: {
                   city_country: { city: city, country: country }
                 },
-                create: {
-                  city,
-                  country
-                }
+                create: { city, country }
               }
             },
             occupation: {
@@ -79,9 +71,9 @@ async function main() {
               }
             },
             skills: {
-              connectOrCreate: userSkills.map((skill) => ({
-                where: { name: skill.name },
-                create: { name: skill.name }
+              connectOrCreate: randomSkills.map((name) => ({
+                where: { name },
+                create: { name, category: SKILL_TO_CATEGORY[name] }
               }))
             }
           }

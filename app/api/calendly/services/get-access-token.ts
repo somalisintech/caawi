@@ -20,5 +20,9 @@ export const getAccessToken = async ({ grantType, code, redirectUri }: Props) =>
     body: encodedParams
   });
 
+  if (!response.ok) {
+    throw new Error(`Calendly token request failed: ${response.status} ${response.statusText}`);
+  }
+
   return await response.json();
 };

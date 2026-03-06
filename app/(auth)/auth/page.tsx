@@ -6,14 +6,16 @@ import { CaawiLogo } from '@/components/brand/caawi-logo';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/utils/supabase/server';
+import { validateRedirectPath } from '@/utils/url';
 import { AuthForm } from './components/forms';
 
-export default async function Auth() {
+export default async function Auth({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
+  const { next } = await searchParams;
 
   if (data.user) {
-    redirect('/dashboard/profile');
+    redirect(next ? validateRedirectPath(next) : '/dashboard');
   }
 
   return (
@@ -24,7 +26,7 @@ export default async function Auth() {
           <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">Continue to Caawi</h2>
           <div className="space-y-6">
             <Suspense>
-              <AuthForm />
+              <AuthForm next={next} />
             </Suspense>
             <div className="flex items-center gap-4">
               <Separator className="flex-1" />
@@ -32,7 +34,7 @@ export default async function Auth() {
               <Separator className="flex-1" />
             </div>
             <Suspense>
-              <SocialAuth />
+              <SocialAuth next={next} />
             </Suspense>
           </div>
         </CardContent>

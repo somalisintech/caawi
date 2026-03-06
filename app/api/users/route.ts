@@ -1,31 +1,64 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { Prisma } from '@/generated/prisma/client';
+import { SKILL_TO_CATEGORY } from '@/lib/constants/skills';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
+
+const emptyToNull = (v: unknown) => (v === '' ? null : v);
+const optionalUrl = z.preprocess(emptyToNull, z.string().url().max(2048).optional().nullable());
+
+const profileUpdateSchema = z.object({
+  userType: z.enum(['MENTOR', 'MENTEE']).optional(),
+  firstName: z.string().max(100).optional(),
+  lastName: z.string().max(100).optional(),
+  image: optionalUrl,
+  gender: z.enum(['MALE', 'FEMALE']).optional().nullable(),
+  bio: z.string().max(1000).optional().nullable(),
+  sameGenderPref: z.boolean().optional(),
+  country: z.string().max(100).optional().nullable(),
+  city: z.string().max(100).optional().nullable(),
+  role: z.string().max(100).optional().nullable(),
+  company: z.string().max(100).optional().nullable(),
+  yearsOfExperience: z.number().int().min(0).max(100).optional().nullable(),
+  linkedInUrl: optionalUrl,
+  githubUrl: optionalUrl,
+  buyMeCoffeeUrl: optionalUrl,
+  onboardingCompleted: z.boolean().optional(),
+  skills: z.array(z.string().max(100)).optional()
+});
 
 export const DELETE = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-
-  if (!data.user) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
-  await prisma.user.delete({ where: { email: data.user.email } });
+  try {
+    await prisma.user.delete({ where: { email: req.user.email } });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+    throw error;
+  }
 
   req.log.debug('User deleted', {
-    userId: data.user.id
+    userId: req.user.id
   });
 
-  return NextResponse.json(data);
+  return NextResponse.json({ user: req.user });
 });
 
 export const POST = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (!data.user || error) {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
+  }
+
+  const body = await req.json();
+  const parsed = profileUpdateSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues }, { status: 400 });
   }
 
   const {
@@ -43,12 +76,14 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     yearsOfExperience,
     linkedInUrl,
     githubUrl,
-    buyMeCoffeeUrl
-  } = await req.json();
+    buyMeCoffeeUrl,
+    onboardingCompleted,
+    skills
+  } = parsed.data;
 
   const user = await prisma.user.update({
     where: {
-      email: data.user.email
+      email: req.user.email
     },
     data: {
       firstName,
@@ -64,31 +99,42 @@ export const POST = withLogger(async (req: LoggerRequest) => {
           linkedInUrl,
           githubUrl,
           buyMeCoffeeUrl,
-          location: country && {
-            connectOrCreate: {
-              where: {
-                city_country: { city: city, country: country }
-              },
-              create: {
-                country,
-                city
-              }
+          onboardingCompleted,
+          ...(skills !== undefined && {
+            skills: {
+              set: [],
+              connectOrCreate: skills.map((name) => ({
+                where: { name },
+                create: { name, category: SKILL_TO_CATEGORY[name] ?? 'Other' }
+              }))
             }
-          },
-          occupation: role && {
-            connectOrCreate: {
-              where: {
-                role_company: {
-                  role: role,
-                  company: company
+          }),
+          location: country
+            ? {
+                connectOrCreate: {
+                  where: {
+                    city_country: { city: city ?? '', country }
+                  },
+                  create: {
+                    country,
+                    city: city ?? ''
+                  }
                 }
-              },
-              create: {
-                role,
-                company
               }
-            }
-          }
+            : undefined,
+          occupation: role
+            ? {
+                connectOrCreate: {
+                  where: {
+                    role_company: { role, company: company ?? '' }
+                  },
+                  create: {
+                    role,
+                    company: company ?? ''
+                  }
+                }
+              }
+            : undefined
         }
       }
     },
@@ -101,7 +147,7 @@ export const POST = withLogger(async (req: LoggerRequest) => {
   });
 
   req.log.debug('User profile updated', {
-    userId: data.user.id
+    userId: req.user.id
   });
 
   return NextResponse.json(user);

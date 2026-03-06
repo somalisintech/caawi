@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import type { User } from '@supabase/supabase-js';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
@@ -6,10 +7,13 @@ import { createClient } from '@/utils/supabase/server';
 
 export type LoggerRequest = NextRequest & {
   log: typeof logger;
+  user: User | null;
 };
 
-export function withLogger(handler: (req: LoggerRequest) => Promise<NextResponse>) {
-  return async (req: NextRequest) => {
+type RouteContext = { params: Promise<Record<string, string>> };
+
+export function withLogger(handler: (req: LoggerRequest, context: RouteContext) => Promise<NextResponse>) {
+  return async (req: NextRequest, context: RouteContext) => {
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     const userId = data.user?.id;
@@ -27,9 +31,10 @@ export function withLogger(handler: (req: LoggerRequest) => Promise<NextResponse
     };
 
     (req as LoggerRequest).log = scopedLog;
+    (req as LoggerRequest).user = data.user;
 
     try {
-      return await handler(req as LoggerRequest);
+      return await handler(req as LoggerRequest, context);
     } catch (error) {
       scopedLog.error('Unhandled route error', {
         error: error instanceof Error ? error.message : String(error)

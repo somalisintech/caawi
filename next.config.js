@@ -10,12 +10,6 @@ const nextConfig = {
       headers: [{ key: 'Document-Policy', value: 'js-profiling' }]
     }
   ],
-  rewrites: async () => [
-    {
-      source: '/dashboard',
-      destination: '/dashboard/mentors'
-    }
-  ],
   images: {
     remotePatterns: [
       {

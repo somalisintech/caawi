@@ -1,27 +1,21 @@
 import { NextResponse } from 'next/server';
-import { revokeAccessToken } from '@/app/api/calendly/services';
+import { deleteWebhookSubscription, revokeAccessToken } from '@/app/api/calendly/services';
+import { decrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
-import { createClient } from '@/utils/supabase/server';
 
-export const GET = withLogger(async (req: LoggerRequest) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (!data.user || error) {
+export const POST = withLogger(async (req: LoggerRequest) => {
+  if (!req.user) {
     return NextResponse.json({ message: 'Unauthorised' }, { status: 401, statusText: 'Unauthorised' });
   }
 
   req.log.info('Disconnecting Calendly', {
-    userId: data.user.id
+    userId: req.user.id
   });
-
-  const calendly_access_token = req.cookies.get('calendly_access_token')?.value;
-  calendly_access_token && (await revokeAccessToken(calendly_access_token));
 
   const user = await prisma.user.findUnique({
     where: {
-      email: data.user.email
+      email: req.user.email
     },
     select: {
       profile: {
@@ -32,20 +26,46 @@ export const GET = withLogger(async (req: LoggerRequest) => {
     }
   });
 
-  const response = NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
-  response.cookies.delete('calendly_access_token');
-  response.cookies.delete('calendly_refresh_token');
-  response.cookies.delete('calendly_organization');
+  const calendlyUser = user?.profile?.calendlyUser;
 
-  if (!user?.profile?.calendlyUser) {
-    return response;
+  let accessToken: string | undefined;
+  try {
+    accessToken = calendlyUser?.accessToken ? decrypt(calendlyUser.accessToken) : undefined;
+  } catch {
+    req.log.error('Failed to decrypt access token');
+  }
+
+  if (calendlyUser?.webhookUri && accessToken) {
+    try {
+      await deleteWebhookSubscription(calendlyUser.webhookUri, accessToken);
+      req.log.info('Webhook subscription deleted', { webhookUri: calendlyUser.webhookUri });
+    } catch (err) {
+      req.log.error('Failed to delete webhook subscription', {
+        error: err instanceof Error ? err.message : String(err)
+      });
+    }
+  }
+  if (accessToken) {
+    try {
+      await revokeAccessToken(accessToken);
+    } catch (err) {
+      req.log.error('Failed to revoke access token', {
+        error: err instanceof Error ? err.message : String(err)
+      });
+    }
+  }
+
+  if (!calendlyUser) {
+    return NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
   }
 
   await prisma.calendlyUser.delete({
     where: {
-      uri: user.profile.calendlyUser.uri
+      uri: calendlyUser.uri
     }
   });
 
-  return response;
+  req.log.info('Calendly disconnected successfully');
+
+  return NextResponse.redirect(`${req.nextUrl.origin}/dashboard/profile`);
 });

@@ -11,5 +11,9 @@ export const revokeAccessToken = async (token: string) => {
     body: encodedParams
   });
 
+  if (!response.ok) {
+    throw new Error(`Calendly token revocation failed: ${response.status} ${response.statusText}`);
+  }
+
   return response.json();
 };

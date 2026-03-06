@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { CalendlyDisconnectButton } from '@/components/calendly/calendly-disconnect-button';
 import { Button } from '@/components/ui/button';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
@@ -42,18 +42,12 @@ export async function CalendlyConnectionButton() {
   const scheduling_url = profile?.calendlyUser?.scheduling_url;
 
   if (scheduling_url) {
-    return (
-      <Button disabled={!scheduling_url} variant="outline" type="button">
-        <Link prefetch={false} href={'/api/calendly/disconnect'}>
-          Disconnect
-        </Link>
-      </Button>
-    );
+    return <CalendlyDisconnectButton />;
   }
 
   return (
-    <Button disabled={!!scheduling_url} variant="secondary" type="button">
-      <Link href={'/api/calendly/connect'}>Connect</Link>
+    <Button asChild variant="secondary">
+      <a href="/api/calendly/connect">Connect</a>
     </Button>
   );
 }

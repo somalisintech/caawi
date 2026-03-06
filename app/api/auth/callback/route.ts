@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
+import { getUrl, validateRedirectPath } from '@/utils/url';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
+  const origin = getUrl();
   try {
-    const { searchParams, origin } = requestUrl;
+    const { searchParams } = requestUrl;
     const code = searchParams.get('code');
     // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get('next') ?? '/dashboard/profile';
+    const next = validateRedirectPath(searchParams.get('next'));
 
     if (!code) {
       logger.error('No code provided in OAuth callback');
@@ -21,7 +23,11 @@ export async function GET(request: Request) {
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      logger.error('Error exchanging code for session', { code, error: error.message, details: error });
+      logger.error('Error exchanging code for session', {
+        code,
+        error: error.message,
+        details: error
+      });
       if (error.message.includes('validation_failed')) {
         return NextResponse.redirect(`${origin}/auth/error?error=validation_failed`);
       }
@@ -38,6 +44,6 @@ export async function GET(request: Request) {
     logger.error('Unexpected error in OAuth callback', {
       error: error instanceof Error ? error.message : String(error)
     });
-    return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=unexpected`);
+    return NextResponse.redirect(`${origin}/auth/error?error=unexpected`);
   }
 }

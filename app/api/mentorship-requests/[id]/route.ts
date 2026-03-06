@@ -73,17 +73,15 @@ export const PATCH = withLogger(async (req: LoggerRequest, { params }) => {
       });
 
       if (profile?.monthlyCapacity != null) {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const acceptedCount = await tx.mentorshipRequest.count({
           where: {
             mentorProfileId,
-            status: 'ACCEPTED'
+            status: 'ACCEPTED',
+            updatedAt: { gte: startOfMonth }
           }
         });
-
-        if (acceptedCount >= profile.monthlyCapacity) {
-          throw new Error('CAPACITY_REACHED');
-        }
-      }
 
       return tx.mentorshipRequest.update({
         where: { id },

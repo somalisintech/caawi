@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { SessionFeedback } from './feedback/session-feedback';
 import { LocalTime } from './local-time';
+import { SessionNotes } from './notes/session-notes';
 
 type SessionUser = {
   firstName: string | null;
@@ -89,6 +90,8 @@ export function SessionDetail({ session, roleLabel }: Props) {
           </DetailRow>
         ) : null}
       </div>
+
+      <SessionNotes sessionId={session.id} sessionEndTime={session.endTime} isCanceled={isCanceled} />
 
       <SessionFeedback sessionId={session.id} sessionEndTime={session.endTime} isCanceled={isCanceled} />
     </div>

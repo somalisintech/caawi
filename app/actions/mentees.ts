@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/db';
 import { resend } from '@/lib/email';
 import { MenteeNudgeEmail } from '@/lib/emails/mentee-nudge';
+import { isBlocked } from '@/lib/queries/blocks';
 import { createClient } from '@/utils/supabase/server';
 
 const NUDGE_COOLDOWN_DAYS = 7;
@@ -37,6 +38,7 @@ export async function browseNudgeAction(menteeProfileId: string) {
     const menteeProfile = await prisma.profile.findUnique({
       where: { id: menteeProfileId },
       select: {
+        userId: true,
         userType: true,
         onboardingCompleted: true,
         user: { select: { email: true } }
@@ -45,6 +47,10 @@ export async function browseNudgeAction(menteeProfileId: string) {
 
     if (!menteeProfile || menteeProfile.userType !== 'MENTEE' || !menteeProfile.onboardingCompleted) {
       return { success: false, message: 'Mentee not found' };
+    }
+
+    if (await isBlocked(data.user.id, menteeProfile.userId)) {
+      return { success: false, message: 'You cannot interact with this user' };
     }
 
     const existingNudge = await prisma.menteeNudge.findUnique({

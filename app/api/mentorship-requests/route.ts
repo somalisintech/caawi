@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { Prisma } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
+import { isBlocked } from '@/lib/queries/blocks';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
 
 const createRequestSchema = z.object({
@@ -46,6 +47,7 @@ export const POST = withLogger(async (req: LoggerRequest) => {
     where: { id: mentorProfileId },
     select: {
       id: true,
+      userId: true,
       userType: true,
       gender: true,
       sameGenderPref: true,
@@ -56,6 +58,10 @@ export const POST = withLogger(async (req: LoggerRequest) => {
 
   if (!mentorProfile || mentorProfile.userType !== 'MENTOR') {
     return NextResponse.json({ message: 'Mentor not found' }, { status: 404 });
+  }
+
+  if (await isBlocked(req.user.id, mentorProfile.userId)) {
+    return NextResponse.json({ message: 'You cannot interact with this user' }, { status: 403 });
   }
 
   if (!mentorProfile.isAcceptingMentees) {

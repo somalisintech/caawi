@@ -9,6 +9,7 @@ import LayerCard from '@/components/layer-card';
 import { AvailabilityBadge } from '@/components/mentors/availability-badge';
 import { SkillBadges } from '@/components/mentors/skill-badges';
 import { RequestForm } from '@/components/mentorship/request-form';
+import { ReportBlockButtons } from '@/components/trust-safety/report-block-buttons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,8 +52,30 @@ export async function MentorProfile({ mentor }: Props) {
     }
   });
 
+  const mentorProfile = await prisma.profile.findUnique({
+    where: { id: mentor.id },
+    select: { userId: true }
+  });
+
+  const isOwnProfile = mentorProfile?.userId === data.user.id;
+
+  const viewerBlock = isOwnProfile
+    ? null
+    : await prisma.block.findFirst({
+        where: {
+          OR: [
+            { blockerId: data.user.id, blockedId: mentorProfile?.userId ?? '' },
+            { blockerId: mentorProfile?.userId ?? '', blockedId: data.user.id }
+          ]
+        }
+      });
+
+  const isBlockedRelationship = !!viewerBlock;
+  const isBlockedByViewer = viewerBlock?.blockerId === data.user.id;
+
   const isAvailable = mentor.isAcceptingMentees && !mentor.onVacation;
-  const canBook = isAvailable && (!mentor.sameGenderPref || mentor.gender === user?.profile?.gender);
+  const canBook =
+    isAvailable && !isBlockedRelationship && (!mentor.sameGenderPref || mentor.gender === user?.profile?.gender);
   const isMentee = user?.profile?.userType === 'MENTEE';
   const requestStatus =
     canBook && isMentee && user?.profile?.id ? await getRequestStatus(user.profile.id, mentor.id) : null;
@@ -72,7 +95,14 @@ export async function MentorProfile({ mentor }: Props) {
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
-            {!isAvailable && (
+            {isBlockedRelationship && (
+              <LayerCard className="w-auto">
+                <LayerCard.Primary className="px-4 py-2">
+                  <p className="text-sm text-muted-foreground">You cannot interact with this user</p>
+                </LayerCard.Primary>
+              </LayerCard>
+            )}
+            {!isBlockedRelationship && !isAvailable && (
               <LayerCard className="w-auto">
                 <LayerCard.Primary className="px-4 py-2">
                   <p className="text-sm text-muted-foreground">
@@ -188,6 +218,12 @@ export async function MentorProfile({ mentor }: Props) {
             </Link>
           )}
         </div>
+        {!isOwnProfile && mentorProfile && (
+          <>
+            <Separator />
+            <ReportBlockButtons targetUserId={mentorProfile.userId} isBlockedByViewer={isBlockedByViewer} />
+          </>
+        )}
       </CardContent>
     </Card>
   );

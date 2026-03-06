@@ -64,6 +64,11 @@ export async function createSessionNoteAction(data: { sessionId: string; type: s
     return { success: false, message: 'Only mentees can create pre-session agendas' };
   }
 
+  // Canceled sessions: no new notes allowed
+  if (participant.session.status === 'CANCELED') {
+    return { success: false, message: 'Cannot add notes to a canceled session' };
+  }
+
   // Post-session notes: session must have ended
   if (type === 'POST_SESSION' && new Date(participant.session.endTime) > new Date()) {
     return { success: false, message: 'Session has not ended yet' };

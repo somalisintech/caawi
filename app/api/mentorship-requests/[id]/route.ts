@@ -83,6 +83,11 @@ export const PATCH = withLogger(async (req: LoggerRequest, { params }) => {
           }
         });
 
+        if (acceptedCount >= profile.monthlyCapacity) {
+          throw new Error('CAPACITY_REACHED');
+        }
+      }
+
       return tx.mentorshipRequest.update({
         where: { id },
         data: { status: 'ACCEPTED' }

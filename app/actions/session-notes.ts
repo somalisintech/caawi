@@ -89,7 +89,10 @@ export async function createSessionNoteAction(data: { sessionId: string; type: s
     logger.info('Session note created', { userId: user.id, sessionId, type, noteId: note.id });
     revalidatePath('/dashboard/sessions');
     return { success: true, message: 'Note saved', data: { id: note.id } };
-  } catch (err) {
+  } catch (err: unknown) {
+    if (err instanceof Object && 'code' in err && err.code === 'P2002') {
+      return { success: false, message: 'A note of this type already exists for this session' };
+    }
     logger.error('Failed to create session note', { userId: user.id, sessionId, err });
     return { success: false, message: 'Could not save note. Please try again.' };
   }
@@ -147,7 +150,10 @@ export async function getSessionNotesAction(sessionId: string) {
   const user = await getAuthUser();
   if (!user) return { success: false, message: 'Unauthorised', data: null };
 
-  const participant = await verifySessionParticipant(sessionId, user.id);
+  const parsed = z.string().uuid().safeParse(sessionId);
+  if (!parsed.success) return { success: false, message: 'Invalid session ID', data: null };
+
+  const participant = await verifySessionParticipant(parsed.data, user.id);
   if (!participant) return { success: false, message: 'Session not found or not a participant', data: null };
 
   const notes = await prisma.sessionNote.findMany({

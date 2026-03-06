@@ -69,7 +69,6 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
       </Dialog>
     );
   }
-  }
 
   // User has submitted — show their feedback + other party status
   const windowClosed = feedback.windowClosesAt ? new Date() >= new Date(feedback.windowClosesAt) : false;

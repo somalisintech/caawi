@@ -152,6 +152,7 @@ model SessionNote {
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
+  @@unique([sessionId, authorId, type])
   @@index([sessionId])
   @@index([authorId])
 }

@@ -60,17 +60,17 @@ export async function submitSessionFeedbackAction(data: { sessionId: string; sta
   const windowClosesAt = new Date(session.endTime);
   windowClosesAt.setDate(windowClosesAt.getDate() + BLIND_WINDOW_DAYS);
 
-try {
-  await prisma.sessionFeedback.create({
-    data: { sessionId, authorId: authData.user.id, role, stars, comment, windowClosesAt }
-  });
-} catch (err: any) {
-  if (err?.code === 'P2002') {
-    return { success: false, message: 'You have already submitted feedback for this session' };
+  try {
+    await prisma.sessionFeedback.create({
+      data: { sessionId, authorId: authData.user.id, role, stars, comment, windowClosesAt }
+    });
+  } catch (err: unknown) {
+    if (err instanceof Object && 'code' in err && err.code === 'P2002') {
+      return { success: false, message: 'You have already submitted feedback for this session' };
+    }
+    logger.error('Failed to submit feedback', { userId: authData.user.id, sessionId, err });
+    return { success: false, message: 'Could not submit feedback. Please try again.' };
   }
-  logger.error('Failed to submit feedback', { userId: authData.user.id, sessionId, err });
-  return { success: false, message: 'Could not submit feedback. Please try again.' };
-}
 
   logger.info('Session feedback submitted', { userId: authData.user.id, sessionId, role, stars });
 
@@ -96,6 +96,15 @@ export async function getSessionFeedbackAction(sessionId: string) {
   }
 
   const { sessionId: validSessionId } = parsed.data;
+
+  const session = await prisma.session.findUnique({
+    where: { id: validSessionId },
+    include: {
+      mentorProfile: { select: { userId: true } },
+      menteeProfile: { select: { userId: true } },
+      feedback: true
+    }
+  });
 
   if (!session) {
     return { success: false, message: 'Session not found', data: null };

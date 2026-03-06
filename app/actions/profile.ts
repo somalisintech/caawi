@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { Prisma } from '@/generated/prisma/client';
 import { SKILL_TO_CATEGORY } from '@/lib/constants/skills';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
@@ -61,6 +60,30 @@ type ProfileUpdateInput = Partial<Record<string, unknown>> & {
   onboardingCompleted?: boolean;
   skills?: string[];
 };
+
+export async function deleteAccountAction() {
+  try {
+    const supabase = await createClient();
+    const { data: authData, error } = await supabase.auth.getUser();
+
+    if (!authData.user || error) {
+      return { success: false, message: 'Unauthorised' };
+    }
+
+    await prisma.user.delete({
+      where: { email: authData.user.email }
+    });
+
+    await supabase.auth.signOut();
+
+    logger.info('User account deleted', { userId: authData.user.id });
+
+    return { success: true, message: 'Account deleted' };
+  } catch (error) {
+    console.error('Failed to delete account:', error);
+    return { success: false, message: 'Something went wrong' };
+  }
+}
 
 export async function updateProfileAction(data: ProfileUpdateInput) {
   try {

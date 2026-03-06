@@ -33,13 +33,16 @@ export function SessionNotes({ sessionId, sessionEndTime, isCanceled }: Props) {
   const [showForm, setShowForm] = useState(false);
 
   const loadNotes = useCallback(async () => {
-    const result = await getSessionNotesAction(sessionId);
-    if (result.success && result.data) {
-      setNotes(result.data.notes as Note[]);
-      setIsMentee(result.data.isMentee);
-      setSessionEnded(result.data.sessionEnded);
+    try {
+      const result = await getSessionNotesAction(sessionId);
+      if (result.success && result.data) {
+        setNotes(result.data.notes as Note[]);
+        setIsMentee(result.data.isMentee);
+        setSessionEnded(result.data.sessionEnded);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [sessionId]);
 
   useEffect(() => {

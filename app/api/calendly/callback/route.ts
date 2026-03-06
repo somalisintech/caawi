@@ -86,6 +86,11 @@ export const GET = withLogger(async (req: LoggerRequest) => {
       }
     });
 
+    await prisma.profile.update({
+      where: { id: user.profile.id },
+      data: { calendlyUserUri: uri }
+    });
+
     req.log.info('Stored Calendly tokens in DB', { uri });
 
     let webhookUri: string | undefined;

@@ -78,6 +78,10 @@ try {
   return { success: true, message: 'Feedback submitted' };
 }
 
+const sessionFeedbackSchema = z.object({
+  sessionId: z.string().uuid()
+});
+
 export async function getSessionFeedbackAction(sessionId: string) {
   const supabase = await createClient();
   const { data: authData, error } = await supabase.auth.getUser();
@@ -86,14 +90,12 @@ export async function getSessionFeedbackAction(sessionId: string) {
     return { success: false, message: 'Unauthorised', data: null };
   }
 
-  const session = await prisma.session.findUnique({
-    where: { id: sessionId },
-    include: {
-      mentorProfile: { select: { userId: true } },
-      menteeProfile: { select: { userId: true } },
-      feedback: true
-    }
-  });
+  const parsed = sessionFeedbackSchema.safeParse({ sessionId });
+  if (!parsed.success) {
+    return { success: false, message: 'Invalid session ID', data: null };
+  }
+
+  const { sessionId: validSessionId } = parsed.data;
 
   if (!session) {
     return { success: false, message: 'Session not found', data: null };

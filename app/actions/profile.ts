@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { SKILL_TO_CATEGORY } from '@/lib/constants/skills';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { createClient } from '@/utils/supabase/server';
 
 const emptyToNull = (v: unknown) => (v === '' ? null : v);
@@ -71,8 +72,14 @@ export async function deleteAccountAction() {
     }
 
     await prisma.user.delete({
-      where: { email: authData.user.email }
+      where: { id: authData.user.id }
     });
+
+    const adminClient = createAdminClient();
+    const { error: adminErr } = await adminClient.auth.admin.deleteUser(authData.user.id);
+    if (adminErr) {
+      logger.error('Failed to delete Supabase auth user', { userId: authData.user.id, error: adminErr });
+    }
 
     await supabase.auth.signOut();
 

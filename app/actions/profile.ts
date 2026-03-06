@@ -144,29 +144,7 @@ export async function updateProfileAction(data: ProfileUpdateInput) {
   }
 }
 
-export async function deleteAccountAction() {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.getUser();
-
-    if (!data.user || error) {
-      return { success: false, message: 'Unauthorised' };
-    }
-
-    try {
-      await prisma.user.delete({ where: { email: data.user.email } });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        return { success: false, message: 'User not found' };
-      }
-      throw error;
-    }
-
     logger.debug('User deleted', { userId: data.user.id });
 
+    await supabase.auth.signOut();
     return { success: true, message: 'Account deleted' };
-  } catch (error) {
-    console.error('Failed to delete account:', error);
-    return { success: false, message: 'Something went wrong' };
-  }
-}

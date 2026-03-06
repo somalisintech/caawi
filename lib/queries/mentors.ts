@@ -17,7 +17,7 @@ export async function getMentorsWithCountries(params?: {
       .split(/\s+/)
       .filter(Boolean);
     if (words.length === 0) return getMentorsWithCountries({ ...params, search: undefined });
-    const formattedSearch = words.join(' | ');
+    const formattedSearch = words.map((w) => `${w}:*`).join(' | ');
     where.push({
       OR: [
         { firstName: { search: formattedSearch } },

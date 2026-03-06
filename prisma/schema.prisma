@@ -96,23 +96,45 @@ model CalendlyUser {
 }
 
 model Session {
-  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  calendlyEventUri String        @unique
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  calendlyEventUri String            @unique
   eventName        String?
   startTime        DateTime
   endTime          DateTime
-  status           SessionStatus @default(ACTIVE)
-  mentorProfileId  String        @db.Uuid
-  mentorProfile    Profile       @relation("MentorSessions", fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  menteeProfileId  String        @db.Uuid
-  menteeProfile    Profile       @relation("MenteeSessions", fields: [menteeProfileId], references: [id], onDelete: Cascade)
-  createdAt        DateTime      @default(now())
+  status           SessionStatus     @default(ACTIVE)
+  mentorProfileId  String            @db.Uuid
+  mentorProfile    Profile           @relation("MentorSessions", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  menteeProfileId  String            @db.Uuid
+  menteeProfile    Profile           @relation("MenteeSessions", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+  createdAt        DateTime          @default(now())
   canceledAt       DateTime?
+  feedback         SessionFeedback[]
 }
 
 enum SessionStatus {
   ACTIVE
   CANCELED
+}
+
+model SessionFeedback {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId      String       @db.Uuid
+  session        Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  authorId       String       @db.Uuid
+  role           FeedbackRole
+  stars          Int
+  comment        String?
+  submittedAt    DateTime     @default(now())
+  windowClosesAt DateTime
+
+  @@unique([sessionId, authorId])
+  @@index([sessionId])
+  @@index([authorId])
+}
+
+enum FeedbackRole {
+  MENTOR
+  MENTEE
 }
 
 model MentorshipRequest {

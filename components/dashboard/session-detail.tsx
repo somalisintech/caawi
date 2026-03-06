@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { SessionFeedback } from './feedback/session-feedback';
 import { LocalTime } from './local-time';
 
 type SessionUser = {
@@ -88,6 +89,8 @@ export function SessionDetail({ session, roleLabel }: Props) {
           </DetailRow>
         ) : null}
       </div>
+
+      <SessionFeedback sessionId={session.id} sessionEndTime={session.endTime} isCanceled={isCanceled} />
     </div>
   );
 }

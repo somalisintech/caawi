@@ -1,13 +1,6 @@
+import { PAGE_SIZE } from '@/lib/constants/data';
 import prisma from '@/lib/db';
-
-export const PAGE_SIZE = 12;
-const MAX_PAGE = 1000;
-
-function parsePage(raw?: string): number {
-  const n = Number(raw);
-  if (!Number.isFinite(n) || !Number.isInteger(n) || n < 1) return 1;
-  return Math.min(n, MAX_PAGE);
-}
+import { parsePage } from '@/lib/utils';
 
 export async function getMentorsWithCountries(params?: {
   search?: string;
@@ -44,23 +37,33 @@ export async function getMentorsWithCountries(params?: {
   }
 
   const requestedPage = parsePage(params?.page);
+  const skip = (requestedPage - 1) * PAGE_SIZE;
   const whereClause = where.length > 0 ? { where: { AND: where } } : undefined;
 
-  const [totalCount, allMentors] = await Promise.all([
+  const [totalCount, allMentors, speculativeMentors] = await Promise.all([
     prisma.mentorProfile.count(whereClause),
-    prisma.mentorProfile.findMany({ select: { country: true }, distinct: ['country'] })
+    prisma.mentorProfile.findMany({ select: { country: true }, distinct: ['country'] }),
+    prisma.mentorProfile.findMany({
+      ...whereClause,
+      orderBy: [{ firstName: 'asc' }, { id: 'asc' }],
+      skip,
+      take: PAGE_SIZE
+    })
   ]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
   const page = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
-  const skip = (page - 1) * PAGE_SIZE;
 
-  const mentors = await prisma.mentorProfile.findMany({
-    ...whereClause,
-    orderBy: [{ firstName: 'asc' }, { id: 'asc' }],
-    skip,
-    take: PAGE_SIZE
-  });
+  // Re-fetch only if requested page was beyond the last page
+  const mentors =
+    page === requestedPage
+      ? speculativeMentors
+      : await prisma.mentorProfile.findMany({
+          ...whereClause,
+          orderBy: [{ firstName: 'asc' }, { id: 'asc' }],
+          skip: (page - 1) * PAGE_SIZE,
+          take: PAGE_SIZE
+        });
 
   const countries = allMentors.map((m) => m.country).filter(Boolean) as string[];
   countries.sort();

@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
 import type { MentorProfile } from '@/generated/prisma/client';
+import { PAGE_SIZE } from '@/lib/constants/data';
 import { MentorCard } from './mentor-card';
 import { MentorsSearch } from './mentors-search';
 
@@ -25,7 +26,7 @@ export function MentorsList({
   currentPage,
   buildHref
 }: Props) {
-  const start = totalCount > 0 ? (currentPage - 1) * 12 + 1 : 0;
+  const start = totalCount > 0 ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
   const end = start + mentors.length - 1;
 
   return (

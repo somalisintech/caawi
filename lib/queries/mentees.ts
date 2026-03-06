@@ -1,13 +1,6 @@
+import { PAGE_SIZE } from '@/lib/constants/data';
 import prisma from '@/lib/db';
-
-const PAGE_SIZE = 12;
-const MAX_PAGE = 1000;
-
-function parsePage(raw?: string): number {
-  const n = Number(raw);
-  if (!Number.isFinite(n) || !Number.isInteger(n) || n < 1) return 1;
-  return Math.min(n, MAX_PAGE);
-}
+import { parsePage } from '@/lib/utils';
 
 export async function getMenteesWithCountries(params?: { search?: string; country?: string; page?: string }) {
   const where: Record<string, unknown>[] = [{ userType: 'MENTEE' }, { onboardingCompleted: true }];
@@ -31,21 +24,9 @@ export async function getMenteesWithCountries(params?: { search?: string; countr
   }
 
   const requestedPage = parsePage(params?.page);
+  const skip = (requestedPage - 1) * PAGE_SIZE;
 
-  const [totalCount, allMentees] = await Promise.all([
-    prisma.profile.count({ where: { AND: where } }),
-    prisma.profile.findMany({
-      where: { userType: 'MENTEE', onboardingCompleted: true, locationId: { not: null } },
-      select: { location: { select: { country: true } } },
-      distinct: ['locationId']
-    })
-  ]);
-
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
-  const page = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
-  const skip = (page - 1) * PAGE_SIZE;
-
-  const mentees = await prisma.profile.findMany({
+  const findManyArgs = {
     where: { AND: where },
     include: {
       user: { select: { firstName: true, lastName: true, image: true } },
@@ -53,10 +34,27 @@ export async function getMenteesWithCountries(params?: { search?: string; countr
       occupation: true,
       skills: true
     },
-    orderBy: [{ user: { firstName: 'asc' } }, { id: 'asc' }],
-    skip,
-    take: PAGE_SIZE
-  });
+    orderBy: [{ user: { firstName: 'asc' as const } }, { id: 'asc' as const }]
+  };
+
+  const [totalCount, allMentees, speculativeMentees] = await Promise.all([
+    prisma.profile.count({ where: { AND: where } }),
+    prisma.profile.findMany({
+      where: { userType: 'MENTEE', onboardingCompleted: true, locationId: { not: null } },
+      select: { location: { select: { country: true } } },
+      distinct: ['locationId']
+    }),
+    prisma.profile.findMany({ ...findManyArgs, skip, take: PAGE_SIZE })
+  ]);
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  const page = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
+
+  // Re-fetch only if requested page was beyond the last page
+  const mentees =
+    page === requestedPage
+      ? speculativeMentees
+      : await prisma.profile.findMany({ ...findManyArgs, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE });
 
   const countries = allMentees.map((m) => m.location?.country).filter(Boolean) as string[];
   countries.sort();

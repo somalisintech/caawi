@@ -1,6 +1,7 @@
 import { MentorsSearch } from '@/components/mentors/mentors-search';
 import { Card } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
+import { PAGE_SIZE } from '@/lib/constants/data';
 import type { MenteeWithDetails } from '@/lib/queries/mentees';
 import { MenteeBrowseCard } from './mentee-browse-card';
 
@@ -23,7 +24,7 @@ export function MenteesBrowseList({
   currentPage,
   buildHref
 }: Props) {
-  const start = totalCount > 0 ? (currentPage - 1) * 12 + 1 : 0;
+  const start = totalCount > 0 ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
   const end = start + mentees.length - 1;
 
   return (

@@ -4,6 +4,17 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { deleteSessionNoteAction, updateSessionNoteAction } from '@/app/actions/session-notes';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -104,14 +115,25 @@ export function NoteEditor({ note, onUpdate }: Props) {
             >
               <Pencil className="size-3" />
             </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={isPending}
-              className="text-muted-foreground hover:text-destructive"
-            >
-              <Trash2 className="size-3" />
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button type="button" disabled={isPending} className="text-muted-foreground hover:text-destructive">
+                  <Trash2 className="size-3" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent size="sm">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete note?</AlertDialogTitle>
+                  <AlertDialogDescription>This can&apos;t be undone.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive" size="sm" onClick={handleDelete}>
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
       </div>

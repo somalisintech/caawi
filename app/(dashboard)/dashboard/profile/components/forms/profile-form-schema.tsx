@@ -14,6 +14,10 @@ export const profileFormSchema = z
     githubUrl: z.url().or(z.literal('')).optional(),
     buyMeCoffeeUrl: z.url().or(z.literal('')).optional(),
     sameGenderPref: z.boolean().optional(),
+    isAcceptingMentees: z.boolean().optional(),
+    onVacation: z.boolean().optional(),
+    vacationEndsAt: z.string().optional(),
+    monthlyCapacity: z.number().int().min(1).max(100).optional(),
     country: z.string().optional(),
     city: z.string().optional(),
     role: z.string().optional(),
@@ -36,6 +40,19 @@ export const profileFormSchema = z
         message: 'Required',
         input: data.company
       });
+    }
+    if (data.onVacation && data.vacationEndsAt) {
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      const endsAt = new Date(data.vacationEndsAt);
+      if (endsAt < today) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['vacationEndsAt'],
+          message: 'Vacation end date must be today or in the future',
+          input: data.vacationEndsAt
+        });
+      }
     }
   });
 

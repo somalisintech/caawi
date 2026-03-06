@@ -45,6 +45,12 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
       githubUrl: profile?.githubUrl ?? undefined,
       buyMeCoffeeUrl: profile?.buyMeCoffeeUrl ?? undefined,
       sameGenderPref: profile?.sameGenderPref ?? undefined,
+      isAcceptingMentees: profile?.isAcceptingMentees ?? true,
+      onVacation: profile?.onVacation ?? false,
+      vacationEndsAt: profile?.vacationEndsAt
+        ? new Date(profile.vacationEndsAt).toISOString().split('T')[0]
+        : undefined,
+      monthlyCapacity: profile?.monthlyCapacity ?? undefined,
       country: profile?.location?.country ?? undefined,
       city: profile?.location?.city ?? undefined,
       role: profile?.occupation?.role ?? undefined,
@@ -65,6 +71,7 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
   }
 
   const watchedUserType = form.watch('userType');
+  const watchedOnVacation = form.watch('onVacation');
 
   return (
     <Form {...form}>
@@ -304,6 +311,86 @@ export function ProfileForm({ user, calendlyConnectionButton }: Props) {
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {watchedUserType === 'MENTOR' && (
+          <Card>
+            <CardHeader className="border-b-DEFAULT">
+              <CardTitle>Availability</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="isAcceptingMentees"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="space-y-0.5">
+                      <FormLabel>Accepting mentees</FormLabel>
+                      <FormDescription>
+                        When turned off, mentees will not be able to send you requests or book sessions.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="onVacation"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="space-y-0.5">
+                      <FormLabel>On vacation</FormLabel>
+                      <FormDescription>
+                        Temporarily mark yourself as unavailable. Your profile will show a vacation badge.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {watchedOnVacation && (
+                <FormField
+                  control={form.control}
+                  name="vacationEndsAt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Vacation ends</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="date" value={field.value ?? ''} />
+                      </FormControl>
+                      <FormDescription>Optional. Let mentees know when you'll be back.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              <FormField
+                control={form.control}
+                name="monthlyCapacity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Monthly session capacity</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        placeholder="Unlimited"
+                        onChange={(e) => field.onChange(e.target.valueAsNumber || undefined)}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormDescription>Maximum number of sessions per month. Leave blank for unlimited.</FormDescription>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

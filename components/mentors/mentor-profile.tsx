@@ -1,3 +1,4 @@
+import { CalendarDays, Users } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
@@ -5,14 +6,17 @@ import { SiBuymeacoffee } from 'react-icons/si';
 import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
 import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 import LayerCard from '@/components/layer-card';
+import { AvailabilityBadge } from '@/components/mentors/availability-badge';
 import { SkillBadges } from '@/components/mentors/skill-badges';
 import { RequestForm } from '@/components/mentorship/request-form';
+import { ReportBlockButtons } from '@/components/trust-safety/report-block-buttons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { MentorProfile as MentorProfileType } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
+import { formatMemberSince } from '@/lib/format-member-since';
 import { getRequestStatus } from '@/lib/queries/mentorship-requests';
 import { createClient } from '@/utils/supabase/server';
 
@@ -48,7 +52,30 @@ export async function MentorProfile({ mentor }: Props) {
     }
   });
 
-  const canBook = !mentor.sameGenderPref || mentor.gender === user?.profile?.gender;
+  const mentorProfile = await prisma.profile.findUnique({
+    where: { id: mentor.id },
+    select: { userId: true }
+  });
+
+  const isOwnProfile = mentorProfile?.userId === data.user.id;
+
+  const viewerBlock = isOwnProfile
+    ? null
+    : await prisma.block.findFirst({
+        where: {
+          OR: [
+            { blockerId: data.user.id, blockedId: mentorProfile?.userId ?? '' },
+            { blockerId: mentorProfile?.userId ?? '', blockedId: data.user.id }
+          ]
+        }
+      });
+
+  const isBlockedRelationship = !!viewerBlock;
+  const isBlockedByViewer = viewerBlock?.blockerId === data.user.id;
+
+  const isAvailable = mentor.isAcceptingMentees && !mentor.onVacation;
+  const canBook =
+    isAvailable && !isBlockedRelationship && (!mentor.sameGenderPref || mentor.gender === user?.profile?.gender);
   const isMentee = user?.profile?.userType === 'MENTEE';
   const requestStatus =
     canBook && isMentee && user?.profile?.id ? await getRequestStatus(user.profile.id, mentor.id) : null;
@@ -62,11 +89,28 @@ export async function MentorProfile({ mentor }: Props) {
               <AvatarImage src={mentor.image || ''} />
               <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex items-center gap-2">
               {mentor.firstName} {mentor.lastName}
+              <AvailabilityBadge mentor={mentor} />
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
+            {isBlockedRelationship && (
+              <LayerCard className="w-auto">
+                <LayerCard.Primary className="px-4 py-2">
+                  <p className="text-sm text-muted-foreground">You cannot interact with this user</p>
+                </LayerCard.Primary>
+              </LayerCard>
+            )}
+            {!isBlockedRelationship && !isAvailable && (
+              <LayerCard className="w-auto">
+                <LayerCard.Primary className="px-4 py-2">
+                  <p className="text-sm text-muted-foreground">
+                    {mentor.onVacation ? 'Mentor is on vacation' : 'Not accepting mentees'}
+                  </p>
+                </LayerCard.Primary>
+              </LayerCard>
+            )}
             {canBook && isMentee && (!requestStatus || requestStatus.status === 'DECLINED') && (
               <RequestForm mentorProfileId={mentor.id} />
             )}
@@ -83,7 +127,7 @@ export async function MentorProfile({ mentor }: Props) {
             {canBook && !isMentee && (
               <CalendlyWidget scheduling_url={mentor.calendlySchedulingUrl} user={user} profile={user?.profile} />
             )}
-            {!canBook && (
+            {!canBook && isAvailable && !isBlockedRelationship && (
               <LayerCard className="w-auto">
                 <LayerCard.Primary className="px-4 py-2">
                   <p className="text-sm text-muted-foreground">Same-gender mentees only</p>
@@ -104,14 +148,30 @@ export async function MentorProfile({ mentor }: Props) {
           <p>{mentor.bio || '-'}</p>
         </div>
         {mentor.skills.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm uppercase text-muted-foreground">Skills</div>
+            <SkillBadges skills={mentor.skills} max={Infinity} />
+          </div>
+        )}
+        {(mentor.sessionCount > 0 || mentor.memberSince) && (
           <>
-            <div className="space-y-2">
-              <div className="text-sm uppercase text-muted-foreground">Skills</div>
-              <SkillBadges skills={mentor.skills} max={Infinity} />
+            <Separator />
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              {mentor.sessionCount > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Users className="size-4" />
+                  {mentor.sessionCount} {mentor.sessionCount === 1 ? 'session' : 'sessions'} completed
+                </span>
+              )}
+              {mentor.memberSince && (
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="size-4" />
+                  Mentor since {formatMemberSince(mentor.memberSince)}
+                </span>
+              )}
             </div>
           </>
         )}
-        <Separator />
         <Separator />
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div className="space-y-1">
@@ -158,6 +218,12 @@ export async function MentorProfile({ mentor }: Props) {
             </Link>
           )}
         </div>
+        {!isOwnProfile && mentorProfile && (
+          <>
+            <Separator />
+            <ReportBlockButtons targetUserId={mentorProfile.userId} isBlockedByViewer={isBlockedByViewer} />
+          </>
+        )}
       </CardContent>
     </Card>
   );

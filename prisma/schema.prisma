@@ -10,14 +10,19 @@ datasource db {
 }
 
 model User {
-  id        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName String?
-  lastName  String?
-  email     String?  @unique
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  profile   Profile?
+  id              String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName       String?
+  lastName        String?
+  email           String?  @unique
+  image           String?
+  role            Role     @default(USER)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+  profile         Profile?
+  reportsCreated  Report[] @relation("ReportsCreated")
+  reportsReceived Report[] @relation("ReportsReceived")
+  blocksCreated   Block[]  @relation("BlocksCreated")
+  blocksReceived  Block[]  @relation("BlocksReceived")
 }
 
 model Profile {
@@ -36,6 +41,10 @@ model Profile {
   yearsOfExperience     Int?
   calendlyUserUri       String?       @unique
   onboardingCompleted   Boolean       @default(false)
+  isAcceptingMentees    Boolean       @default(true)
+  onVacation            Boolean       @default(false)
+  vacationEndsAt        DateTime?
+  monthlyCapacity       Int?
   location              Location?     @relation(fields: [locationId], references: [id])
   occupation            Occupation?   @relation(fields: [occupationId], references: [id])
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -138,6 +147,49 @@ model MenteeNudge {
   @@unique([mentorProfileId, menteeProfileId])
 }
 
+model Report {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reporterId  String       @db.Uuid
+  reportedId  String       @db.Uuid
+  reason      ReportReason
+  description String?
+  status      ReportStatus @default(PENDING)
+  reviewedAt  DateTime?
+  reviewedBy  String?      @db.Uuid
+  createdAt   DateTime     @default(now())
+  reporter    User         @relation("ReportsCreated", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported    User         @relation("ReportsReceived", fields: [reportedId], references: [id], onDelete: Cascade)
+
+  @@index([reportedId])
+  @@index([status])
+}
+
+model Block {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  blockerId String   @db.Uuid
+  blockedId String   @db.Uuid
+  createdAt DateTime @default(now())
+  blocker   User     @relation("BlocksCreated", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+enum ReportReason {
+  HARASSMENT
+  SPAM
+  INAPPROPRIATE_CONTENT
+  IMPERSONATION
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+  ACTION_TAKEN
+}
+
 model Skill {
   id       Int       @id @default(autoincrement())
   name     String    @unique
@@ -164,6 +216,12 @@ view MentorProfile {
   githubUrl             String?
   buyMeCoffeeUrl        String?
   skills                String[]
+  sessionCount          Int       @default(0)
+  memberSince           DateTime?
+  isAcceptingMentees    Boolean   @default(true)
+  onVacation            Boolean   @default(false)
+  vacationEndsAt        DateTime?
+  monthlyCapacity       Int?
 }
 
 enum UserType {
@@ -174,4 +232,9 @@ enum UserType {
 enum Gender {
   MALE
   FEMALE
+}
+
+enum Role {
+  USER
+  ADMIN
 }

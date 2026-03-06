@@ -5,5 +5,5 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
  */
 export function formatMemberSince(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+  return `${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }

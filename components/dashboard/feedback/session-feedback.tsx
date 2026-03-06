@@ -25,13 +25,19 @@ type Props = {
 export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props) {
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   const loadFeedback = useCallback(async () => {
-    const result = await getSessionFeedbackAction(sessionId);
-    if (result.success && result.data) {
-      setFeedback(result.data);
+    try {
+      const result = await getSessionFeedbackAction(sessionId);
+      if (result.success && result.data) {
+        setFeedback(result.data);
+      } else {
+        setFetchError(true);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [sessionId]);
 
   useEffect(() => {
@@ -40,14 +46,15 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
 
   const sessionEnded = new Date(sessionEndTime) < new Date();
 
-  if (isCanceled || !sessionEnded || loading) return null;
+  if (loading || fetchError) return null;
+  if (isCanceled || !sessionEnded) return null;
 
-  // User hasn't submitted feedback yet — show CTA
+  // User hasn't submitted yet — show rating CTA
   if (!feedback?.myFeedback) {
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="w-full gap-2 text-[13px]">
+  const windowClosed = !!feedback.otherFeedback;
             <MessageSquare className="size-3.5" />
             Rate this session
           </Button>

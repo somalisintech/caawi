@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { SkillBadges } from '@/components/mentors/skill-badges';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import type { MentorProfile } from '@/generated/prisma/client';
@@ -40,6 +41,7 @@ export function MentorCard({ mentor, authenticated }: Props) {
           <p>{mentor.bio || '-'}</p>
         </div>
       </div>
+      <SkillBadges skills={mentor.skills} />
     </div>
   );
 }

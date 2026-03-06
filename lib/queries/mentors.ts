@@ -1,6 +1,10 @@
 import prisma from '@/lib/db';
 
-export async function getMentorsWithCountries(params?: { search?: string; country?: string }) {
+export async function getMentorsWithCountries(params?: {
+  search?: string;
+  country?: string;
+  skills?: string | string[];
+}) {
   const where: Record<string, unknown>[] = [];
 
   if (params?.search) {
@@ -20,6 +24,13 @@ export async function getMentorsWithCountries(params?: { search?: string; countr
 
   if (params?.country) {
     where.push({ country: { equals: params.country, mode: 'insensitive' } });
+  }
+
+  if (params?.skills) {
+    const skillList = Array.isArray(params.skills) ? params.skills : [params.skills];
+    if (skillList.length > 0) {
+      where.push({ skills: { hasSome: skillList } });
+    }
   }
 
   const [mentors, allMentors] = await Promise.all([

@@ -16,7 +16,7 @@ SELECT
   l.country,
   o.role,
   o.company,
-  array_agg(s.name) as skills
+  array_remove(array_agg(s.name), NULL) as skills
 FROM "Profile" p
        JOIN "User" u ON u."id" = p."userId"
        LEFT JOIN "Location" l ON p."locationId" = l.id

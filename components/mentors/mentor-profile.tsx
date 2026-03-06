@@ -5,6 +5,7 @@ import { SiBuymeacoffee } from 'react-icons/si';
 import { ShareProfileButton } from '@/app/(dashboard)/dashboard/profile/components/share-profile-button';
 import { CalendlyWidget } from '@/components/calendly/calendly-widget';
 import LayerCard from '@/components/layer-card';
+import { SkillBadges } from '@/components/mentors/skill-badges';
 import { RequestForm } from '@/components/mentorship/request-form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -101,7 +102,15 @@ export async function MentorProfile({ mentor }: Props) {
         <div className="space-y-1">
           <div className="text-sm uppercase text-muted-foreground">Bio</div>
           <p>{mentor.bio || '-'}</p>
-        </div>
+        {mentor.skills.length > 0 && (
+          <>
+            <div className="space-y-2">
+              <div className="text-sm uppercase text-muted-foreground">Skills</div>
+              <SkillBadges skills={mentor.skills} max={Infinity} />
+            </div>
+          </>
+        )}
+        <Separator />
         <Separator />
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div className="space-y-1">

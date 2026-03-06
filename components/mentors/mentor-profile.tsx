@@ -109,9 +109,9 @@ export async function MentorProfile({ mentor }: Props) {
               <div className="text-sm uppercase text-muted-foreground">Skills</div>
               <SkillBadges skills={mentor.skills} max={Infinity} />
             </div>
-            <Separator />
           </>
         )}
+        <Separator />
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div className="space-y-1">
             <div className="text-sm uppercase text-muted-foreground">Country</div>

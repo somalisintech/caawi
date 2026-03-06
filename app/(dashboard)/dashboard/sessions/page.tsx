@@ -1,19 +1,27 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import { SessionsView } from '@/components/dashboard/sessions-view';
 import prisma from '@/lib/db';
 import { getSessionsForRange } from '@/lib/queries/sessions';
 import { createClient } from '@/utils/supabase/server';
+import SessionsLoading from './loading';
 
 function clamp(value: number, min: number, max: number) {
   if (!Number.isFinite(value)) return min;
   return Math.max(min, Math.min(max, value));
 }
 
-export default async function SessionsPage({
-  searchParams
-}: {
-  searchParams: Promise<{ year?: string; month?: string; day?: string }>;
-}) {
+type SearchParams = Promise<{ year?: string; month?: string; day?: string }>;
+
+export default function SessionsPage({ searchParams }: { searchParams: SearchParams }) {
+  return (
+    <Suspense fallback={<SessionsLoading />}>
+      <SessionsContent searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function SessionsContent({ searchParams: searchParamsPromise }: { searchParams: SearchParams }) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -38,7 +46,7 @@ export default async function SessionsPage({
   const userType = user?.profile?.userType === 'MENTOR' ? 'MENTOR' : 'MENTEE';
   const hasCalendly = !!user?.profile?.calendlyUser;
 
-  const params = await searchParams;
+  const params = await searchParamsPromise;
   const now = new Date();
   const year = clamp(params.year ? Number.parseInt(params.year, 10) : now.getFullYear(), 2020, 2099);
   const month = clamp(params.month ? Number.parseInt(params.month, 10) : now.getMonth(), 0, 11);

@@ -32,9 +32,9 @@ export function SkillPicker({ selected, skillsByCategory, onChange }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        {categories.map((category) => (
+        {categories.map((category, i) => (
           <Badge
-            key={category}
+            key={`${category}-${i}`}
             variant={activeCategory === category ? 'default' : 'outline'}
             className={cn('cursor-pointer', activeCategory !== category && 'hover:bg-muted')}
             onClick={() => setActiveCategory(activeCategory === category ? null : category)}
@@ -50,11 +50,11 @@ export function SkillPicker({ selected, skillsByCategory, onChange }: Props) {
             {selected.length > 0 ? <span className="tabular-nums"> &middot; {selected.length} selected</span> : null}
           </p>
           <div className="flex flex-wrap gap-2">
-            {activeSkills?.map((skill) => {
+            {activeSkills?.map((skill, i) => {
               const isSelected = selectedSet.has(skill);
               return (
                 <Badge
-                  key={skill}
+                  key={`${skill}-${i}`}
                   variant={isSelected ? 'default' : 'secondary'}
                   className={cn('cursor-pointer', !isSelected && 'hover:bg-muted')}
                   onClick={() => toggleSkill(skill)}

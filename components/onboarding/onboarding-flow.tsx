@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
+import { updateProfileAction } from '@/app/actions/profile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { UserType } from '@/generated/prisma/browser';
 import { SKILLS_BY_CATEGORY } from '@/lib/constants/skills';
@@ -78,25 +79,21 @@ export function OnboardingFlow({ user }: Props) {
   const submit = useCallback(async (finalData: OnboardingData) => {
     setSubmitting(true);
     try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userType: finalData.userType,
-          firstName: finalData.firstName,
-          lastName: finalData.lastName,
-          gender: finalData.gender,
-          bio: finalData.bio || null,
-          country: finalData.country || null,
-          city: finalData.city || null,
-          role: finalData.role || null,
-          company: finalData.company || null,
-          skills: finalData.skills,
-          onboardingCompleted: true
-        })
+      const result = await updateProfileAction({
+        userType: finalData.userType ?? undefined,
+        firstName: finalData.firstName,
+        lastName: finalData.lastName,
+        gender: (finalData.gender as 'MALE' | 'FEMALE') || undefined,
+        bio: finalData.bio || null,
+        country: finalData.country || null,
+        city: finalData.city || null,
+        role: finalData.role || null,
+        company: finalData.company || null,
+        skills: finalData.skills,
+        onboardingCompleted: true
       });
 
-      if (!response.ok) {
+      if (!result.success) {
         toast.error('Something went wrong. Please try again.');
         return false;
       }

@@ -94,8 +94,8 @@ export function MentorsSearch({ countries = [], allSkills }: Props) {
               <SelectValue placeholder="All countries" />
             </SelectTrigger>
             <SelectContent className="max-h-48 overflow-y-auto">
-              {countries.map((c) => (
-                <SelectItem key={c} value={c}>
+              {countries.map((c, i) => (
+                <SelectItem key={`${c}-${i}`} value={c}>
                   {c}
                 </SelectItem>
               ))}
@@ -121,10 +121,13 @@ export function MentorsSearch({ countries = [], allSkills }: Props) {
                   <div key={category}>
                     <div className="mb-2 text-xs font-medium uppercase text-muted-foreground">{category}</div>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                      {skills.map((skill) => {
-                        const skillId = `skill-${skill.replaceAll(/[^a-zA-Z0-9-_]/g, '-')}`;
+                      {skills.map((skill, i) => {
+                        const skillId = `skill-${category}-${skill.replaceAll(/[^a-zA-Z0-9-_]/g, '-')}`;
                         return (
-                          <div key={skill} className="flex items-center gap-2 text-sm cursor-pointer">
+                          <div
+                            key={`${category}-${skill}-${i}`}
+                            className="flex items-center gap-2 text-sm cursor-pointer"
+                          >
                             <Checkbox
                               id={skillId}
                               checked={selectedSkills.includes(skill)}

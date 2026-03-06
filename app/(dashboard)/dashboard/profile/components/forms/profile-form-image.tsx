@@ -1,6 +1,7 @@
 import { Loader2 } from 'lucide-react';
 import { type ChangeEvent, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { updateProfileAction } from '@/app/actions/profile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { UserWithProfile } from '@/types/user';
 import { createClient } from '@/utils/supabase/client';
@@ -44,11 +45,8 @@ export function ProfileFormImage({ user }: Props) {
 
           const imageUrl = `${imageData.publicUrl}?updated=${Date.now()}`;
 
-          const response = await fetch('/api/users', {
-            method: 'POST',
-            body: JSON.stringify({ image: imageUrl })
-          });
-          if (!response.ok) {
+          const result = await updateProfileAction({ image: imageUrl });
+          if (!result.success) {
             throw Error('Failed to upload image');
           }
           setLocalImage(imageUrl);

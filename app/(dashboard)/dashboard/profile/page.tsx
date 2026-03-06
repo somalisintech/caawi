@@ -1,11 +1,21 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import { CalendlyConnectionButton } from '@/components/calendly/calendly-connection-button';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
 import { ProfileForm } from './components/forms';
+import ProfileLoading from './loading';
 
-export default async function SettingsProfilePage() {
+export default function SettingsProfilePage() {
+  return (
+    <Suspense fallback={<ProfileLoading />}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
+
+async function ProfileContent() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 

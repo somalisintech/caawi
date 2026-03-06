@@ -1,9 +1,12 @@
 import { MentorsList } from '@/components/mentors/mentors-list';
+import { SKILLS_BY_CATEGORY } from '@/lib/constants/skills';
 import { getMentorsWithCountries } from '@/lib/queries/mentors';
 
-export default async function MentorsListPage(props: { searchParams: Promise<{ search?: string; country?: string }> }) {
+export default async function MentorsListPage(props: {
+  searchParams: Promise<{ search?: string; country?: string; skills?: string | string[] }>;
+}) {
   const searchParams = await props.searchParams;
   const { mentors, countries } = await getMentorsWithCountries(searchParams);
 
-  return <MentorsList mentors={mentors} authenticated={true} countries={countries} />;
+  return <MentorsList mentors={mentors} authenticated={true} countries={countries} allSkills={SKILLS_BY_CATEGORY} />;
 }

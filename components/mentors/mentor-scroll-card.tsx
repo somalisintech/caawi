@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { SkillBadges } from '@/components/mentors/skill-badges';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { MentorProfile } from '@/generated/prisma/client';
 
@@ -30,11 +31,7 @@ export function MentorScrollCard({ mentor, authenticated }: Props) {
         </div>
       </div>
       <div>{mentor.bio}</div>
-      {/* <div className="flex gap-2">
-        <Badge variant="secondary">HTML</Badge>
-        <Badge variant="secondary">CSS</Badge>
-        <Badge variant="secondary">JavaScript</Badge>
-      </div> */}
+      <SkillBadges skills={mentor.skills} />
     </Link>
   );
 }

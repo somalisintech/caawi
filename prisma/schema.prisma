@@ -163,6 +163,7 @@ view MentorProfile {
   linkedInUrl           String?
   githubUrl             String?
   buyMeCoffeeUrl        String?
+  skills                String[]
 }
 
 enum UserType {

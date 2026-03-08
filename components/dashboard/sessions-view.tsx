@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { DevOnly } from '@/components/dev/dev-only';
+import { MockBookingButton } from '@/components/dev/mock-booking-button';
 import LayerCard from '@/components/layer-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -207,6 +209,9 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
             <Globe className="size-3.5" />
             <span>{tz.replace('_', ' ')}</span>
           </div>
+          <DevOnly>
+            <MockBookingButton />
+          </DevOnly>
         </div>
       </div>
 
@@ -246,7 +251,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
 
         <div className="flex items-center gap-2">
           {/* Filters */}
-          <div className="flex gap-1 rounded-lg border border-border/60 bg-muted/30 p-0.5 dark:bg-zinc-900/50">
+          <div className="flex gap-1 rounded-lg border border-border/60 bg-muted/30 p-0.5">
             {filters.map((f) => (
               <button
                 key={f.key}
@@ -254,9 +259,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                 onClick={() => setFilter(f.key)}
                 className={cn(
                   'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors cursor-pointer',
-                  filter === f.key
-                    ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
-                    : 'text-muted-foreground hover:text-foreground'
+                  filter === f.key ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 {f.label}
@@ -264,7 +267,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                   <span
                     className={cn(
                       'ml-1 tabular-nums text-[11px]',
-                      filter === f.key ? 'text-muted-foreground' : 'text-[#aaa] dark:text-zinc-600'
+                      filter === f.key ? 'text-muted-foreground' : 'text-muted-foreground/60'
                     )}
                   >
                     {f.count}
@@ -275,14 +278,14 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
           </div>
 
           {/* View toggle */}
-          <div className="flex gap-0.5 rounded-lg border border-border/60 bg-muted/30 p-0.5 dark:bg-zinc-900/50">
+          <div className="flex gap-0.5 rounded-lg border border-border/60 bg-muted/30 p-0.5">
             <button
               type="button"
               onClick={() => switchView('week')}
               className={cn(
                 'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
                 viewMode === 'week'
-                  ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
+                  ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -295,7 +298,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
               className={cn(
                 'rounded-md px-2.5 py-1 text-[13px] font-medium transition-colors',
                 viewMode === 'month'
-                  ? 'bg-background text-foreground shadow-sm dark:bg-zinc-800'
+                  ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -393,7 +396,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
                               onClick={() => setSelectedSession(s)}
                               className={cn(
                                 'flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/50 dark:hover:bg-zinc-900/40 cursor-pointer',
-                                selectedSession?.id === s.id && 'bg-muted/60 dark:bg-zinc-900/60'
+                                selectedSession?.id === s.id && 'bg-muted/60'
                               )}
                             >
                               <div

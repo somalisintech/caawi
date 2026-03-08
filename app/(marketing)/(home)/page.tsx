@@ -1,6 +1,9 @@
+import { Footer } from '@/components/layout/footer';
+import { Nav } from '@/components/layout/nav';
 import prisma from '@/lib/db';
 import { createClient } from '@/utils/supabase/server';
-import { LandingShell } from './components/landing-shell';
+import { Hero } from './components/hero';
+import { HowItWorks } from './components/how-it-works';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -19,5 +22,12 @@ export default async function Home() {
     });
   }
 
-  return <LandingShell user={user} />;
+  return (
+    <div className="flex min-h-screen flex-col font-[family-name:var(--font-manrope)]">
+      <Nav user={user} className="px-[60px] max-lg:px-10 max-sm:px-6" />
+      <Hero />
+      <HowItWorks />
+      <Footer className="px-[60px] max-lg:px-10 max-sm:px-6" />
+    </div>
+  );
 }

@@ -22,14 +22,12 @@ export function PeelCard({
   color,
   title,
   subtitle,
-  graphic,
-  dark = true
+  graphic
 }: {
   color: keyof typeof PATTERN_MAP;
   title: string;
   subtitle: string;
   graphic: React.ReactNode;
-  dark?: boolean;
 }) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number>(0);
@@ -66,7 +64,7 @@ export function PeelCard({
     green: 'bg-[#00A651] text-[#003311]',
     lavender: 'bg-[#D8CEF6] text-[#2a1a4a]',
     coral: 'bg-[#FF6B4A] text-[#4a1000]',
-    white: dark ? 'bg-white text-black' : 'bg-[#1a1a1a] text-white'
+    white: 'bg-white text-black dark:bg-[#1a1a1a] dark:text-white'
   };
 
   return (

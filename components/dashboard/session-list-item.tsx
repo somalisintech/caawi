@@ -29,19 +29,22 @@ export function getFullName(firstName: string | null, lastName: string | null) {
 export function SessionListItem({ session, otherUser, isRecent = false, action }: Props) {
   return (
     <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-center gap-3">
-        <Avatar className="size-10 shrink-0">
-          <AvatarImage src={otherUser.image ?? undefined} />
-          <AvatarFallback>{getInitials(otherUser.firstName, otherUser.lastName)}</AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <p className={`truncate font-medium ${isRecent ? 'text-muted-foreground' : 'text-foreground'}`}>
-            {session.eventName ?? 'Mentoring Session'}
-          </p>
-          <p className="truncate mt-0.5 text-sm text-muted-foreground">
-            with {getFullName(otherUser.firstName, otherUser.lastName)}
-          </p>
+      <div className="flex items-center gap-3 justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <Avatar className="size-10 shrink-0">
+            <AvatarImage src={otherUser.image ?? undefined} />
+            <AvatarFallback>{getInitials(otherUser.firstName, otherUser.lastName)}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className={`truncate font-medium ${isRecent ? 'text-muted-foreground' : 'text-foreground'}`}>
+              {session.eventName ?? 'Mentoring Session'}
+            </p>
+            <p className="truncate mt-0.5 text-sm text-muted-foreground">
+              with {getFullName(otherUser.firstName, otherUser.lastName)}
+            </p>
+          </div>
         </div>
+        <div className="">{action}</div>
       </div>
 
       {isRecent ? (
@@ -58,7 +61,6 @@ export function SessionListItem({ session, otherUser, isRecent = false, action }
               <LocalTime date={session.endTime} format="time" />
             </p>
           </div>
-          {action}
         </div>
       ) : (
         <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end">

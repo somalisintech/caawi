@@ -103,7 +103,7 @@ function AlertDialogBody({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="alert-dialog-body"
-      className={cn('flex flex-col gap-4 overflow-hidden rounded-lg bg-background p-6 ring ring-border', className)}
+      className={cn('flex flex-col gap-4 overflow-hidden rounded-lg bg-card p-6 ring ring-border', className)}
       {...props}
     />
   );

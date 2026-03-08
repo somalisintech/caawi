@@ -95,7 +95,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 60 20% 96%;
     --foreground: 0 0% 5%;
 
     --card: 0 0% 100%;
@@ -119,40 +119,40 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 92%;
-    --input: 0 0% 85%;
+    --border: 0 0% 88%;
+    --input: 0 0% 82%;
     --ring: 0 0% 76%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 0%;
+    --background: 0 0% 10%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 3%;
+    --card: 0 0% 13%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 3%;
+    --popover: 0 0% 13%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 177 86% 28%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 0 0% 6%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 9%;
+    --muted: 0 0% 15%;
     --muted-foreground: 0 0% 49%;
 
-    --accent: 0 0% 6%;
+    --accent: 0 0% 15%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 11%;
-    --input: 0 0% 16%;
+    --border: 0 0% 18%;
+    --input: 0 0% 22%;
     --ring: 177 86% 40%;
   }
 }
@@ -163,6 +163,13 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-manrope), sans-serif;
   }
 
   .hide-dialog-close > button {

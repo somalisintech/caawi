@@ -49,7 +49,7 @@ export function BrowseNudgeButton({ menteeProfileId, lastNudgedAt }: Props) {
 
   if (!canNudge) {
     return (
-      <Button size="sm" variant="outline" disabled className="text-xs gap-1 font-mono uppercase w-fit px-2">
+      <Button size="sm" variant="outline" disabled className="text-xs gap-1  w-fit px-2">
         <Bell className="size-3.5" />
         Nudged {daysRemaining}d ago
       </Button>
@@ -59,7 +59,7 @@ export function BrowseNudgeButton({ menteeProfileId, lastNudgedAt }: Props) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size="sm" variant="outline" className="text-xs gap-1 font-mono uppercase w-fit px-2">
+        <Button size="sm" variant="outline" className="text-xs gap-1 w-fit px-2">
           <Bell className="size-3.5" />
           Nudge
         </Button>

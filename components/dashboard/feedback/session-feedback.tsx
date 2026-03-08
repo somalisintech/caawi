@@ -80,7 +80,7 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
           <Eye className="size-3.5 text-muted-foreground" />
           <p className="text-[13px] font-medium text-foreground">Their rating</p>
         </div>
-        <StarRating value={feedback.otherFeedback.stars} readonly size="sm" />
+        <StarRating value={feedback.otherFeedback.stars} readonly size="md" />
       </div>
       {feedback.otherFeedback.comment ? (
         <p className="mt-1.5 text-[13px] text-muted-foreground">&ldquo;{feedback.otherFeedback.comment}&rdquo;</p>

@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import { FeedbackPrompt } from '@/components/dashboard/feedback/feedback-prompt';
 import { MenteeHome } from '@/components/dashboard/mentee-home';
 import { MentorHome } from '@/components/dashboard/mentor-home';
 import prisma from '@/lib/db';
@@ -59,26 +58,19 @@ async function DashboardContent() {
         getSessionsAwaitingFeedback(profileId, data.user.id, 'MENTOR')
       ]);
 
-    const feedbackSessions = awaitingFeedback.map((s) => ({
-      id: s.id,
-      eventName: s.eventName,
-      endTime: s.endTime.toISOString(),
-      counterpart: s.menteeProfile.user
-    }));
+    const awaitingFeedbackIds = awaitingFeedback.map((s) => s.id);
 
     return (
-      <>
-        <FeedbackPrompt sessions={feedbackSessions} />
-        <MentorHome
-          firstName={user.firstName}
-          hasCalendly={!!user.profile.calendlyUser}
-          upcomingSessions={upcomingSessions}
-          menteeCount={menteeCount}
-          totalSessions={totalSessions}
-          recentSessions={recentSessions}
-          pendingRequestCount={pendingRequestCount}
-        />
-      </>
+      <MentorHome
+        firstName={user.firstName}
+        hasCalendly={!!user.profile.calendlyUser}
+        upcomingSessions={upcomingSessions}
+        menteeCount={menteeCount}
+        totalSessions={totalSessions}
+        recentSessions={recentSessions}
+        pendingRequestCount={pendingRequestCount}
+        awaitingFeedbackIds={awaitingFeedbackIds}
+      />
     );
   }
 
@@ -91,23 +83,16 @@ async function DashboardContent() {
     profileId ? getSessionsAwaitingFeedback(profileId, data.user.id, 'MENTEE') : []
   ]);
 
-  const feedbackSessions = awaitingFeedback.map((s) => ({
-    id: s.id,
-    eventName: s.eventName,
-    endTime: s.endTime.toISOString(),
-    counterpart: s.mentorProfile.user
-  }));
+  const awaitingFeedbackIds = awaitingFeedback.map((s) => s.id);
 
   return (
-    <>
-      <FeedbackPrompt sessions={feedbackSessions} />
-      <MenteeHome
-        firstName={user?.firstName}
-        mentorCount={mentorCount}
-        upcomingSessions={upcomingSessions}
-        totalSessions={totalSessions}
-        recentSessions={recentSessions}
-      />
-    </>
+    <MenteeHome
+      firstName={user?.firstName}
+      mentorCount={mentorCount}
+      upcomingSessions={upcomingSessions}
+      totalSessions={totalSessions}
+      recentSessions={recentSessions}
+      awaitingFeedbackIds={awaitingFeedbackIds}
+    />
   );
 }

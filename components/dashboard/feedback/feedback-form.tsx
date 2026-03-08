@@ -75,7 +75,7 @@ export function FeedbackForm({ sessionId, onSuccess }: Props) {
         {isPending ? 'Submitting...' : 'Submit Feedback'}
       </Button>
       <p className="text-center text-[12px] text-muted-foreground">
-        Ratings are blind for 5 days — neither party sees the other&apos;s feedback until then.
+        Ratings are blind for 5 days, neither party sees the other&apos;s feedback until then.
       </p>
     </form>
   );

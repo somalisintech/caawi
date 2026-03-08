@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import {
   AlertDialog,
+  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -78,37 +79,39 @@ export function RequestForm({ mentorProfileId }: Props) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Request mentorship</AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogBody>
           <AlertDialogDescription>
             Introduce yourself and share what you'd like to learn. The mentor will review your request.
           </AlertDialogDescription>
-        </AlertDialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Hi! I'm interested in learning about..."
-                      className="min-h-[120px] resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-              <Button type="submit" disabled={isPending} className="gap-2">
-                <Send className="size-4" />
-                {isPending ? 'Sending...' : 'Send request'}
-              </Button>
-            </AlertDialogFooter>
-          </form>
-        </Form>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Hi! I'm interested in learning about..."
+                        className="min-h-[120px] resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+                <Button type="submit" disabled={isPending} className="gap-2">
+                  <Send className="size-4" />
+                  {isPending ? 'Sending...' : 'Send request'}
+                </Button>
+              </AlertDialogFooter>
+            </form>
+          </Form>
+        </AlertDialogBody>
       </AlertDialogContent>
     </AlertDialog>
   );

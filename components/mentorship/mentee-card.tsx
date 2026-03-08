@@ -19,15 +19,17 @@ export function MenteeCard({ firstName, lastName, image, message, createdAt, act
         <AvatarImage src={image ?? undefined} />
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center justify-between">
           <p className="font-medium text-foreground">{name}</p>
           <time className="text-xs text-muted-foreground">
             {createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </time>
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">{message}</p>
-        {actions && <div className="pt-2">{actions}</div>}
+        <div className="flex items-end justify-between gap-4">
+          <p className="text-sm text-muted-foreground line-clamp-2">{message}</p>
+          {actions && <div className="shrink-0">{actions}</div>}
+        </div>
       </div>
     </div>
   );

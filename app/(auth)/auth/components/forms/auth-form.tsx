@@ -51,7 +51,7 @@ export function AuthForm({ next }: { next?: string }) {
             <FormItem>
               <FormLabel>Email address</FormLabel>
               <FormControl>
-                <Input {...field} autoComplete="email" type="email" required />
+                <Input {...field} autoComplete="email" type="email" placeholder="you@example.com" required />
               </FormControl>
               <FormMessage />
             </FormItem>

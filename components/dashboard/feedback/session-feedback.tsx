@@ -5,7 +5,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { getSessionFeedbackAction } from '@/app/actions/feedback';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
 import { FeedbackForm } from './feedback-form';
 import { StarRating } from './star-rating';
 
@@ -68,6 +76,11 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
           <DialogBody>
             <FeedbackForm sessionId={sessionId} onSuccess={loadFeedback} />
           </DialogBody>
+          <DialogFooter className="px-4 py-3">
+            <p className="text-center text-xs text-muted-foreground">
+              Ratings are blind for 5 days, neither party sees the other&apos;s feedback until then.
+            </p>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     );

@@ -44,7 +44,7 @@ export function SessionListItem({ session, otherUser, isRecent = false, action }
             </p>
           </div>
         </div>
-        <div className="">{action}</div>
+        <div className="sm:hidden">{action}</div>
       </div>
 
       {isRecent ? (
@@ -61,6 +61,7 @@ export function SessionListItem({ session, otherUser, isRecent = false, action }
               <LocalTime date={session.endTime} format="time" />
             </p>
           </div>
+          <div className="hidden sm:block">{action}</div>
         </div>
       ) : (
         <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end">
@@ -73,6 +74,7 @@ export function SessionListItem({ session, otherUser, isRecent = false, action }
               <LocalTime date={session.endTime} format="time" />
             </p>
           </div>
+          <div className="hidden sm:block">{action}</div>
         </div>
       )}
     </div>

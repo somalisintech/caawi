@@ -2,7 +2,6 @@ import Link from 'next/link';
 
 export function LandingFooter({ dark }: { dark: boolean }) {
   const muted = dark ? 'text-white/50' : 'text-black/40';
-  const _border = dark ? 'border-white/10' : 'border-black/10';
 
   return (
     <footer className={`mt-auto px-[60px] py-10 max-lg:px-10 max-sm:px-6 ${dark ? 'text-white' : 'text-[#1a1a1a]'}`}>

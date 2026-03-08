@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getSessionFeedbackAction } from '@/app/actions/feedback';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { FeedbackForm } from './feedback-form';
 import { StarRating } from './star-rating';
 
@@ -52,7 +52,6 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
   if (isCanceled || !sessionEnded) return null;
 
   // User hasn't submitted yet — show rating CTA
-  // User hasn't submitted yet — show rating CTA
   if (!feedback?.myFeedback) {
     return (
       <Dialog>
@@ -66,48 +65,44 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
           <DialogHeader>
             <DialogTitle>Session Feedback</DialogTitle>
           </DialogHeader>
-          <FeedbackForm sessionId={sessionId} onSuccess={loadFeedback} />
+          <DialogBody>
+            <FeedbackForm sessionId={sessionId} onSuccess={loadFeedback} />
+          </DialogBody>
         </DialogContent>
       </Dialog>
     );
   }
 
-  // User has submitted — show their feedback + other party status
-  // Other party's feedback
-  {feedback.otherFeedback ? (
-        <div className="border-t border-border/40 pt-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Eye className="size-3.5 text-muted-foreground" />
-              <p className="text-[13px] font-medium text-foreground">Their rating</p>
-            </div>
-            <StarRating value={feedback.otherFeedback.stars} readonly size="sm" />
-          </div>
-          {feedback.otherFeedback.comment ? (
-            <p className="mt-1.5 text-[13px] text-muted-foreground">&ldquo;{feedback.otherFeedback.comment}&rdquo;</p>
-          ) : null}
+  return feedback.otherFeedback ? (
+    <div className="border-t border-border/40 pt-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <Eye className="size-3.5 text-muted-foreground" />
+          <p className="text-[13px] font-medium text-foreground">Their rating</p>
         </div>
-      ) : feedback.hasOtherSubmitted && !windowClosed ? (
-        <div className="flex items-center gap-1.5 border-t border-border/40 pt-3">
-          <EyeOff className="size-3.5 text-muted-foreground" />
-          <p className="text-[12px] text-muted-foreground">
-            Other party rated — visible after{' '}
-            {feedback.windowClosesAt
-              ? new Date(feedback.windowClosesAt).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric'
-                })
-              : 'blind window closes'}
-          </p>
-        </div>
-      ) : !feedback.hasOtherSubmitted ? (
-        <div className="flex items-center gap-1.5 border-t border-border/40 pt-3">
-          <Clock className="size-3.5 text-muted-foreground" />
-          <Badge variant="outline" className="text-[11px] font-normal text-muted-foreground">
-            Awaiting other party&apos;s feedback
-          </Badge>
-        </div>
+        <StarRating value={feedback.otherFeedback.stars} readonly size="sm" />
+      </div>
+      {feedback.otherFeedback.comment ? (
+        <p className="mt-1.5 text-[13px] text-muted-foreground">&ldquo;{feedback.otherFeedback.comment}&rdquo;</p>
       ) : null}
     </div>
-  );
+  ) : feedback.hasOtherSubmitted && feedback.windowClosesAt && new Date() < new Date(feedback.windowClosesAt) ? (
+    <div className="flex items-center gap-1.5 border-t border-border/40 pt-3">
+      <EyeOff className="size-3.5 text-muted-foreground" />
+      <p className="text-[12px] text-muted-foreground">
+        Other party rated — visible after{' '}
+        {new Date(feedback.windowClosesAt).toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric'
+        })}
+      </p>
+    </div>
+  ) : !feedback.hasOtherSubmitted ? (
+    <div className="flex items-center gap-1.5 border-t border-border/40 pt-3">
+      <Clock className="size-3.5 text-muted-foreground" />
+      <Badge variant="outline" className="text-[11px] font-normal text-muted-foreground">
+        Awaiting other party&apos;s feedback
+      </Badge>
+    </div>
+  ) : null;
 }

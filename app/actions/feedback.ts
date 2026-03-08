@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { Prisma } from '@/generated/prisma/client';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/utils/supabase/server';
@@ -65,7 +66,7 @@ export async function submitSessionFeedbackAction(data: { sessionId: string; sta
       data: { sessionId, authorId: authData.user.id, role, stars, comment, windowClosesAt }
     });
   } catch (err: unknown) {
-    if (err instanceof Object && 'code' in err && err.code === 'P2002') {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
       return { success: false, message: 'You have already submitted feedback for this session' };
     }
     logger.error('Failed to submit feedback', { userId: authData.user.id, sessionId, err });
@@ -76,9 +77,7 @@ export async function submitSessionFeedbackAction(data: { sessionId: string; sta
 
   revalidatePath('/dashboard/sessions');
   revalidatePath('/dashboard');
-  revalidatePath('/dashboard');
   return { success: true, message: 'Feedback submitted' };
-}
 }
 
 const sessionFeedbackSchema = z.object({

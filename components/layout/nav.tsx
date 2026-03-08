@@ -53,7 +53,7 @@ export function Nav({ user, className }: { user: UserData; className?: string })
           ) : (
             <Link
               href="/auth"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm border border-border rounded-full px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               Log in
             </Link>

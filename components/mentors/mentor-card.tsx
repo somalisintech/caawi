@@ -17,14 +17,14 @@ export function MentorCard({ mentor, authenticated }: Props) {
   const redirectPath = authenticated ? mentorPath : `/auth?next=${mentorPath}`;
 
   return (
-    <div className="flex flex-col gap-4 p-6">
-      <div className="flex justify-between">
-        <div className="flex items-center gap-2">
+    <div className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-foreground/15">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
           <Avatar>
             <AvatarImage src={mentor.image || ''} />
             <AvatarFallback>{mentor.firstName ? mentor.firstName[0] : '-'}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
+          <div>
             <div className="font-semibold">
               {mentor.firstName} {mentor.lastName}
             </div>
@@ -33,33 +33,33 @@ export function MentorCard({ mentor, authenticated }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <AvailabilityBadge mentor={mentor} />
           <Button asChild variant="outline" size="sm" className="rounded-full">
             <Link href={redirectPath}>View</Link>
           </Button>
         </div>
       </div>
-      <div className="flex-1">
-        <div className="bg-muted-background">
-          <p>{mentor.bio || '-'}</p>
+
+      {mentor.bio && <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{mentor.bio}</p>}
+
+      <div className="mt-3 flex items-center justify-between gap-4">
+        <SkillBadges skills={mentor.skills} />
+        <div className="flex shrink-0 items-center gap-4 text-xs text-muted-foreground">
+          {mentor.sessionCount > 0 && (
+            <span className="flex items-center gap-1">
+              <Users className="size-3" />
+              {mentor.sessionCount} {mentor.sessionCount === 1 ? 'session' : 'sessions'}
+            </span>
+          )}
+          {mentor.memberSince && (
+            <span className="flex items-center gap-1">
+              <CalendarDays className="size-3" />
+              {formatMemberSince(mentor.memberSince)}
+            </span>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-        {mentor.sessionCount > 0 && (
-          <span className="flex items-center gap-1">
-            <Users className="size-3.5" />
-            {mentor.sessionCount} {mentor.sessionCount === 1 ? 'session' : 'sessions'}
-          </span>
-        )}
-        {mentor.memberSince && (
-          <span className="flex items-center gap-1">
-            <CalendarDays className="size-3.5" />
-            Mentor since {formatMemberSince(mentor.memberSince)}
-          </span>
-        )}
-      </div>
-      <SkillBadges skills={mentor.skills} />
     </div>
   );
 }

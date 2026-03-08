@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, Home, Search, User, UserSearch, Users } from 'lucide-react';
+import { CalendarDays, Home, User, UserSearch, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -40,7 +40,7 @@ export function DashboardMenu({ userType }: Props) {
 
   return (
     <nav className="border-b border-border bg-background">
-      <div className="mx-auto flex h-10 max-w-[1200px] items-center gap-1 overflow-x-auto px-1 md:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex h-10 max-w-[1200px] items-center gap-1 overflow-x-auto px-1 md:px-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {navItems.map((item) => {
           const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 

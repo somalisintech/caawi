@@ -1,4 +1,3 @@
-import { Card } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
 import type { MentorProfile } from '@/generated/prisma/client';
 import { PAGE_SIZE } from '@/lib/constants/data';
@@ -30,24 +29,31 @@ export function MentorsList({
   const end = start + mentors.length - 1;
 
   return (
-    <Card className="grid grid-cols-1 divide-y-2 gap-0">
-      <div className="p-5">
-        <div className="mb-2 h-fit">
-          <h3 className="text-lg font-medium">
-            {totalCount > 0 ? `Showing ${start}-${end} of ${totalCount} mentors` : `Search (0 mentors)`}
-          </h3>
-        </div>
-        <MentorsSearch countries={countries} allSkills={allSkills} />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-balance text-3xl font-bold text-foreground md:text-4xl">Mentors</h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          {totalCount > 0
+            ? `Showing ${start}\u2013${end} of ${totalCount} mentors`
+            : 'No mentors found \u2014 try adjusting your search'}
+        </p>
       </div>
+
+      <MentorsSearch countries={countries} allSkills={allSkills} />
+
       {mentors.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
-          <p>No mentors found</p>
-          <p className="text-sm">Try adjusting your search</p>
+        <div className="py-16 text-center text-sm text-muted-foreground">
+          Try a different search or remove some filters
         </div>
       ) : (
-        mentors.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />)
+        <div className="space-y-3">
+          {mentors.map((mentor) => (
+            <MentorCard key={mentor.id} mentor={mentor} authenticated={authenticated} />
+          ))}
+        </div>
       )}
+
       <Pagination currentPage={currentPage} totalPages={totalPages} buildHref={buildHref} />
-    </Card>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ import LayerCard from '@/components/layer-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { LocalTime } from './local-time';
@@ -443,18 +443,16 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
 
       {/* Session detail dialog */}
       <Dialog open={!!selectedSession} onOpenChange={(open) => !open && setSelectedSession(null)}>
-        <DialogContent className="border-0 bg-transparent p-0 shadow-none sm:max-w-md">
+        <DialogContent className="sm:max-w-md">
           {selectedSession ? (
-            <LayerCard>
-              <LayerCard.Secondary className="py-4">
-                <DialogTitle className="text-base font-normal border-0">
-                  {selectedSession.eventName ?? 'Mentoring Session'}
-                </DialogTitle>
-              </LayerCard.Secondary>
-              <LayerCard.Primary className="p-5 rounded-2xl">
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedSession.eventName ?? 'Mentoring Session'}</DialogTitle>
+              </DialogHeader>
+              <DialogBody>
                 <SessionDetail session={selectedSession} roleLabel={roleLabel} />
-              </LayerCard.Primary>
-            </LayerCard>
+              </DialogBody>
+            </>
           ) : null}
         </DialogContent>
       </Dialog>

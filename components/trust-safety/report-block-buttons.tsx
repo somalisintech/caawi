@@ -7,6 +7,7 @@ import { blockUserAction, reportUserAction, unblockUserAction } from '@/app/acti
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -87,32 +88,34 @@ export function ReportBlockButtons({ targetUserId, isBlockedByViewer }: Props) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Report user</DialogTitle>
-            <DialogDescription>Help us keep the community safe. Select a reason for your report.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <RadioGroup value={reason} onValueChange={setReason}>
-              {REPORT_REASONS.map((r) => (
-                <div key={r.value} className="flex items-center gap-2">
-                  <RadioGroupItem value={r.value} id={r.value} />
-                  <Label htmlFor={r.value}>{r.label}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-            <Textarea
-              placeholder="Additional details (optional)"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="resize-none"
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setReportOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleReport} disabled={loading}>
-              Submit report
-            </Button>
-          </DialogFooter>
+          <DialogBody>
+            <DialogDescription>Help us keep the community safe. Select a reason for your report.</DialogDescription>
+            <div className="space-y-4">
+              <RadioGroup value={reason} onValueChange={setReason}>
+                {REPORT_REASONS.map((r) => (
+                  <div key={r.value} className="flex items-center gap-2">
+                    <RadioGroupItem value={r.value} id={r.value} />
+                    <Label htmlFor={r.value}>{r.label}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+              <Textarea
+                placeholder="Additional details (optional)"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="resize-none"
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setReportOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleReport} disabled={loading}>
+                Submit report
+              </Button>
+            </DialogFooter>
+          </DialogBody>
         </DialogContent>
       </Dialog>
 

@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react';
 import Link from 'next/link';
+import { RateSessionButton } from '@/components/dashboard/feedback/rate-session-button';
 import LayerCard from '@/components/layer-card';
 import { Button } from '@/components/ui/button';
 import { LocalTime } from './local-time';
@@ -27,6 +28,7 @@ type Props = {
   totalSessions: number;
   recentSessions: SessionItem[];
   pendingRequestCount: number;
+  awaitingFeedbackIds: string[];
 };
 
 export function MentorHome({
@@ -36,7 +38,8 @@ export function MentorHome({
   menteeCount,
   totalSessions,
   recentSessions,
-  pendingRequestCount
+  pendingRequestCount,
+  awaitingFeedbackIds
 }: Props) {
   const greeting = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
   const nextSession = upcomingSessions[0];
@@ -170,7 +173,15 @@ export function MentorHome({
           <LayerCard.Primary className="p-0">
             <div className="divide-y divide-border">
               {recentSessions.map((session) => (
-                <SessionListItem key={session.id} session={session} otherUser={session.menteeProfile.user} isRecent />
+                <SessionListItem
+                  key={session.id}
+                  session={session}
+                  otherUser={session.menteeProfile.user}
+                  isRecent
+                  action={
+                    awaitingFeedbackIds.includes(session.id) ? <RateSessionButton sessionId={session.id} /> : undefined
+                  }
+                />
               ))}
             </div>
           </LayerCard.Primary>

@@ -7,6 +7,7 @@ import { deleteSessionNoteAction, updateSessionNoteAction } from '@/app/actions/
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -124,14 +125,16 @@ export function NoteEditor({ note, onUpdate }: Props) {
               <AlertDialogContent size="sm">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete note?</AlertDialogTitle>
-                  <AlertDialogDescription>This can&apos;t be undone.</AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
-                  <AlertDialogAction variant="destructive" size="sm" onClick={handleDelete}>
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
+                <AlertDialogBody>
+                  <AlertDialogDescription>This can&apos;t be undone.</AlertDialogDescription>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
+                    <AlertDialogAction variant="destructive" size="sm" onClick={handleDelete}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogBody>
               </AlertDialogContent>
             </AlertDialog>
           </div>

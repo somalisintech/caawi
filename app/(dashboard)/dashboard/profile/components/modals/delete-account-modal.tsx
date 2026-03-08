@@ -4,6 +4,7 @@ import { deleteAccountAction } from '@/app/actions/profile';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -37,19 +38,22 @@ export function DeleteAccountModal() {
         <DialogHeader>
           <DialogTitle>Delete your account</DialogTitle>
         </DialogHeader>
-        <p className="text-muted-foreground">
-          This action cannot be undone. This will permanently delete your account and remove your data from our servers.
-        </p>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
+        <DialogBody>
+          <p className="text-muted-foreground">
+            This action cannot be undone. This will permanently delete your account and remove your data from our
+            servers.
+          </p>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+            <Button type="button" variant="destructive" onClick={handleClick}>
+              Delete account
             </Button>
-          </DialogClose>
-          <Button type="button" variant="destructive" onClick={handleClick}>
-            Delete account
-          </Button>
-        </DialogFooter>
+          </DialogFooter>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

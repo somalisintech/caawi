@@ -15,6 +15,7 @@ type Props = {
     image: string | null;
   };
   isRecent?: boolean;
+  action?: React.ReactNode;
 };
 
 export function getInitials(firstName: string | null, lastName: string | null) {
@@ -25,7 +26,7 @@ export function getFullName(firstName: string | null, lastName: string | null) {
   return [firstName, lastName].filter(Boolean).join(' ') || 'User';
 }
 
-export function SessionListItem({ session, otherUser, isRecent = false }: Props) {
+export function SessionListItem({ session, otherUser, isRecent = false, action }: Props) {
   return (
     <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3">
@@ -44,17 +45,20 @@ export function SessionListItem({ session, otherUser, isRecent = false }: Props)
       </div>
 
       {isRecent ? (
-        <div className="shrink-0 text-left sm:text-right">
-          <LocalTime
-            date={session.startTime}
-            format="date"
-            className="block text-sm font-medium text-muted-foreground"
-          />
-          <p className="mt-0.5 text-sm text-muted-foreground">
-            <LocalTime date={session.startTime} format="time" />
-            {' – '}
-            <LocalTime date={session.endTime} format="time" />
-          </p>
+        <div className="flex shrink-0 items-center gap-3">
+          <div className="text-left sm:text-right">
+            <LocalTime
+              date={session.startTime}
+              format="date"
+              className="block text-sm font-medium text-muted-foreground"
+            />
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              <LocalTime date={session.startTime} format="time" />
+              {' – '}
+              <LocalTime date={session.endTime} format="time" />
+            </p>
+          </div>
+          {action}
         </div>
       ) : (
         <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end">

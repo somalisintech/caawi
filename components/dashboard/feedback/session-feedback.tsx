@@ -86,7 +86,7 @@ export function SessionFeedback({ sessionId, sessionEndTime, isCanceled }: Props
         <p className="mt-1.5 text-[13px] text-muted-foreground">&ldquo;{feedback.otherFeedback.comment}&rdquo;</p>
       ) : null}
     </div>
-  ) : feedback.hasOtherSubmitted && feedback.windowClosesAt ? (
+  ) : feedback.hasOtherSubmitted && feedback.windowClosesAt && new Date() < new Date(feedback.windowClosesAt) ? (
     <div className="flex items-center gap-1.5 border-t border-border/40 pt-3">
       <EyeOff className="size-3.5 text-muted-foreground" />
       <p className="text-[12px] text-muted-foreground">

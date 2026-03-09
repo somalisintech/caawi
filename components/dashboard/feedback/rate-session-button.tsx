@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FeedbackForm } from './feedback-form';
 
 type Props = {
@@ -25,6 +25,11 @@ export function RateSessionButton({ sessionId }: Props) {
           <DialogBody>
             <FeedbackForm sessionId={sessionId} onSuccess={() => setOpen(false)} />
           </DialogBody>
+          <DialogFooter className="px-4 py-3">
+            <p className="text-center text-xs text-muted-foreground">
+              Ratings are blind for 5 days, neither party sees the other&apos;s feedback until then.
+            </p>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

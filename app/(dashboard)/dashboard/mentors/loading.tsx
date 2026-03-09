@@ -1,44 +1,38 @@
-import { Card } from '@/components/ui/card';
+import { MentorsSearch } from '@/components/mentors/mentors-search';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MentorsLoading() {
   return (
-    <Card className="grid grid-cols-1 divide-y-2 gap-0">
-      {/* Header — we know the structure, count is dynamic */}
-      <div className="p-5">
-        <div className="mb-2 h-fit">
-          <h3 className="text-lg font-medium">
-            Showing <Skeleton className="inline-block h-5 w-32 align-middle" />
-          </h3>
-        </div>
-        {/* Search bar placeholder — keeps layout stable */}
-        <Skeleton className="h-10 w-full" />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-balance text-3xl font-bold text-foreground md:text-4xl">Mentors</h1>
+        <Skeleton className="mt-2 h-5 w-64" />
       </div>
 
-      {/* Mentor cards */}
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="flex gap-4 p-5">
-          <Skeleton className="size-12 shrink-0 rounded-full" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-4 w-56" />
-            <Skeleton className="h-4 w-full max-w-md" />
-            <div className="flex gap-1.5 pt-1">
+      <MentorsSearch />
+
+      <div className="space-y-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="rounded-xl border border-border bg-card p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-10 rounded-full" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3.5 w-48" />
+                </div>
+              </div>
+              <Skeleton className="h-8 w-16 rounded-full" />
+            </div>
+            <Skeleton className="mt-3 h-4 w-full max-w-lg" />
+            <div className="mt-3 flex gap-1.5">
               <Skeleton className="h-5 w-16 rounded-full" />
               <Skeleton className="h-5 w-20 rounded-full" />
               <Skeleton className="h-5 w-14 rounded-full" />
             </div>
           </div>
-          <Skeleton className="h-9 w-16 shrink-0 self-center rounded-md" />
-        </div>
-      ))}
-
-      {/* Pagination */}
-      <div className="flex items-center justify-center gap-2 p-4">
-        <Skeleton className="h-9 w-9 rounded-md" />
-        <Skeleton className="h-9 w-9 rounded-md" />
-        <Skeleton className="h-9 w-9 rounded-md" />
+        ))}
       </div>
-    </Card>
+    </div>
   );
 }

@@ -36,12 +36,13 @@ export function SocialAuth({ next }: { next?: string }) {
   const [loading, setLoading] = useState<Provider | null>();
 
   return (
-    <form className="grid grid-cols-1 gap-3">
+    <form className="grid w-full grid-cols-1 gap-2">
       {socialAuth.map((auth) => (
         <Button
           key={auth.provider}
           className="relative gap-2 text-muted-foreground"
           variant="outline"
+          size="sm"
           title={auth.title}
           onClick={() => setLoading(auth.provider)}
           formAction={(formData) => {
@@ -50,10 +51,10 @@ export function SocialAuth({ next }: { next?: string }) {
             return signInWithOAuth(formData);
           }}
         >
-          <div className="absolute left-4">
-            {loading === auth.provider ? <Loader2 className="animate-spin" size={18} /> : <auth.icon size={18} />}
+          <div className="absolute left-3">
+            {loading === auth.provider ? <Loader2 className="animate-spin" size={16} /> : <auth.icon size={16} />}
           </div>
-          <div>{auth.title}</div>
+          <div className="text-sm">{auth.title}</div>
         </Button>
       ))}
     </form>

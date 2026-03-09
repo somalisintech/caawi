@@ -76,7 +76,7 @@ export function MentorsSearch({ countries = [], allSkills }: Props) {
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
         <Input
-          className="bg-muted"
+          className="bg-card"
           placeholder="Search by name, role, company or country"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -90,7 +90,7 @@ export function MentorsSearch({ countries = [], allSkills }: Props) {
       <div className="flex gap-2">
         {countries.length > 0 && (
           <Select value={country} onValueChange={handleCountryChange}>
-            <SelectTrigger className="bg-muted">
+            <SelectTrigger className="bg-card">
               <SelectValue placeholder="All countries" />
             </SelectTrigger>
             <SelectContent className="max-h-48 overflow-y-auto">
@@ -105,7 +105,7 @@ export function MentorsSearch({ countries = [], allSkills }: Props) {
         {allSkills && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="bg-muted gap-1.5">
+              <Button variant="outline" className="bg-card gap-1.5">
                 <Filter className="size-4" />
                 Skills
                 {selectedSkills.length > 0 && (

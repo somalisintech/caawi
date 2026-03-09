@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import type { PropsWithChildren } from 'react';
 import { DashboardMenu } from '@/components/layout/dashboard-menu';
+import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
@@ -59,7 +60,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <Header />
       </div>
@@ -67,6 +68,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
       <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-10 md:px-8 md:pt-12">
         <main>{children}</main>
       </div>
+      <Footer className="mx-auto max-w-[1200px] px-5 md:px-8" />
     </div>
   );
 }

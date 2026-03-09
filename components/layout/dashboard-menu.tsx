@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, Home, Search, User, UserSearch, Users } from 'lucide-react';
+import { CalendarDays, Home, User, UserSearch, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -17,18 +17,30 @@ export function DashboardMenu({ userType }: Props) {
     { href: '/dashboard', icon: Home, label: 'Home', exact: true },
     { href: '/dashboard/sessions', icon: CalendarDays, label: 'Sessions' },
     ...(isMentor ? [{ href: '/dashboard/mentees', icon: Users, label: 'Mentees' }] : []),
-    ...(isMentor ? [{ href: '/dashboard/browse-mentees', icon: UserSearch, label: 'Find Mentees' }] : []),
-    {
-      href: '/dashboard/mentors',
-      icon: Search,
-      label: isMentor ? 'Browse' : 'Find a Mentor'
-    },
+    ...(isMentor
+      ? [
+          {
+            href: '/dashboard/browse-mentees',
+            icon: UserSearch,
+            label: 'Find Mentees'
+          }
+        ]
+      : []),
+    ...(!isMentor
+      ? [
+          {
+            href: '/dashboard/mentors',
+            icon: UserSearch,
+            label: 'Find a Mentor'
+          }
+        ]
+      : []),
     { href: '/dashboard/profile', icon: User, label: 'Profile' }
   ];
 
   return (
-    <nav className="border-b border-border bg-white dark:bg-zinc-950">
-      <div className="mx-auto flex h-12 max-w-[1200px] items-center gap-1 overflow-x-auto px-5 md:h-16 md:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <nav className="border-b border-border bg-background">
+      <div className="mx-auto flex h-10 max-w-[1200px] items-center gap-1 overflow-x-auto px-1 md:px-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {navItems.map((item) => {
           const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
@@ -37,13 +49,13 @@ export function DashboardMenu({ userType }: Props) {
               key={item.href}
               href={item.href}
               className={cn(
-                'relative flex h-full items-center gap-1.5 px-3 text-sm text-[#777] transition-colors hover:text-foreground dark:text-zinc-500 dark:hover:text-zinc-200',
-                isActive && 'font-semibold text-foreground dark:text-zinc-100'
+                'relative flex h-full shrink-0 items-center gap-1.5 whitespace-nowrap px-3 text-sm text-muted-foreground transition-colors hover:text-foreground',
+                isActive && 'font-semibold text-foreground'
               )}
             >
               <item.icon className="size-4" />
               {item.label}
-              {isActive && <span className="absolute inset-x-3 bottom-0 h-0.5 bg-foreground dark:bg-zinc-100" />}
+              {isActive && <span className="absolute inset-x-3 bottom-0 h-0.5 bg-foreground" />}
             </Link>
           );
         })}

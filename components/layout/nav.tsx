@@ -30,7 +30,7 @@ export function Nav({ user, className }: { user: UserData; className?: string })
         <div className="flex items-center gap-3">
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="bg-background flex items-center gap-2 rounded-full border border-border px-3 py-1.5 transition-colors hover:border-foreground/40">
+      <DropdownMenuTrigger className="bg-card flex items-center gap-2 rounded-full border border-border px-3 py-1.5 transition-colors hover:border-foreground/40">
                 <Avatar className="size-6">
                   {user.image ? <AvatarImage src={user.image} alt="" /> : null}
                   <AvatarFallback className="bg-transparent text-sm">{user.firstName?.at(0) ?? '-'}</AvatarFallback>

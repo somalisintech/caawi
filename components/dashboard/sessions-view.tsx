@@ -5,8 +5,6 @@ import { ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { DevOnly } from '@/components/dev/dev-only';
-import { MockBookingButton } from '@/components/dev/mock-booking-button';
 import LayerCard from '@/components/layer-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';

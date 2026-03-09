@@ -207,9 +207,6 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
             <Globe className="size-3.5" />
             <span>{tz.replace('_', ' ')}</span>
           </div>
-          <DevOnly>
-            <MockBookingButton />
-          </DevOnly>
         </div>
       </div>
 

@@ -16,14 +16,18 @@ model User {
   email           String?  @unique
   image           String?
   role            Role     @default(USER)
+  bannedAt        DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now())
   profile         Profile?
   reportsCreated  Report[]          @relation("ReportsCreated")
   reportsReceived Report[]          @relation("ReportsReceived")
+  reportsReviewed Report[]          @relation("ReportsReviewed")
   blocksCreated   Block[]           @relation("BlocksCreated")
   blocksReceived  Block[]           @relation("BlocksReceived")
   feedbackGiven   SessionFeedback[]
+
+  @@index([createdAt])
 }
 
 model Profile {
@@ -206,6 +210,7 @@ model Report {
   createdAt   DateTime     @default(now())
   reporter    User         @relation("ReportsCreated", fields: [reporterId], references: [id], onDelete: Cascade)
   reported    User         @relation("ReportsReceived", fields: [reportedId], references: [id], onDelete: Cascade)
+  reviewer    User?        @relation("ReportsReviewed", fields: [reviewedBy], references: [id], onDelete: SetNull)
 
   @@index([reportedId])
   @@index([status])

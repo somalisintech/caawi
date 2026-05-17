@@ -23,13 +23,15 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
 
   const user = await prisma.user.findUnique({
     where: {
-      email: data.user.email
+      id: data.user.id
     },
     select: {
       firstName: true,
       lastName: true,
       email: true,
       image: true,
+      role: true,
+      bannedAt: true,
       createdAt: true,
       updatedAt: true,
       profile: {
@@ -55,6 +57,10 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
     redirect('/auth');
   }
 
+  if (user.bannedAt) {
+    redirect('/banned');
+  }
+
   if (!user.profile?.onboardingCompleted) {
     redirect('/onboarding');
   }
@@ -64,7 +70,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <Header />
       </div>
-      <DashboardMenu userType={user.profile?.userType ?? 'MENTEE'} />
+      <DashboardMenu userType={user.profile?.userType ?? 'MENTEE'} isAdmin={user.role === 'ADMIN'} />
       <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-10 md:px-8 md:pt-12">
         <main>{children}</main>
       </div>

@@ -1,15 +1,16 @@
 'use client';
 
-import { CalendarDays, Home, User, UserSearch, Users } from 'lucide-react';
+import { CalendarDays, Home, Shield, User, UserSearch, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 type Props = {
   userType: string;
+  isAdmin?: boolean;
 };
 
-export function DashboardMenu({ userType }: Props) {
+export function DashboardMenu({ userType, isAdmin = false }: Props) {
   const pathname = usePathname();
   const isMentor = userType === 'MENTOR';
 
@@ -35,7 +36,8 @@ export function DashboardMenu({ userType }: Props) {
           }
         ]
       : []),
-    { href: '/dashboard/profile', icon: User, label: 'Profile' }
+    { href: '/dashboard/profile', icon: User, label: 'Profile' },
+    ...(isAdmin ? [{ href: '/dashboard/admin', icon: Shield, label: 'Admin' }] : [])
   ];
 
   return (

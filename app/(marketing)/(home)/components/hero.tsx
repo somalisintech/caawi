@@ -38,7 +38,7 @@ function RoleTile({ href, icon, label }: { href: string; icon: React.ReactNode; 
   return (
     <Link
       href={href}
-      className="group flex flex-1 items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 no-underline transition-all  hover:border-foreground/40"
+      className="group flex flex-1 items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 no-underline transition-all hover:border-foreground/40"
     >
       {icon}
       <div className="flex flex-col leading-tight">

@@ -9,10 +9,10 @@ export function Footer({ className }: { className?: string }) {
         <div className="flex items-center gap-6">
           <div className="text-lg font-extrabold tracking-tight">caawi.</div>
           <Link
-            href="mailto:hello@caawi.org"
+            href="mailto:caawi@somalisintech.com"
             className="text-sm text-muted-foreground transition-opacity hover:opacity-100"
           >
-            hello@caawi.org
+            caawi@somalisintech.com
           </Link>
         </div>
         <div className="flex items-center gap-6">

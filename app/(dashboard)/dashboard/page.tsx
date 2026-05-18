@@ -4,7 +4,7 @@ import { MenteeHome } from '@/components/dashboard/mentee-home';
 import { MentorHome } from '@/components/dashboard/mentor-home';
 import prisma from '@/lib/db';
 import { getSessionsAwaitingFeedback } from '@/lib/queries/feedback';
-import { getPendingRequestCount } from '@/lib/queries/mentorship-requests';
+import { getActiveMentorCount, getPendingRequestCount } from '@/lib/queries/mentorship-requests';
 import {
   getMenteeCount,
   getRecentMenteeSessions,
@@ -75,13 +75,15 @@ async function DashboardContent() {
   }
 
   const profileId = user?.profile?.id;
-  const [mentorCount, upcomingSessions, totalSessions, recentSessions, awaitingFeedback] = await Promise.all([
-    prisma.mentorProfile.count(),
-    profileId ? getUpcomingMenteeSessions(profileId) : [],
-    profileId ? getTotalSessionCount(profileId) : 0,
-    profileId ? getRecentMenteeSessions(profileId) : [],
-    profileId ? getSessionsAwaitingFeedback(profileId, data.user.id, 'MENTEE') : []
-  ]);
+  const [mentorCount, activeMentorCount, upcomingSessions, totalSessions, recentSessions, awaitingFeedback] =
+    await Promise.all([
+      prisma.mentorProfile.count(),
+      profileId ? getActiveMentorCount(profileId) : 0,
+      profileId ? getUpcomingMenteeSessions(profileId) : [],
+      profileId ? getTotalSessionCount(profileId) : 0,
+      profileId ? getRecentMenteeSessions(profileId) : [],
+      profileId ? getSessionsAwaitingFeedback(profileId, data.user.id, 'MENTEE') : []
+    ]);
 
   const awaitingFeedbackIds = awaitingFeedback.map((s) => s.id);
 
@@ -89,6 +91,7 @@ async function DashboardContent() {
     <MenteeHome
       firstName={user?.firstName}
       mentorCount={mentorCount}
+      activeMentorCount={activeMentorCount}
       upcomingSessions={upcomingSessions}
       totalSessions={totalSessions}
       recentSessions={recentSessions}

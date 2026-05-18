@@ -1,37 +1,39 @@
-import { Inbox, Users } from 'lucide-react';
+import { Hourglass, Users } from 'lucide-react';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import LayerCard from '@/components/layer-card';
-import { NudgeButton } from '@/components/mentorship/nudge-button';
 import { ParticipantCard } from '@/components/mentorship/participant-card';
-import { RequestActions } from '@/components/mentorship/request-actions';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import prisma from '@/lib/db';
-import { getActiveMentees, getPendingRequests } from '@/lib/queries/mentorship-requests';
+import { getActiveMentors, getPendingMentorRequests } from '@/lib/queries/mentorship-requests';
 import { createClient } from '@/utils/supabase/server';
 
-export default function MenteesPage() {
+export default function MentorsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-balance text-3xl font-bold text-foreground md:text-4xl">Mentees</h1>
-        <p className="mt-2 text-base text-muted-foreground">Review requests and manage your mentees.</p>
+        <h1 className="text-balance text-3xl font-bold text-foreground md:text-4xl">Mentors</h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          Requests you&apos;ve sent and the mentors you&apos;ve connected with.
+        </p>
       </div>
 
-      <Suspense fallback={<MenteesCardsSkeleton />}>
-        <MenteesContent />
+      <Suspense fallback={<MentorsCardsSkeleton />}>
+        <MentorsContent />
       </Suspense>
     </div>
   );
 }
 
-function MenteesCardsSkeleton() {
+function MentorsCardsSkeleton() {
   return (
     <>
       <LayerCard>
         <LayerCard.Secondary>
-          <Inbox className="size-4" />
-          <span>Pending requests</span>
+          <Hourglass className="size-4" />
+          <span>Awaiting response</span>
         </LayerCard.Secondary>
         <LayerCard.Primary className="p-0">
           <div className="divide-y divide-border">
@@ -43,10 +45,7 @@ function MenteesCardsSkeleton() {
                   <Skeleton className="h-3 w-full max-w-xs" />
                   <Skeleton className="h-3 w-24" />
                 </div>
-                <div className="flex gap-2">
-                  <Skeleton className="h-8 w-20 rounded-md" />
-                  <Skeleton className="h-8 w-20 rounded-md" />
-                </div>
+                <Skeleton className="h-8 w-20" />
               </div>
             ))}
           </div>
@@ -56,7 +55,7 @@ function MenteesCardsSkeleton() {
       <LayerCard>
         <LayerCard.Secondary>
           <Users className="size-4" />
-          <span>Your mentees</span>
+          <span>Your mentors</span>
         </LayerCard.Secondary>
         <LayerCard.Primary className="p-0">
           <div className="divide-y divide-border">
@@ -68,7 +67,7 @@ function MenteesCardsSkeleton() {
                   <Skeleton className="h-3 w-full max-w-xs" />
                   <Skeleton className="h-3 w-24" />
                 </div>
-                <Skeleton className="h-8 w-20 rounded-md" />
+                <Skeleton className="h-8 w-20" />
               </div>
             ))}
           </div>
@@ -78,7 +77,7 @@ function MenteesCardsSkeleton() {
   );
 }
 
-async function MenteesContent() {
+async function MentorsContent() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -87,7 +86,7 @@ async function MenteesContent() {
   }
 
   const user = await prisma.user.findUnique({
-    where: { email: data.user.email },
+    where: { id: data.user.id },
     select: {
       profile: {
         select: { id: true, userType: true }
@@ -95,44 +94,50 @@ async function MenteesContent() {
     }
   });
 
-  if (user?.profile?.userType !== 'MENTOR') {
+  if (user?.profile?.userType !== 'MENTEE') {
     redirect('/dashboard');
   }
 
   const profileId = user.profile.id;
-  const [pendingRequests, activeMentees] = await Promise.all([
-    getPendingRequests(profileId),
-    getActiveMentees(profileId)
+  const [pendingRequests, activeMentors] = await Promise.all([
+    getPendingMentorRequests(profileId),
+    getActiveMentors(profileId)
   ]);
+
+  const noActivity = pendingRequests.length === 0 && activeMentors.length === 0;
 
   return (
     <>
       <LayerCard>
         <LayerCard.Secondary>
-          <Inbox className="size-4" />
-          <span>Pending requests</span>
+          <Hourglass className="size-4" />
+          <span>Awaiting response</span>
         </LayerCard.Secondary>
         <LayerCard.Primary className="p-0">
           {pendingRequests.length > 0 ? (
             <div className="divide-y divide-border">
               {pendingRequests.map((request) => {
-                const { user: menteeUser } = request.menteeProfile;
+                const { user: mentorUser } = request.mentorProfile;
                 return (
                   <ParticipantCard
                     key={request.id}
-                    firstName={menteeUser.firstName}
-                    lastName={menteeUser.lastName}
-                    image={menteeUser.image}
+                    firstName={mentorUser.firstName}
+                    lastName={mentorUser.lastName}
+                    image={mentorUser.image}
                     message={request.message}
                     createdAt={request.createdAt}
-                    actions={<RequestActions requestId={request.id} />}
+                    actions={
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/dashboard/mentors/${request.mentorProfile.id}`}>View</Link>
+                      </Button>
+                    }
                   />
                 );
               })}
             </div>
           ) : (
             <div className="p-8 text-center">
-              <p className="text-sm text-muted-foreground">No pending requests</p>
+              <p className="text-sm text-muted-foreground">No requests awaiting a response</p>
             </div>
           )}
         </LayerCard.Primary>
@@ -141,32 +146,46 @@ async function MenteesContent() {
       <LayerCard>
         <LayerCard.Secondary>
           <Users className="size-4" />
-          <span>Your mentees</span>
+          <span>Your mentors</span>
         </LayerCard.Secondary>
         <LayerCard.Primary className="p-0">
-          {activeMentees.length > 0 ? (
+          {activeMentors.length > 0 ? (
             <div className="divide-y divide-border">
-              {activeMentees.map((request) => {
-                const { user: menteeUser } = request.menteeProfile;
+              {activeMentors.map((request) => {
+                const { user: mentorUser } = request.mentorProfile;
                 return (
                   <ParticipantCard
                     key={request.id}
-                    firstName={menteeUser.firstName}
-                    lastName={menteeUser.lastName}
-                    image={menteeUser.image}
+                    firstName={mentorUser.firstName}
+                    lastName={mentorUser.lastName}
+                    image={mentorUser.image}
                     createdAt={request.createdAt}
-                    actions={<NudgeButton requestId={request.id} lastNudgedAt={request.lastNudgedAt} />}
+                    actions={
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/dashboard/mentors/${request.mentorProfile.id}`}>View</Link>
+                      </Button>
+                    }
                   />
                 );
               })}
             </div>
           ) : (
             <div className="p-8 text-center">
-              <p className="text-sm text-muted-foreground">No mentees yet. Accept a request to get started.</p>
+              <p className="text-sm text-muted-foreground">
+                {noActivity ? 'No mentors yet — find one to get started.' : 'No active mentors yet.'}
+              </p>
             </div>
           )}
         </LayerCard.Primary>
       </LayerCard>
+
+      {noActivity && (
+        <div className="flex justify-center">
+          <Button asChild>
+            <Link href="/dashboard/browse-mentors">Find a mentor</Link>
+          </Button>
+        </div>
+      )}
     </>
   );
 }

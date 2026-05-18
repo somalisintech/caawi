@@ -43,6 +43,7 @@ type Props = {
   sessions: Session[];
   userType: 'MENTOR' | 'MENTEE';
   hasCalendly: boolean;
+  hasMentors: boolean;
   year: number;
   month: number;
   day: number;
@@ -59,7 +60,7 @@ function getFullName(user: SessionUser) {
   return [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Unknown';
 }
 
-export function SessionsView({ sessions, userType, hasCalendly, year, month, day }: Props) {
+export function SessionsView({ sessions, userType, hasCalendly, hasMentors, year, month, day }: Props) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const calendarApiRef = useRef<CalendarApi | null>(null);
@@ -307,7 +308,7 @@ export function SessionsView({ sessions, userType, hasCalendly, year, month, day
 
       {/* Main content: 70/30 split */}
       {isEmpty ? (
-        <EmptyState userType={userType} hasCalendly={hasCalendly} />
+        <EmptyState userType={userType} hasCalendly={hasCalendly} hasMentors={hasMentors} />
       ) : (
         <div className="flex flex-col gap-6 xl:flex-row">
           {/* Calendar (primary) */}

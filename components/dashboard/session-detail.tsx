@@ -91,7 +91,7 @@ export function SessionDetail({ session, roleLabel }: Props) {
         ) : null}
       </div>
 
-      <SessionNotes sessionId={session.id} sessionEndTime={session.endTime} isCanceled={isCanceled} />
+      <SessionNotes sessionId={session.id} isCanceled={isCanceled} />
 
       <SessionFeedback sessionId={session.id} sessionEndTime={session.endTime} isCanceled={isCanceled} />
     </div>

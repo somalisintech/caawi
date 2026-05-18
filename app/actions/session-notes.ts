@@ -59,6 +59,11 @@ export async function createSessionNoteAction(data: { sessionId: string; type: s
   const participant = await verifySessionParticipant(sessionId, user.id);
   if (!participant) return { success: false, message: 'Session not found or not a participant' };
 
+  // Server-side business gate — client flags are bypassable
+  if (participant.session.status === 'CANCELED' || participant.session.canceledAt) {
+    return { success: false, message: 'Session was canceled' };
+  }
+
   // Pre-session notes: only mentee can create
   if (type === 'PRE_SESSION' && !participant.isMentee) {
     return { success: false, message: 'Only mentees can create pre-session agendas' };
@@ -75,27 +80,32 @@ export async function createSessionNoteAction(data: { sessionId: string; type: s
     return { success: false, message: 'Session has not ended yet' };
   }
 
-  if (type === 'PRE_SESSION') {
-    const existing = await prisma.sessionNote.findFirst({
-      where: { sessionId, authorId: user.id, type: 'PRE_SESSION' }
-    });
-    if (existing) return { success: false, message: 'An agenda already exists for this session' };
-  }
-
   try {
-    const note = await prisma.sessionNote.create({
-      data: { sessionId, authorId: user.id, type, content }
+    const note = await prisma.sessionNote.upsert({
+      where: { sessionId_authorId_type: { sessionId, authorId: user.id, type } },
+      create: { sessionId, authorId: user.id, type, content },
+      update: { content }
     });
-    logger.info('Session note created', { userId: user.id, sessionId, type, noteId: note.id });
+    logger.info('Session note saved', { userId: user.id, sessionId, type, noteId: note.id });
     revalidatePath('/dashboard/sessions');
     return { success: true, message: 'Note saved', data: { id: note.id } };
-  } catch (err: unknown) {
-    if (err instanceof Object && 'code' in err && err.code === 'P2002') {
-      return { success: false, message: 'A note of this type already exists for this session' };
-    }
-    logger.error('Failed to create session note', { userId: user.id, sessionId, err });
+  } catch (err) {
+    logger.error('Failed to save session note', { userId: user.id, sessionId, err });
     return { success: false, message: 'Could not save note. Please try again.' };
   }
+}
+
+async function loadOwnedNote(noteId: string, userId: string) {
+  const note = await prisma.sessionNote.findUnique({
+    where: { id: noteId },
+    include: { session: { select: { status: true, canceledAt: true } } }
+  });
+  if (!note) return { error: 'Note not found' as const };
+  if (note.authorId !== userId) return { error: 'You can only modify your own notes' as const };
+  if (note.session.status === 'CANCELED' || note.session.canceledAt) {
+    return { error: 'Session was canceled' as const };
+  }
+  return { note };
 }
 
 export async function updateSessionNoteAction(data: { noteId: string; content: string }) {
@@ -107,9 +117,8 @@ export async function updateSessionNoteAction(data: { noteId: string; content: s
 
   const { noteId, content } = parsed.data;
 
-  const note = await prisma.sessionNote.findUnique({ where: { id: noteId } });
-  if (!note) return { success: false, message: 'Note not found' };
-  if (note.authorId !== user.id) return { success: false, message: 'You can only edit your own notes' };
+  const owned = await loadOwnedNote(noteId, user.id);
+  if (owned.error) return { success: false, message: owned.error };
 
   try {
     await prisma.sessionNote.update({ where: { id: noteId }, data: { content } });
@@ -131,9 +140,8 @@ export async function deleteSessionNoteAction(data: { noteId: string }) {
 
   const { noteId } = parsed.data;
 
-  const note = await prisma.sessionNote.findUnique({ where: { id: noteId } });
-  if (!note) return { success: false, message: 'Note not found' };
-  if (note.authorId !== user.id) return { success: false, message: 'You can only delete your own notes' };
+  const owned = await loadOwnedNote(noteId, user.id);
+  if (owned.error) return { success: false, message: owned.error };
 
   try {
     await prisma.sessionNote.delete({ where: { id: noteId } });

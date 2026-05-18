@@ -20,7 +20,7 @@ export function EmptyState({ userType, hasCalendly }: Props) {
         <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-muted-foreground">
           Once connected, mentees can discover your profile and book sessions directly.
         </p>
-        <Button asChild className="mt-6 h-11 rounded-xl px-6 font-semibold">
+        <Button asChild className="mt-6">
           <Link href="/dashboard/profile">Connect Calendly</Link>
         </Button>
       </div>
@@ -37,7 +37,7 @@ export function EmptyState({ userType, hasCalendly }: Props) {
         <p className="mt-2 max-w-sm text-pretty text-[14px] leading-relaxed text-muted-foreground">
           Browse our mentors and schedule a time that works for you.
         </p>
-        <Button asChild className="mt-6 h-11 rounded-xl px-6 font-semibold">
+        <Button asChild className="mt-6">
           <Link href="/dashboard/mentors">Find a mentor</Link>
         </Button>
       </div>

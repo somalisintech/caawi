@@ -19,27 +19,33 @@ type Note = {
 
 type Props = {
   sessionId: string;
-  sessionEndTime: string;
   isCanceled: boolean;
 };
 
-export function SessionNotes({ sessionId, sessionEndTime, isCanceled }: Props) {
+export function SessionNotes({ sessionId, isCanceled }: Props) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isMentee, setIsMentee] = useState(false);
   const [sessionEnded, setSessionEnded] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [newContent, setNewContent] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
   const loadNotes = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
     try {
       const result = await getSessionNotesAction(sessionId);
       if (result.success && result.data) {
         setNotes(result.data.notes as Note[]);
         setIsMentee(result.data.isMentee);
         setSessionEnded(result.data.sessionEnded);
+      } else {
+        setLoadError(true);
       }
+    } catch {
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
@@ -49,15 +55,38 @@ export function SessionNotes({ sessionId, sessionEndTime, isCanceled }: Props) {
     loadNotes();
   }, [loadNotes]);
 
-  if (isCanceled || loading) return null;
+  if (isCanceled) return null;
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        <div className="h-16 animate-pulse rounded-md border border-border/60 bg-muted/20 dark:bg-zinc-900/30" />
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-muted/20 p-3 dark:bg-zinc-900/30">
+        <p className="text-[12px] text-muted-foreground">Couldn&apos;t load notes.</p>
+        <Button variant="ghost" size="xs" onClick={loadNotes}>
+          Try again
+        </Button>
+      </div>
+    );
+  }
 
   const preNotes = notes.filter((n) => n.type === 'PRE_SESSION');
   const postNotes = notes.filter((n) => n.type === 'POST_SESSION');
-  const ended = sessionEnded || new Date(sessionEndTime) < new Date();
+  // Trust the server's sessionEnded; client clock can drift
+  const ended = sessionEnded;
+
+  const hasOwnPreNote = preNotes.some((n) => n.isOwn);
+  const hasOwnPostNote = postNotes.some((n) => n.isOwn);
 
   // Determine which note type to create
-  const canCreatePre = isMentee && !ended;
-  const canCreatePost = ended;
+  const canCreatePre = isMentee && !ended && !hasOwnPreNote;
+  const canCreatePost = ended && !hasOwnPostNote;
   const noteType = canCreatePre ? 'PRE_SESSION' : canCreatePost ? 'POST_SESSION' : null;
 
   async function handleCreate() {
@@ -100,13 +129,8 @@ export function SessionNotes({ sessionId, sessionEndTime, isCanceled }: Props) {
               <NoteEditor key={note.id} note={note} onUpdate={loadNotes} />
             ))}
           </div>
-          {canCreatePre && preNotes.length === 0 && !showForm && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-[12px] text-muted-foreground"
-              onClick={() => setShowForm(true)}
-            >
+          {canCreatePre && !showForm && (
+            <Button variant="ghost" size="xs" className="text-muted-foreground" onClick={() => setShowForm(true)}>
               + Add agenda for this session
             </Button>
           )}
@@ -126,12 +150,7 @@ export function SessionNotes({ sessionId, sessionEndTime, isCanceled }: Props) {
             ))}
           </div>
           {canCreatePost && !showForm && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-[12px] text-muted-foreground"
-              onClick={() => setShowForm(true)}
-            >
+            <Button variant="ghost" size="xs" className="text-muted-foreground" onClick={() => setShowForm(true)}>
               + Add a note
             </Button>
           )}
@@ -156,18 +175,12 @@ export function SessionNotes({ sessionId, sessionEndTime, isCanceled }: Props) {
             autoFocus
           />
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="h-7 text-[12px]"
-              onClick={handleCreate}
-              disabled={isPending || !newContent.trim()}
-            >
+            <Button size="xs" onClick={handleCreate} disabled={isPending || !newContent.trim()}>
               {isPending ? 'Saving...' : 'Save'}
             </Button>
             <Button
               variant="ghost"
-              size="sm"
-              className="h-7 text-[12px]"
+              size="xs"
               onClick={() => {
                 setShowForm(false);
                 setNewContent('');

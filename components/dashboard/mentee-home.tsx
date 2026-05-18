@@ -111,10 +111,7 @@ export function MenteeHome({
                 <p className="mt-0.5 text-sm text-muted-foreground">Search by name, skill, or country.</p>
               </div>
             </div>
-            <Button
-              asChild
-              className="h-11 shrink-0 rounded-lg bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary/90"
-            >
+            <Button asChild className="shrink-0">
               <Link href="/dashboard/mentors">Find a mentor</Link>
             </Button>
           </div>

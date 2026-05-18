@@ -1,27 +1,55 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/client';
 
-export function SignOutTrigger() {
-  const [isPending, startTransition] = useTransition();
-  const [signedOut, setSignedOut] = useState(false);
+type Status = 'pending' | 'signed_out' | 'error' | 'navigating';
 
-  useEffect(() => {
+export function SignOutTrigger() {
+  const [status, setStatus] = useState<Status>('pending');
+
+  const runSignOut = useCallback(() => {
+    setStatus('pending');
     const supabase = createClient();
-    void supabase.auth.signOut().finally(() => setSignedOut(true));
+    supabase.auth
+      .signOut()
+      .then(({ error }) => {
+        setStatus(error ? 'error' : 'signed_out');
+      })
+      .catch(() => setStatus('error'));
   }, []);
 
+  useEffect(() => {
+    runSignOut();
+  }, [runSignOut]);
+
   function handleClick() {
-    startTransition(() => {
-      window.location.href = '/';
-    });
+    if (status === 'error') {
+      runSignOut();
+      return;
+    }
+    setStatus('navigating');
+    window.location.href = '/';
   }
 
+  const label =
+    status === 'pending'
+      ? 'Signing out…'
+      : status === 'error'
+        ? 'Sign-out failed — retry'
+        : status === 'navigating'
+          ? 'Redirecting…'
+          : 'Return to homepage';
+
   return (
-    <Button onClick={handleClick} disabled={isPending} className="w-fit">
-      {signedOut ? 'Return to homepage' : 'Signing out…'}
+    <Button
+      onClick={handleClick}
+      disabled={status === 'pending' || status === 'navigating'}
+      variant={status === 'error' ? 'outline' : 'default'}
+      className="w-fit"
+    >
+      {label}
     </Button>
   );
 }

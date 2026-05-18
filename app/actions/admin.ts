@@ -150,7 +150,7 @@ export async function banAndCloseReportAction(data: { reportId: string }): Promi
 
   const report = await prisma.report.findUnique({
     where: { id: reportId },
-    select: { id: true, status: true, reportedId: true, reported: { select: { role: true, bannedAt: true } } }
+    select: { id: true, status: true, reportedId: true, reported: { select: { role: true } } }
   });
 
   if (!report) {
@@ -166,29 +166,44 @@ export async function banAndCloseReportAction(data: { reportId: string }): Promi
     return { success: false, message: 'Admins cannot be banned' };
   }
 
+  const BAN_FAILED = Symbol('ban-failed');
+  const REPORT_STALE = Symbol('report-stale');
+
   try {
-    const updated = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const reportUpdate = await tx.report.updateMany({
         where: { id: reportId, status: 'PENDING' },
         data: { status: 'ACTION_TAKEN', reviewedAt: new Date(), reviewedBy: auth.userId }
       });
 
       if (reportUpdate.count === 0) {
-        return { reportClosed: false, userBanned: false };
+        throw REPORT_STALE;
       }
 
+      // Only ban if not already banned (preserves original bannedAt); skip admins.
       const userUpdate = await tx.user.updateMany({
-        where: { id: report.reportedId, role: { not: 'ADMIN' } },
-        data: { bannedAt: report.reported.bannedAt ?? new Date() }
+        where: { id: report.reportedId, role: { not: 'ADMIN' }, bannedAt: null },
+        data: { bannedAt: new Date() }
       });
 
-      return { reportClosed: true, userBanned: userUpdate.count > 0 || !!report.reported.bannedAt };
+      if (userUpdate.count === 0) {
+        // Verify the row still exists and is not an admin; if so, user is already banned (idempotent).
+        const target = await tx.user.findUnique({
+          where: { id: report.reportedId },
+          select: { role: true, bannedAt: true }
+        });
+        if (!target || target.role === 'ADMIN' || !target.bannedAt) {
+          throw BAN_FAILED;
+        }
+      }
     });
-
-    if (!updated.reportClosed) {
+  } catch (err) {
+    if (err === REPORT_STALE) {
       return { success: false, message: 'Report has already been reviewed' };
     }
-  } catch (err) {
+    if (err === BAN_FAILED) {
+      return { success: false, message: 'User no longer exists or cannot be banned' };
+    }
     logger.error('Failed to ban and close report', { adminId: auth.userId, reportId, err });
     return { success: false, message: 'Could not complete action. Please try again.' };
   }

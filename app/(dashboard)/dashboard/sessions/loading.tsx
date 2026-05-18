@@ -31,7 +31,7 @@ export default function SessionsLoading() {
             <Button variant="outline" size="icon" className="size-8" disabled>
               <ChevronLeft className="size-4" />
             </Button>
-            <Button variant="outline" size="sm" className="h-8 px-3 text-[13px] font-medium" disabled>
+            <Button variant="outline" size="sm" disabled>
               Today
             </Button>
             <Button variant="outline" size="icon" className="size-8" disabled>

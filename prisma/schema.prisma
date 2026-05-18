@@ -26,6 +26,7 @@ model User {
   blocksCreated   Block[]           @relation("BlocksCreated")
   blocksReceived  Block[]           @relation("BlocksReceived")
   feedbackGiven   SessionFeedback[]
+  sessionNotes    SessionNote[]
 
   @@index([createdAt])
 }
@@ -61,7 +62,6 @@ model Profile {
   mentorRequests        MentorshipRequest[] @relation("MentorRequests")
   nudgesSent            MenteeNudge[]       @relation("MentorNudgesSent")
   nudgesReceived        MenteeNudge[]       @relation("MenteeNudgesReceived")
-  sessionNotes          SessionNote[]
 }
 
 model Location {
@@ -150,7 +150,7 @@ model SessionNote {
   sessionId String          @db.Uuid
   session   Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   authorId  String          @db.Uuid
-  author    Profile         @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+  author    User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
   type      SessionNoteType
   content   String
   createdAt DateTime        @default(now())

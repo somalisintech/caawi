@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { SessionsView } from '@/components/dashboard/sessions-view';
 import prisma from '@/lib/db';
+import { getActiveMentorCount } from '@/lib/queries/mentorship-requests';
 import { getSessionsForRange } from '@/lib/queries/sessions';
 import { createClient } from '@/utils/supabase/server';
 import SessionsLoading from './loading';
@@ -57,7 +58,10 @@ async function SessionsContent({ searchParams: searchParamsPromise }: { searchPa
   const rangeStart = new Date(Date.UTC(year, month, 1 - 7));
   const rangeEnd = new Date(Date.UTC(year, month + 1, 1 + 7));
 
-  const rawSessions = profileId ? await getSessionsForRange(profileId, userType, rangeStart, rangeEnd) : [];
+  const [rawSessions, activeMentorCount] = await Promise.all([
+    profileId ? getSessionsForRange(profileId, userType, rangeStart, rangeEnd) : Promise.resolve([]),
+    userType === 'MENTEE' && profileId ? getActiveMentorCount(profileId) : Promise.resolve(0)
+  ]);
 
   const sessions = rawSessions.map((s) => {
     const counterpart = userType === 'MENTOR' ? s.menteeProfile.user : s.mentorProfile.user;
@@ -77,6 +81,7 @@ async function SessionsContent({ searchParams: searchParamsPromise }: { searchPa
       sessions={sessions}
       userType={userType}
       hasCalendly={hasCalendly}
+      hasMentors={activeMentorCount > 0}
       year={year}
       month={month}
       day={day}

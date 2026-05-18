@@ -76,13 +76,12 @@ export function NoteEditor({ note, onUpdate }: Props) {
           className="resize-none text-[13px]"
         />
         <div className="flex gap-2">
-          <Button size="sm" className="h-7 text-[12px]" onClick={handleSave} disabled={isPending || !content.trim()}>
+          <Button size="xs" onClick={handleSave} disabled={isPending || !content.trim()}>
             {isPending ? 'Saving...' : 'Save'}
           </Button>
           <Button
             variant="ghost"
-            size="sm"
-            className="h-7 text-[12px]"
+            size="xs"
             onClick={() => {
               setContent(note.content);
               setEditing(false);

@@ -2,8 +2,8 @@ import { Inbox, Users } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import LayerCard from '@/components/layer-card';
-import { MenteeCard } from '@/components/mentorship/mentee-card';
 import { NudgeButton } from '@/components/mentorship/nudge-button';
+import { ParticipantCard } from '@/components/mentorship/participant-card';
 import { RequestActions } from '@/components/mentorship/request-actions';
 import { Skeleton } from '@/components/ui/skeleton';
 import prisma from '@/lib/db';
@@ -118,7 +118,7 @@ async function MenteesContent() {
               {pendingRequests.map((request) => {
                 const { user: menteeUser } = request.menteeProfile;
                 return (
-                  <MenteeCard
+                  <ParticipantCard
                     key={request.id}
                     firstName={menteeUser.firstName}
                     lastName={menteeUser.lastName}
@@ -149,12 +149,11 @@ async function MenteesContent() {
               {activeMentees.map((request) => {
                 const { user: menteeUser } = request.menteeProfile;
                 return (
-                  <MenteeCard
+                  <ParticipantCard
                     key={request.id}
                     firstName={menteeUser.firstName}
                     lastName={menteeUser.lastName}
                     image={menteeUser.image}
-                    message={request.message}
                     createdAt={request.createdAt}
                     actions={<NudgeButton requestId={request.id} lastNudgedAt={request.lastNudgedAt} />}
                   />

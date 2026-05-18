@@ -35,7 +35,7 @@ export function MentorCard({ mentor, authenticated }: Props) {
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <AvailabilityBadge mentor={mentor} />
-          <Button asChild variant="outline" size="sm" className="rounded-full">
+          <Button asChild variant="outline" size="sm">
             <Link href={redirectPath}>View</Link>
           </Button>
         </div>

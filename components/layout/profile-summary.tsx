@@ -34,7 +34,7 @@ export function ProfileSummary({ user }: Props) {
             <CardDescription>{user.email}</CardDescription>
           </div>
           <div className="flex flex-1 justify-end">
-            <Button size="icon" variant="secondary" className="rounded-full" asChild>
+            <Button size="icon" variant="secondary" asChild>
               <Link href="/dashboard/profile">
                 <PencilIcon size={16} />
               </Link>
@@ -63,7 +63,7 @@ export function ProfileSummary({ user }: Props) {
               <div className="mt-4 flex gap-2">
                 {user.profile?.linkedInUrl && (
                   <Link className="text-sm underline" href={user.profile?.linkedInUrl} target="_blank">
-                    <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                    <Button size="sm" variant="outline" className="gap-1">
                       <FaLinkedin />
                       LinkedIn
                     </Button>
@@ -71,7 +71,7 @@ export function ProfileSummary({ user }: Props) {
                 )}
                 {user.profile?.githubUrl && (
                   <Link className="text-sm underline" href={user.profile?.githubUrl} target="_blank">
-                    <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                    <Button size="sm" variant="outline" className="gap-1">
                       <FaGithub />
                       GitHub
                     </Button>
@@ -79,7 +79,7 @@ export function ProfileSummary({ user }: Props) {
                 )}
                 {user.profile?.buyMeCoffeeUrl && (
                   <Link className="text-sm underline" href={user.profile?.buyMeCoffeeUrl} target="_blank">
-                    <Button size="sm" variant="outline" className="gap-1 rounded-full">
+                    <Button size="sm" variant="outline" className="gap-1">
                       <SiBuymeacoffee />
                       Buy Me Coffee
                     </Button>

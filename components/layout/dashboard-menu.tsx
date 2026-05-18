@@ -27,10 +27,11 @@ export function DashboardMenu({ userType, isAdmin = false }: Props) {
           }
         ]
       : []),
+    ...(!isMentor ? [{ href: '/dashboard/mentors', icon: Users, label: 'Mentors' }] : []),
     ...(!isMentor
       ? [
           {
-            href: '/dashboard/mentors',
+            href: '/dashboard/browse-mentors',
             icon: UserSearch,
             label: 'Find a Mentor'
           }

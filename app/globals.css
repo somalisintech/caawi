@@ -95,7 +95,7 @@
 
 @layer base {
   :root {
-    --background: 60 20% 96%;
+    --background: 38 56% 97%;
     --foreground: 0 0% 5%;
 
     --card: 0 0% 100%;
@@ -104,7 +104,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 5%;
 
-    --primary: 177 86% 28%;
+    --primary: 184 88% 13%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96%;
@@ -136,7 +136,7 @@
     --popover: 0 0% 13%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 177 86% 28%;
+    --primary: 139 46% 53%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 15%;
@@ -153,7 +153,7 @@
 
     --border: 0 0% 18%;
     --input: 0 0% 22%;
-    --ring: 177 86% 40%;
+    --ring: 139 46% 53%;
   }
 }
 @layer base {

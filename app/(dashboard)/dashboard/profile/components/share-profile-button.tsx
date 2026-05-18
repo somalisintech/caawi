@@ -1,5 +1,6 @@
 'use client';
 
+import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
@@ -21,8 +22,8 @@ export function ShareProfileButton({ userId }: Props) {
   };
 
   return (
-    <Button variant="secondary" onClick={handleShare}>
-      Share profile
+    <Button variant="secondary" size="icon" onClick={handleShare} aria-label="Share profile">
+      <Share2 className="size-4" />
     </Button>
   );
 }

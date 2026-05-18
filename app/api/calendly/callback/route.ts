@@ -8,6 +8,7 @@ import {
 import { encrypt } from '@/lib/crypto';
 import prisma from '@/lib/db';
 import { type LoggerRequest, withLogger } from '@/lib/with-logger';
+import { getUrl } from '@/utils/url';
 
 export const GET = withLogger(async (req: LoggerRequest) => {
   try {
@@ -20,7 +21,7 @@ export const GET = withLogger(async (req: LoggerRequest) => {
     const { access_token, refresh_token, organization } = await getAccessToken({
       grantType: 'authorization_code',
       code: req.nextUrl.searchParams.get('code')!,
-      redirectUri: `${req.nextUrl.origin}/api/calendly/callback`
+      redirectUri: `${getUrl()}/api/calendly/callback`
     });
 
     if (!access_token) {
@@ -97,7 +98,7 @@ export const GET = withLogger(async (req: LoggerRequest) => {
     try {
       const result = await createWebhookSubscription({
         accessToken: access_token,
-        callbackUrl: `${req.nextUrl.origin}/api/calendly/webhook`,
+        callbackUrl: `${getUrl()}/api/calendly/webhook`,
         organization,
         user: uri
       });

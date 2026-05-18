@@ -2,16 +2,16 @@ import { PeelCard } from './peel-card';
 
 export function HowItWorks() {
   return (
-    <>
+    <div className="hidden sm:block">
       <div className="mb-10 text-center text-sm font-medium uppercase tracking-widest">How It Works</div>
 
-      <section className="grid grid-cols-4 gap-6 px-[60px] pb-20 max-lg:grid-cols-2 max-lg:px-10 max-sm:grid-cols-1 max-sm:px-6">
+      <section className="grid grid-cols-4 gap-6 px-[60px] pb-20 max-lg:grid-cols-2 max-lg:px-10">
         <PeelCard color="green" title="Profile" subtitle="Tell your story" graphic={<StarGraphic />} />
         <PeelCard color="lavender" title="Goals" subtitle="Set direction" graphic={<BarGraphic />} />
         <PeelCard color="coral" title="Connect" subtitle="Find mentors" graphic={<CirclesGraphic />} />
         <PeelCard color="white" title="Grow" subtitle="Build momentum" graphic={<PeakGraphic />} />
       </section>
-    </>
+    </div>
   );
 }
 

@@ -129,10 +129,7 @@ export function MentorHome({
                   </p>
                 </div>
               </div>
-              <Button
-                asChild
-                className="h-11 shrink-0 rounded-lg bg-primary px-5 font-medium text-primary-foreground hover:bg-primary/90"
-              >
+              <Button asChild className="shrink-0">
                 <Link href="/dashboard/profile">Connect Calendly</Link>
               </Button>
             </div>

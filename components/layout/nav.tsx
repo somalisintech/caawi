@@ -30,7 +30,7 @@ export function Nav({ user, className }: { user: UserData; className?: string })
         <div className="flex items-center gap-3">
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="bg-card flex items-center gap-2 rounded-full border border-border px-3 py-1.5 transition-colors hover:border-foreground/40">
+              <DropdownMenuTrigger className="bg-card flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 transition-colors hover:border-foreground/40">
                 <Avatar className="size-6">
                   {user.image ? <AvatarImage src={user.image} alt="" /> : null}
                   <AvatarFallback className="bg-transparent text-sm">{user.firstName?.at(0) ?? '-'}</AvatarFallback>
@@ -45,7 +45,7 @@ export function Nav({ user, className }: { user: UserData; className?: string })
                   <Link href="/dashboard/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" asChild>
                   <SignOutMenuButton />
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -53,7 +53,7 @@ export function Nav({ user, className }: { user: UserData; className?: string })
           ) : (
             <Link
               href="/auth"
-              className="text-sm border border-border rounded-full px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm border border-border rounded-full px-3 py-1.5 font-medium transition-colors hover:text-foreground bg-card"
             >
               Log in
             </Link>

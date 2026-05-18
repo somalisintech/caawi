@@ -19,12 +19,12 @@ export function Hero() {
       </div>
 
       <div className="pt-3">
-        <p className="mb-10 max-w-[480px] text-lg leading-relaxed text-muted-foreground">
+        <p className="mb-10 max-w-[480px] text-lg leading-relaxed">
           A platform built for the Somali professional community. Find mentors, build connections, and accelerate your
           career through meaningful relationships with engineers, founders, and operators.
         </p>
 
-        <div className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Or join as</div>
+        <div className="mb-3 text-xs font-medium uppercase tracking-[0.2em]">Or join as</div>
         <div className="flex gap-3">
           <RoleTile href="/auth" icon={<Sparkles className="size-5 shrink-0" strokeWidth={1.75} />} label="Mentor" />
           <RoleTile href="/auth" icon={<Compass className="size-5 shrink-0" strokeWidth={1.75} />} label="Mentee" />
@@ -38,7 +38,7 @@ function RoleTile({ href, icon, label }: { href: string; icon: React.ReactNode; 
   return (
     <Link
       href={href}
-      className="group flex flex-1 items-center gap-3 rounded-xl border border-border bg-card/40 px-4 py-3 no-underline transition-all hover:-translate-y-0.5 hover:border-foreground/40 hover:bg-card"
+      className="group flex flex-1 items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 no-underline transition-all hover:border-foreground/40"
     >
       {icon}
       <div className="flex flex-col leading-tight">

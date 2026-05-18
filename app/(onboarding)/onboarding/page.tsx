@@ -18,10 +18,11 @@ export default async function OnboardingPage() {
   }
 
   const user = await prisma.user.findUnique({
-    where: { email: data.user.email },
+    where: { id: data.user.id },
     select: {
       firstName: true,
       lastName: true,
+      bannedAt: true,
       profile: {
         select: {
           userType: true,
@@ -38,6 +39,10 @@ export default async function OnboardingPage() {
 
   if (!user) {
     redirect('/auth');
+  }
+
+  if (user.bannedAt) {
+    redirect('/banned');
   }
 
   if (user.profile?.onboardingCompleted) {

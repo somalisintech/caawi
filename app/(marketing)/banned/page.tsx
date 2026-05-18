@@ -1,8 +1,11 @@
 import { ShieldAlert } from 'lucide-react';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import LayerCard from '@/components/layer-card';
 import { Footer } from '@/components/layout/footer';
 import { Nav } from '@/components/layout/nav';
+import prisma from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
 import { SignOutTrigger } from './sign-out-trigger';
 
 export const metadata: Metadata = {
@@ -10,7 +13,23 @@ export const metadata: Metadata = {
   description: 'This account has been suspended.'
 };
 
-export default function BannedPage() {
+export default async function BannedPage() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (!data.user) {
+    redirect('/');
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: data.user.id },
+    select: { bannedAt: true }
+  });
+
+  if (!user?.bannedAt) {
+    redirect('/dashboard');
+  }
+
   return (
     <div className="flex min-h-screen flex-col font-[family-name:var(--font-manrope)]">
       <Nav user={null} className="px-[60px] max-lg:px-10 max-sm:px-6" />

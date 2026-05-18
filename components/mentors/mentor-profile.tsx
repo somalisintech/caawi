@@ -94,7 +94,7 @@ export async function MentorProfile({ mentor }: Props) {
               <AvailabilityBadge mentor={mentor} />
             </div>
           </div>
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2">
             {isBlockedRelationship && (
               <LayerCard className="w-auto">
                 <LayerCard.Primary className="px-4 py-2">
@@ -195,7 +195,7 @@ export async function MentorProfile({ mentor }: Props) {
         <div className="flex flex-wrap gap-4">
           {mentor.linkedInUrl && (
             <Link className="text-sm underline" href={mentor.linkedInUrl} target="_blank">
-              <Button size="sm" variant="outline" className="gap-1 rounded-full">
+              <Button size="sm" variant="outline" className="gap-1">
                 <FaLinkedin />
                 LinkedIn
               </Button>
@@ -203,7 +203,7 @@ export async function MentorProfile({ mentor }: Props) {
           )}
           {mentor.githubUrl && (
             <Link className="text-sm underline" href={mentor.githubUrl} target="_blank">
-              <Button size="sm" variant="outline" className="gap-1 rounded-full">
+              <Button size="sm" variant="outline" className="gap-1">
                 <FaGithub />
                 GitHub
               </Button>
@@ -211,7 +211,7 @@ export async function MentorProfile({ mentor }: Props) {
           )}
           {mentor.buyMeCoffeeUrl && (
             <Link className="text-sm underline" href={mentor.buyMeCoffeeUrl} target="_blank">
-              <Button size="sm" variant="outline" className="gap-1 rounded-full">
+              <Button size="sm" variant="outline" className="gap-1">
                 <SiBuymeacoffee />
                 Buy me a coffee
               </Button>

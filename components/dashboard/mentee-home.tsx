@@ -23,6 +23,7 @@ type SessionItem = {
 type Props = {
   firstName?: string | null;
   mentorCount: number;
+  activeMentorCount: number;
   upcomingSessions: SessionItem[];
   totalSessions: number;
   recentSessions: SessionItem[];
@@ -32,6 +33,7 @@ type Props = {
 export function MenteeHome({
   firstName,
   mentorCount,
+  activeMentorCount,
   upcomingSessions,
   totalSessions,
   recentSessions,
@@ -100,26 +102,25 @@ export function MenteeHome({
         </LayerCard>
       </div>
 
-      {/* Find a mentor CTA */}
-      <LayerCard>
-        <LayerCard.Primary className="p-6 md:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <Search className="size-5 text-muted-foreground" />
-              <div>
-                <p className="font-semibold text-foreground">{mentorCount} mentors available</p>
-                <p className="mt-0.5 text-sm text-muted-foreground">Search by name, skill, or country.</p>
+      {/* Find a mentor CTA — only when the mentee has no active mentors */}
+      {activeMentorCount === 0 && (
+        <LayerCard>
+          <LayerCard.Primary className="p-6 md:p-8">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <Search className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="font-semibold text-foreground">{mentorCount} mentors available</p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">Search by name, skill, or country.</p>
+                </div>
               </div>
+              <Button asChild className="shrink-0">
+                <Link href="/dashboard/browse-mentors">Find a mentor</Link>
+              </Button>
             </div>
-            <Button
-              asChild
-              className="h-11 shrink-0 rounded-lg bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              <Link href="/dashboard/mentors">Find a mentor</Link>
-            </Button>
-          </div>
-        </LayerCard.Primary>
-      </LayerCard>
+          </LayerCard.Primary>
+        </LayerCard>
+      )}
 
       {/* Upcoming sessions list */}
       {upcomingSessions.length > 0 ? (
